@@ -34,3 +34,27 @@ public func call<A, B>(_ rpc: @escaping UnaryRPC<A, B>)
     UnaryCallPublisher(rpc(request, callOptions))
   }
 }
+
+public func call<A, B>(_ rpc: @escaping ServerStreamingRPC<A, B>)
+  -> (A)
+  -> ServerStreamingCallPublisher<A, B>
+  where A: Message, B: Message
+{
+  return { request in
+    var publisher = ServerStreamingCallPublisher<A, B>()
+    publisher.call = rpc(request, nil, publisher.responseHandler)
+    return publisher
+  }
+}
+
+public func call<A, B>(_ rpc: @escaping ServerStreamingRPC<A, B>)
+  -> (A, CallOptions)
+  -> ServerStreamingCallPublisher<A, B>
+  where A: Message, B: Message
+{
+  return { request, callOptions in
+    var publisher = ServerStreamingCallPublisher<A, B>()
+    publisher.call = rpc(request, callOptions, publisher.responseHandler)
+    return publisher
+  }
+}

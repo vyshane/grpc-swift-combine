@@ -14,10 +14,10 @@ public struct ServerStreamingCallPublisher<A, B>: Combine.Publisher where A: Mes
   public typealias Output = B
   public typealias Failure = Error
   
-  let call: ServerStreamingCall<A, B>
+  public var call: ServerStreamingCall<A, B>? = nil
   
-  init(_ serverStreamingCall: ServerStreamingCall<A, B>) {
-    call = serverStreamingCall
+  public let responseHandler: (B) -> Void = { response in
+    // TODO
   }
   
   @available(OSX 10.15, *)
