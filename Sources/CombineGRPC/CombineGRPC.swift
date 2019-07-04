@@ -8,10 +8,10 @@ public typealias UnaryRPC<A, B> = (A, CallOptions?) -> UnaryCall<A, B>
 public typealias ServerStreamingRPC<A, B> = (A, CallOptions?, (B) -> Void) -> ServerStreamingCall<A, B>
   where A: Message, B: Message
 
-public typealias ClientStreamRPC<A, B> = (CallOptions?) -> ClientStreamingCall<A, B>
+public typealias ClientStreamingRPC<A, B> = (CallOptions?) -> ClientStreamingCall<A, B>
   where A: Message, B: Message
 
-public typealias BidirectionalStreamRPC<A, B> = (CallOptions?, (B) -> Void) -> BidirectionalStreamingCall<A, B>
+public typealias BidirectionalStreamingRPC<A, B> = (CallOptions?, (B) -> Void) -> BidirectionalStreamingCall<A, B>
   where A: Message, B: Message
 
 
