@@ -21,7 +21,9 @@ public struct UnaryCallPublisher<A, B>: Combine.Publisher where A: Message, B: M
   }
   
   @available(OSX 10.15, *)
-  public func receive<S>(subscriber: S) where S : Subscriber, UnaryCallPublisher.Failure == S.Failure, UnaryCallPublisher.Output == S.Input {
+  public func receive<S>(subscriber: S)
+    where S : Subscriber, UnaryCallPublisher.Failure == S.Failure, UnaryCallPublisher.Output == S.Input
+  {
     call.response.whenSuccess { response in
       _ = subscriber.receive(response)
     }
