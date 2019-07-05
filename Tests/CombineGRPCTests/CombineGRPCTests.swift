@@ -24,6 +24,14 @@ final class CombineGRPCTests: XCTestCase {
     _ = call(client.dummyUnary)(Grpcbin_DummyMessage(), CallOptions()).map { response in
       return response
     }
+    
+    _ = call(client.dummyServerStream)(Grpcbin_DummyMessage()).map { response in
+      return response
+    }
+    
+    _ = call(client.dummyServerStream)(Grpcbin_DummyMessage(), CallOptions()).map { response in
+      return response
+    }
   }
 
   static var allTests = [

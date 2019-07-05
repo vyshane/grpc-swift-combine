@@ -14,16 +14,25 @@ public struct ServerStreamingCallPublisher<A, B>: Combine.Publisher where A: Mes
   public typealias Output = B
   public typealias Failure = Error
   
-  public var call: ServerStreamingCall<A, B>? = nil
+  let call: ServerStreamingCall<A, B>
+  let collector: ServerStreamingResponseCollector<B>
   
-  public let responseHandler: (B) -> Void = { response in
-    // TODO
+  init(serverStreamingCall: ServerStreamingCall<A, B>, responseCollector: ServerStreamingResponseCollector<B>) {
+    call = serverStreamingCall
+    collector = responseCollector
   }
   
   @available(OSX 10.15, *)
   public func receive<S>(subscriber: S)
     where S : Subscriber, ServerStreamingCallPublisher.Failure == S.Failure, ServerStreamingCallPublisher.Output == S.Input
   {
+    // TODO
+  }
+}
+
+public struct ServerStreamingResponseCollector<B> where B: Message {
+  
+  public let receiver: (B) -> Void = { response in
     // TODO
   }
 }

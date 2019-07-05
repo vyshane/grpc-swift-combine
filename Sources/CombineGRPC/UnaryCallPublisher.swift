@@ -16,7 +16,7 @@ public struct UnaryCallPublisher<A, B>: Combine.Publisher where A: Message, B: M
   
   let call: UnaryCall<A, B>
   
-  init(_ unaryCall: UnaryCall<A, B>) {
+  init(unaryCall: UnaryCall<A, B>) {
     call = unaryCall
   }
   

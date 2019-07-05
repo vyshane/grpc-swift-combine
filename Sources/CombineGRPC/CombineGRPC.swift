@@ -5,7 +5,7 @@ import SwiftProtobuf
 public typealias UnaryRPC<A, B> = (A, CallOptions?) -> UnaryCall<A, B>
   where A: Message, B: Message
 
-public typealias ServerStreamingRPC<A, B> = (A, CallOptions?, (B) -> Void) -> ServerStreamingCall<A, B>
+public typealias ServerStreamingRPC<A, B> = (A, CallOptions?, @escaping (B) -> Void) -> ServerStreamingCall<A, B>
   where A: Message, B: Message
 
 public typealias ClientStreamingRPC<A, B> = (CallOptions?) -> ClientStreamingCall<A, B>
@@ -21,7 +21,7 @@ public func call<A, B>(_ rpc: @escaping UnaryRPC<A, B>)
   where A: Message, B: Message
 {
   return { request in
-    UnaryCallPublisher(rpc(request, nil))
+    UnaryCallPublisher(unaryCall: rpc(request, nil))
   }
 }
 
@@ -31,7 +31,7 @@ public func call<A, B>(_ rpc: @escaping UnaryRPC<A, B>)
   where A: Message, B: Message
 {
   return { request, callOptions in
-    UnaryCallPublisher(rpc(request, callOptions))
+    UnaryCallPublisher(unaryCall: rpc(request, callOptions))
   }
 }
 
@@ -41,9 +41,9 @@ public func call<A, B>(_ rpc: @escaping ServerStreamingRPC<A, B>)
   where A: Message, B: Message
 {
   return { request in
-    var publisher = ServerStreamingCallPublisher<A, B>()
-    publisher.call = rpc(request, nil, publisher.responseHandler)
-    return publisher
+    let collector = ServerStreamingResponseCollector<B>()
+    let call = rpc(request, nil, collector.receiver)
+    return ServerStreamingCallPublisher(serverStreamingCall: call, responseCollector: collector)
   }
 }
 
@@ -53,8 +53,8 @@ public func call<A, B>(_ rpc: @escaping ServerStreamingRPC<A, B>)
   where A: Message, B: Message
 {
   return { request, callOptions in
-    var publisher = ServerStreamingCallPublisher<A, B>()
-    publisher.call = rpc(request, callOptions, publisher.responseHandler)
-    return publisher
+    let collector = ServerStreamingResponseCollector<B>()
+    let call = rpc(request, callOptions, collector.receiver)
+    return ServerStreamingCallPublisher(serverStreamingCall: call, responseCollector: collector)
   }
 }
