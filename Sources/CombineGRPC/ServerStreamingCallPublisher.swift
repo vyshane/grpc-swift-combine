@@ -13,7 +13,7 @@ import SwiftProtobuf
 @available(OSX 10.15, *)
 public struct ServerStreamingCallPublisher<Request, Response>: Publisher where Request: Message, Response: Message {
   public typealias Output = Response
-  public typealias Failure = Error
+  public typealias Failure = StatusError
   
   let call: ServerStreamingCall<Request, Response>
   let bridge: MessageBridge<Response>
@@ -28,6 +28,7 @@ public struct ServerStreamingCallPublisher<Request, Response>: Publisher where R
   {
     _ = bridge.messages.map { subscriber.receive($0) }
     
+    // TODO: Abstract this out
     // The status future completes successfully even when there is an error status
     call.status.whenSuccess { status in
       switch status.code {

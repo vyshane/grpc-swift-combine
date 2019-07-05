@@ -12,7 +12,7 @@ import SwiftProtobuf
 
 public struct UnaryCallPublisher<Request, Response>: Publisher where Request: Message, Response: Message {
   public typealias Output = Response
-  public typealias Failure = Error
+  public typealias Failure = StatusError
   
   let call: UnaryCall<Request, Response>
   
@@ -27,8 +27,16 @@ public struct UnaryCallPublisher<Request, Response>: Publisher where Request: Me
     call.response.whenSuccess { response in
       _ = subscriber.receive(response)
     }
-    call.response.whenFailure { error in
-      _ = subscriber.receive(completion: Subscribers.Completion.failure(error))
+    
+    // TODO: Abstract this out
+    // The status future completes successfully even when there is an error status
+    call.status.whenSuccess { status in
+      switch status.code {
+      case .ok:
+        subscriber.receive(completion: .finished)
+      default:
+        subscriber.receive(completion: .failure(StatusError(code: status.code, message: status.message)))
+      }
     }
   }
 }

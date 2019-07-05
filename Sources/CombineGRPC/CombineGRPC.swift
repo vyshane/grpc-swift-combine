@@ -19,48 +19,50 @@ public typealias BidirectionalStreamingRPC<Request, Response> =
   where Request: Message, Response: Message
 
 
+@available(OSX 10.15, *)
 public func call<Request, Response>(_ rpc: @escaping UnaryRPC<Request, Response>)
   -> (Request)
-  -> UnaryCallPublisher<Request, Response>
+  -> AnyPublisher<Response, StatusError>
   where Request: Message, Response: Message
 {
   return { request in
-    UnaryCallPublisher(unaryCall: rpc(request, nil))
+    AnyPublisher(UnaryCallPublisher(unaryCall: rpc(request, nil)))
   }
 }
 
+@available(OSX 10.15, *)
 public func call<Request, Response>(_ rpc: @escaping UnaryRPC<Request, Response>)
   -> (Request, CallOptions)
-  -> UnaryCallPublisher<Request, Response>
+  -> AnyPublisher<Response, StatusError>
   where Request: Message, Response: Message
 {
   return { request, callOptions in
-    UnaryCallPublisher(unaryCall: rpc(request, callOptions))
+    AnyPublisher(UnaryCallPublisher(unaryCall: rpc(request, callOptions)))
   }
 }
 
 @available(OSX 10.15, *)
 public func call<Request, Response>(_ rpc: @escaping ServerStreamingRPC<Request, Response>)
   -> (Request)
-  -> ServerStreamingCallPublisher<Request, Response>
+  -> AnyPublisher<Response, StatusError>
   where Request: Message, Response: Message
 {
   return { request in
     let bridge = MessageBridge<Response>()
     let call = rpc(request, nil, bridge.receive)
-    return ServerStreamingCallPublisher(serverStreamingCall: call, messageBridge: bridge)
+    return AnyPublisher(ServerStreamingCallPublisher(serverStreamingCall: call, messageBridge: bridge))
   }
 }
 
 @available(OSX 10.15, *)
 public func call<Request, Response>(_ rpc: @escaping ServerStreamingRPC<Request, Response>)
   -> (Request, CallOptions)
-  -> ServerStreamingCallPublisher<Request, Response>
+  -> AnyPublisher<Response, StatusError>
   where Request: Message, Response: Message
 {
   return { request, callOptions in
     let bridge = MessageBridge<Response>()
     let call = rpc(request, callOptions, bridge.receive)
-    return ServerStreamingCallPublisher(serverStreamingCall: call, messageBridge: bridge)
+    return AnyPublisher(ServerStreamingCallPublisher(serverStreamingCall: call, messageBridge: bridge))
   }
 }
