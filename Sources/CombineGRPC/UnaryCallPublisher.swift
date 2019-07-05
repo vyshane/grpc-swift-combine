@@ -10,13 +10,13 @@ import Combine
 import GRPC
 import SwiftProtobuf
 
-public struct UnaryCallPublisher<A, B>: Combine.Publisher where A: Message, B: Message {
-  public typealias Output = B
+public struct UnaryCallPublisher<Request, Response>: Publisher where Request: Message, Response: Message {
+  public typealias Output = Response
   public typealias Failure = Error
   
-  let call: UnaryCall<A, B>
+  let call: UnaryCall<Request, Response>
   
-  init(unaryCall: UnaryCall<A, B>) {
+  init(unaryCall: UnaryCall<Request, Response>) {
     call = unaryCall
   }
   

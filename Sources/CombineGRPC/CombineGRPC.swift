@@ -2,33 +2,37 @@ import Combine
 import GRPC
 import SwiftProtobuf
 
-public typealias UnaryRPC<A, B> = (A, CallOptions?) -> UnaryCall<A, B>
-  where A: Message, B: Message
+public typealias UnaryRPC<Request, Response> =
+  (Request, CallOptions?) -> UnaryCall<Request, Response>
+  where Request: Message, Response: Message
 
-public typealias ServerStreamingRPC<A, B> = (A, CallOptions?, @escaping (B) -> Void) -> ServerStreamingCall<A, B>
-  where A: Message, B: Message
+public typealias ServerStreamingRPC<Request, Response> =
+  (Request, CallOptions?, @escaping (Response) -> Void) -> ServerStreamingCall<Request, Response>
+  where Request: Message, Response: Message
 
-public typealias ClientStreamingRPC<A, B> = (CallOptions?) -> ClientStreamingCall<A, B>
-  where A: Message, B: Message
+public typealias ClientStreamingRPC<Request, Response> =
+  (CallOptions?) -> ClientStreamingCall<Request, Response>
+  where Request: Message, Response: Message
 
-public typealias BidirectionalStreamingRPC<A, B> = (CallOptions?, (B) -> Void) -> BidirectionalStreamingCall<A, B>
-  where A: Message, B: Message
+public typealias BidirectionalStreamingRPC<Request, Response> =
+  (CallOptions?, (Response) -> Void) -> BidirectionalStreamingCall<Request, Response>
+  where Request: Message, Response: Message
 
 
-public func call<A, B>(_ rpc: @escaping UnaryRPC<A, B>)
-  -> (A)
-  -> UnaryCallPublisher<A, B>
-  where A: Message, B: Message
+public func call<Request, Response>(_ rpc: @escaping UnaryRPC<Request, Response>)
+  -> (Request)
+  -> UnaryCallPublisher<Request, Response>
+  where Request: Message, Response: Message
 {
   return { request in
     UnaryCallPublisher(unaryCall: rpc(request, nil))
   }
 }
 
-public func call<A, B>(_ rpc: @escaping UnaryRPC<A, B>)
-  -> (A, CallOptions)
-  -> UnaryCallPublisher<A, B>
-  where A: Message, B: Message
+public func call<Request, Response>(_ rpc: @escaping UnaryRPC<Request, Response>)
+  -> (Request, CallOptions)
+  -> UnaryCallPublisher<Request, Response>
+  where Request: Message, Response: Message
 {
   return { request, callOptions in
     UnaryCallPublisher(unaryCall: rpc(request, callOptions))
@@ -36,26 +40,26 @@ public func call<A, B>(_ rpc: @escaping UnaryRPC<A, B>)
 }
 
 @available(OSX 10.15, *)
-public func call<A, B>(_ rpc: @escaping ServerStreamingRPC<A, B>)
-  -> (A)
-  -> ServerStreamingCallPublisher<A, B>
-  where A: Message, B: Message
+public func call<Request, Response>(_ rpc: @escaping ServerStreamingRPC<Request, Response>)
+  -> (Request)
+  -> ServerStreamingCallPublisher<Request, Response>
+  where Request: Message, Response: Message
 {
   return { request in
-    let bridge = MessageBridge<B>()
+    let bridge = MessageBridge<Response>()
     let call = rpc(request, nil, bridge.receive)
     return ServerStreamingCallPublisher(serverStreamingCall: call, messageBridge: bridge)
   }
 }
 
 @available(OSX 10.15, *)
-public func call<A, B>(_ rpc: @escaping ServerStreamingRPC<A, B>)
-  -> (A, CallOptions)
-  -> ServerStreamingCallPublisher<A, B>
-  where A: Message, B: Message
+public func call<Request, Response>(_ rpc: @escaping ServerStreamingRPC<Request, Response>)
+  -> (Request, CallOptions)
+  -> ServerStreamingCallPublisher<Request, Response>
+  where Request: Message, Response: Message
 {
   return { request, callOptions in
-    let bridge = MessageBridge<B>()
+    let bridge = MessageBridge<Response>()
     let call = rpc(request, callOptions, bridge.receive)
     return ServerStreamingCallPublisher(serverStreamingCall: call, messageBridge: bridge)
   }

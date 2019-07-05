@@ -11,14 +11,14 @@ import GRPC
 import SwiftProtobuf
 
 @available(OSX 10.15, *)
-public struct ServerStreamingCallPublisher<A, B>: Publisher where A: Message, B: Message {
-  public typealias Output = B
+public struct ServerStreamingCallPublisher<Request, Response>: Publisher where Request: Message, Response: Message {
+  public typealias Output = Response
   public typealias Failure = Error
   
-  let call: ServerStreamingCall<A, B>
-  let bridge: MessageBridge<B>
+  let call: ServerStreamingCall<Request, Response>
+  let bridge: MessageBridge<Response>
   
-  init(serverStreamingCall: ServerStreamingCall<A, B>, messageBridge: MessageBridge<B>) {
+  init(serverStreamingCall: ServerStreamingCall<Request, Response>, messageBridge: MessageBridge<Response>) {
     call = serverStreamingCall
     bridge = messageBridge
   }
