@@ -28,8 +28,14 @@ public struct ServerStreamingCallPublisher<A, B>: Publisher where A: Message, B:
   {
     _ = bridge.messages.map { subscriber.receive($0) }
     
-    // TODO
-    // Status of the gRPC call after it has ended
-//    call.status
+    // The status future completes successfully even when there is an error status
+    call.status.whenSuccess { status in
+      switch status.code {
+      case .ok:
+        subscriber.receive(completion: .finished)
+      default:
+        subscriber.receive(completion: .failure(StatusError(code: status.code, message: status.message)))
+      }
+    }
   }
 }
