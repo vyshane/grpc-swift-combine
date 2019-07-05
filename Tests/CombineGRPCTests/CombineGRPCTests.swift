@@ -15,7 +15,9 @@ final class CombineGRPCTests: XCTestCase {
       eventLoopGroup: eventLoopGroup
     )
     let connection = ClientConnection(configuration: configuration)
-    let client = Grpcbin_GRPCBinServiceClient(connection: connection)
+    let client = Grpcbin_GRPCBinServiceClient(
+      connection: connection, defaultCallOptions: CallOptions(timeout: try! .seconds(5))
+    )
     
     _ = call(client.dummyUnary)(Grpcbin_DummyMessage()).map { response in
       return response

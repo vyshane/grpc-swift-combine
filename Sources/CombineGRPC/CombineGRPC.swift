@@ -35,26 +35,28 @@ public func call<A, B>(_ rpc: @escaping UnaryRPC<A, B>)
   }
 }
 
+@available(OSX 10.15, *)
 public func call<A, B>(_ rpc: @escaping ServerStreamingRPC<A, B>)
   -> (A)
   -> ServerStreamingCallPublisher<A, B>
   where A: Message, B: Message
 {
   return { request in
-    let collector = ServerStreamingResponseCollector<B>()
-    let call = rpc(request, nil, collector.receiver)
-    return ServerStreamingCallPublisher(serverStreamingCall: call, responseCollector: collector)
+    let bridge = MessageBridge<B>()
+    let call = rpc(request, nil, bridge.receive)
+    return ServerStreamingCallPublisher(serverStreamingCall: call, messageBridge: bridge)
   }
 }
 
+@available(OSX 10.15, *)
 public func call<A, B>(_ rpc: @escaping ServerStreamingRPC<A, B>)
   -> (A, CallOptions)
   -> ServerStreamingCallPublisher<A, B>
   where A: Message, B: Message
 {
   return { request, callOptions in
-    let collector = ServerStreamingResponseCollector<B>()
-    let call = rpc(request, callOptions, collector.receiver)
-    return ServerStreamingCallPublisher(serverStreamingCall: call, responseCollector: collector)
+    let bridge = MessageBridge<B>()
+    let call = rpc(request, callOptions, bridge.receive)
+    return ServerStreamingCallPublisher(serverStreamingCall: call, messageBridge: bridge)
   }
 }

@@ -10,29 +10,26 @@ import Combine
 import GRPC
 import SwiftProtobuf
 
-public struct ServerStreamingCallPublisher<A, B>: Combine.Publisher where A: Message, B: Message {
+@available(OSX 10.15, *)
+public struct ServerStreamingCallPublisher<A, B>: Publisher where A: Message, B: Message {
   public typealias Output = B
   public typealias Failure = Error
   
   let call: ServerStreamingCall<A, B>
-  let collector: ServerStreamingResponseCollector<B>
+  let bridge: MessageBridge<B>
   
-  init(serverStreamingCall: ServerStreamingCall<A, B>, responseCollector: ServerStreamingResponseCollector<B>) {
+  init(serverStreamingCall: ServerStreamingCall<A, B>, messageBridge: MessageBridge<B>) {
     call = serverStreamingCall
-    collector = responseCollector
+    bridge = messageBridge
   }
   
-  @available(OSX 10.15, *)
   public func receive<S>(subscriber: S)
     where S : Subscriber, ServerStreamingCallPublisher.Failure == S.Failure, ServerStreamingCallPublisher.Output == S.Input
   {
+    _ = bridge.messages.map { subscriber.receive($0) }
+    
     // TODO
-  }
-}
-
-public struct ServerStreamingResponseCollector<B> where B: Message {
-  
-  public let receiver: (B) -> Void = { response in
-    // TODO
+    // Status of the gRPC call after it has ended
+//    call.status
   }
 }
