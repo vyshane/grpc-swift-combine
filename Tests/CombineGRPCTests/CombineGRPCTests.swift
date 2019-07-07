@@ -24,23 +24,19 @@ final class CombineGRPCTests: XCTestCase {
     
     // MARK: Unary
     
-    _ = call(client.dummyUnary)(Grpcbin_DummyMessage()).map { response in
-      return response
-    }
+    _ = call(client.dummyUnary)(Grpcbin_DummyMessage())
+      .sink(receiveCompletion: { print ($0) }, receiveValue: { print ($0) })
 
-    _ = call(client.dummyUnary)(Grpcbin_DummyMessage(), CallOptions()).map { response in
-      return response
-    }
+    _ = call(client.dummyUnary)(Grpcbin_DummyMessage(), CallOptions())
+      .sink(receiveCompletion: { print ($0) }, receiveValue: { print ($0) })
     
     // MARK: Server Streaming
     
-    _ = call(client.dummyServerStream)(Grpcbin_DummyMessage()).map { response in
-      return response
-    }
+    _ = call(client.dummyServerStream)(Grpcbin_DummyMessage())
+      .sink(receiveCompletion: { print ($0) }, receiveValue: { print ($0) })
     
-    _ = call(client.dummyServerStream)(Grpcbin_DummyMessage(), CallOptions()).map { response in
-      return response
-    }
+    _ = call(client.dummyServerStream)(Grpcbin_DummyMessage(), CallOptions())
+      .sink(receiveCompletion: { print ($0) }, receiveValue: { print ($0) })
     
     // MARK: Client Streaming
     
@@ -48,23 +44,19 @@ final class CombineGRPCTests: XCTestCase {
       Publishers.Sequence(sequence: [Grpcbin_DummyMessage(), Grpcbin_DummyMessage()])
     )
     
-    _ = call(client.dummyClientStream)(requests).map { response in
-      return response
-    }
+    _ = call(client.dummyClientStream)(requests)
+      .sink(receiveCompletion: { print ($0) }, receiveValue: { print ($0) })
     
-    _ = call(client.dummyClientStream)(requests, CallOptions()).map { response in
-      return response
-    }
+    _ = call(client.dummyClientStream)(requests, CallOptions())
+      .sink(receiveCompletion: { print ($0) }, receiveValue: { print ($0) })
     
     // MARK: Bidirectional Streaming
     
-    _ = call(client.dummyBidirectionalStreamStream)(requests).map { response in
-      return response
-    }
+    _ = call(client.dummyBidirectionalStreamStream)(requests)
+      .sink(receiveCompletion: { print ($0) }, receiveValue: { print ($0) })
     
-    _ = call(client.dummyBidirectionalStreamStream)(requests, CallOptions()).map { response in
-      return response
-    }
+    _ = call(client.dummyBidirectionalStreamStream)(requests, CallOptions())
+      .sink(receiveCompletion: { print ($0) }, receiveValue: { print ($0) })
   }
 
   static var allTests = [
