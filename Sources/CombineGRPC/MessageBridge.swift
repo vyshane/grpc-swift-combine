@@ -8,7 +8,7 @@ import Combine
 struct MessageBridge<T> {
   let messages = PassthroughSubject<T, Error>()
   
-  public func receive(message: T) -> Void {
+  func receive(message: T) -> Void {
     _ = messages.append(message)
   }
 }
