@@ -24,19 +24,7 @@ public struct UnaryCallPublisher<Request, Response>: Publisher where Request: Me
   public func receive<S>(subscriber: S)
     where S : Subscriber, UnaryCallPublisher.Failure == S.Failure, UnaryCallPublisher.Output == S.Input
   {
-    call.response.whenSuccess { response in
-      _ = subscriber.receive(response)
-    }
-    
-    // TODO: Abstract this out
-    // The status future completes successfully even when there is an error status
-    call.status.whenSuccess { status in
-      switch status.code {
-      case .ok:
-        subscriber.receive(completion: .finished)
-      default:
-        subscriber.receive(completion: .failure(StatusError(code: status.code, message: status.message)))
-      }
-    }
+    call.response.whenSuccess { _ = subscriber.receive($0) }
+    call.status.whenSuccess { sendCompletion(toSubscriber: subscriber, forStatus: $0) }
   }
 }
