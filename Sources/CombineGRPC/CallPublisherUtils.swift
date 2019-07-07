@@ -1,9 +1,5 @@
-//
-//  CallPublisherUtils.swift
-//  CombineGRPC
-//
-//  Created by Vy-Shane Xie on 7/7/19.
-//
+// Copyright 2019, Vy-Shane Xie
+// Licensed under the Apache License, Version 2.0
 
 import Foundation
 import Combine

@@ -1,3 +1,6 @@
+// Copyright 2019, Vy-Shane Xie
+// Licensed under the Apache License, Version 2.0
+
 import Combine
 import GRPC
 import SwiftProtobuf
@@ -18,6 +21,7 @@ public typealias BidirectionalStreamingRPC<Request, Response> =
   (CallOptions?, (Response) -> Void) -> BidirectionalStreamingCall<Request, Response>
   where Request: Message, Response: Message
 
+// MARK: Unary
 
 @available(OSX 10.15, *)
 public func call<Request, Response>(_ rpc: @escaping UnaryRPC<Request, Response>)
@@ -40,6 +44,8 @@ public func call<Request, Response>(_ rpc: @escaping UnaryRPC<Request, Response>
     AnyPublisher(UnaryCallPublisher(unaryCall: rpc(request, callOptions)))
   }
 }
+
+// MARK: Server Streaming
 
 @available(OSX 10.15, *)
 public func call<Request, Response>(_ rpc: @escaping ServerStreamingRPC<Request, Response>)
@@ -66,3 +72,11 @@ public func call<Request, Response>(_ rpc: @escaping ServerStreamingRPC<Request,
     return AnyPublisher(ServerStreamingCallPublisher(serverStreamingCall: call, messageBridge: bridge))
   }
 }
+
+// MARK: Client Streaming
+
+// TODO
+
+// MARK: Bidirectional Streaming
+
+// TODO

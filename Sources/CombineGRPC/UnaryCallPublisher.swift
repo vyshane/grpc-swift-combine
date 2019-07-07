@@ -1,15 +1,12 @@
-//
-//  UnaryCallPublisher.swift
-//  CombineGRPC
-//
-//  Created by Vy-Shane Xie on 3/7/19.
-//
+// Copyright 2019, Vy-Shane Xie
+// Licensed under the Apache License, Version 2.0
 
 import Foundation
 import Combine
 import GRPC
 import SwiftProtobuf
 
+@available(OSX 10.15, *)
 public struct UnaryCallPublisher<Request, Response>: Publisher where Request: Message, Response: Message {
   public typealias Output = Response
   public typealias Failure = StatusError
@@ -20,7 +17,6 @@ public struct UnaryCallPublisher<Request, Response>: Publisher where Request: Me
     call = unaryCall
   }
   
-  @available(OSX 10.15, *)
   public func receive<S>(subscriber: S)
     where S : Subscriber, UnaryCallPublisher.Failure == S.Failure, UnaryCallPublisher.Output == S.Input
   {
