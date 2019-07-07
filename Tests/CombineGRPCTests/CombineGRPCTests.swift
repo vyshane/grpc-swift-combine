@@ -55,6 +55,16 @@ final class CombineGRPCTests: XCTestCase {
     _ = call(client.dummyClientStream)(requests, CallOptions()).map { response in
       return response
     }
+    
+    // MARK: Bidirectional Streaming
+    
+    _ = call(client.dummyBidirectionalStreamStream)(requests).map { response in
+      return response
+    }
+    
+    _ = call(client.dummyBidirectionalStreamStream)(requests, CallOptions()).map { response in
+      return response
+    }
   }
 
   static var allTests = [

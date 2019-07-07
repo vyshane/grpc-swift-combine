@@ -98,7 +98,35 @@ public func call<Request, Response>(_ rpc: @escaping ClientStreamingRPC<Request,
 // MARK: Bidirectional Streaming
 
 public typealias BidirectionalStreamingRPC<Request, Response> =
-  (CallOptions?, (Response) -> Void) -> BidirectionalStreamingCall<Request, Response>
+  (CallOptions?, @escaping (Response) -> Void) -> BidirectionalStreamingCall<Request, Response>
   where Request: Message, Response: Message
 
-// TODO
+@available(OSX 10.15, *)
+public func call<Request, Response>(_ rpc: @escaping BidirectionalStreamingRPC<Request, Response>)
+  -> (AnyPublisher<Request, Error>)
+  -> AnyPublisher<Response, StatusError>
+  where Request: Message, Response: Message
+{
+  return { requests in
+    let bridge = MessageBridge<Response>()
+    let call = rpc(nil, bridge.receive)
+    return AnyPublisher(
+      BidirectionalStreamingCallPublisher(bidirectionalStreamingCall: call, messageBridge: bridge, requests: requests)
+    )
+  }
+}
+
+@available(OSX 10.15, *)
+public func call<Request, Response>(_ rpc: @escaping BidirectionalStreamingRPC<Request, Response>)
+  -> (AnyPublisher<Request, Error>, CallOptions?)
+  -> AnyPublisher<Response, StatusError>
+  where Request: Message, Response: Message
+{
+  return { requests, callOptions in
+    let bridge = MessageBridge<Response>()
+    let call = rpc(callOptions, bridge.receive)
+    return AnyPublisher(
+      BidirectionalStreamingCallPublisher(bidirectionalStreamingCall: call, messageBridge: bridge, requests: requests)
+    )
+  }
+}
