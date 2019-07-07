@@ -20,7 +20,8 @@ public struct ServerStreamingCallPublisher<Request, Response>: Publisher where R
   }
   
   public func receive<S>(subscriber: S)
-    where S : Subscriber, ServerStreamingCallPublisher.Failure == S.Failure, ServerStreamingCallPublisher.Output == S.Input
+    where S : Subscriber, ServerStreamingCallPublisher.Failure == S.Failure,
+    ServerStreamingCallPublisher.Output == S.Input
   {
     _ = bridge.messages.map(subscriber.receive)
     call.status.whenSuccess { sendCompletion(toSubscriber: subscriber, forStatus: $0) }

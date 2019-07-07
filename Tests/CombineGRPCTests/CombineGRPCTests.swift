@@ -22,6 +22,8 @@ final class CombineGRPCTests: XCTestCase {
       connection: connection, defaultCallOptions: CallOptions(timeout: try! .seconds(5))
     )
     
+    // MARK: Unary
+    
     _ = call(client.dummyUnary)(Grpcbin_DummyMessage()).map { response in
       return response
     }
@@ -30,11 +32,27 @@ final class CombineGRPCTests: XCTestCase {
       return response
     }
     
+    // MARK: Server Streaming
+    
     _ = call(client.dummyServerStream)(Grpcbin_DummyMessage()).map { response in
       return response
     }
     
     _ = call(client.dummyServerStream)(Grpcbin_DummyMessage(), CallOptions()).map { response in
+      return response
+    }
+    
+    // MARK: Client Streaming
+    
+    let requests = AnyPublisher<Grpcbin_DummyMessage, Error>(
+      Publishers.Sequence(sequence: [Grpcbin_DummyMessage(), Grpcbin_DummyMessage()])
+    )
+    
+    _ = call(client.dummyClientStream)(requests).map { response in
+      return response
+    }
+    
+    _ = call(client.dummyClientStream)(requests, CallOptions()).map { response in
       return response
     }
   }
