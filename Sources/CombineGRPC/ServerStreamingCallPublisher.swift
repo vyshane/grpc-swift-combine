@@ -23,7 +23,10 @@ public struct ServerStreamingCallPublisher<Request, Response>: Publisher where R
     where S : Subscriber, ServerStreamingCallPublisher.Failure == S.Failure,
     ServerStreamingCallPublisher.Output == S.Input
   {
-    _ = bridge.messages.map(subscriber.receive)
+    bridge.messages
+      .mapError { error in StatusError(code: .internalError) }
+      .receive(subscriber: subscriber)
+    
     call.status.whenSuccess { sendCompletion(toSubscriber: subscriber, forStatus: $0) }
   }
 }

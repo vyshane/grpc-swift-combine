@@ -30,7 +30,11 @@ public struct BidirectionalStreamingCallPublisher<Request, Response>: Publisher
     BidirectionalStreamingCallPublisher.Output == S.Input
   {
     _ = requests.map { self.call.sendMessage($0) }
-    _ = bridge.messages.map(subscriber.receive)
+    
+    bridge.messages
+      .mapError { error in StatusError(code: .internalError) }
+      .receive(subscriber: subscriber)
+    
     call.status.whenSuccess { sendCompletion(toSubscriber: subscriber, forStatus: $0) }
   }
 }

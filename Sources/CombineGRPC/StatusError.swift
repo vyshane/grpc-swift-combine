@@ -7,6 +7,10 @@ import GRPC
 public struct StatusError: Error {
   let code: GRPCStatus.Code
   let message: String?
+
+  init(code: GRPCStatus.Code) {
+    self.init(code: code, message: nil)
+  }
   
   init(code: GRPCStatus.Code, message: String?) {
     self.code = code
