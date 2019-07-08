@@ -1,0 +1,54 @@
+// Copyright 2019, Vy-Shane Xie
+// Licensed under the Apache License, Version 2.0
+//
+// Scenarios for end to end tests.
+
+syntax = "proto3";
+
+service UnaryScenarios {
+
+  rpc UnaryOk (Request) returns (Response) {}
+
+  rpc UnaryUnimplemented (Empty) returns (Empty) {}
+
+  rpc UnaryFailedPrecondition (Request) returns (Empty) {}
+
+  rpc UnaryNoResponse (Request) returns (Empty) {}
+}
+
+service ClientStreamingScenarios {
+
+  rpc ClientStreamOk (stream Request) returns (Response) {}
+
+  rpc ClientStreamFailedPrecondition (stream Request) returns (Empty) {}
+
+  rpc ClientStreamNoResponse (stream Request) returns (Empty) {}
+}
+
+service ServerStreamingScenarios {
+
+  rpc ServerStreamOk (Request) returns (stream Response) {}
+
+  rpc ServerStreamFailedPrecondition (Request) returns (stream Empty) {}
+
+  rpc ServerStreamNoResponse (Request) returns (stream Empty) {}
+}
+
+service BidirectionalStreamingScenarios {
+
+  rpc BidirectionalStreamOk (stream Request) returns (stream Response) {}
+
+  rpc BidirectionalStreamFailedPrecondition (stream Request) returns (stream Empty) {}
+
+  rpc BidirectionalStreamNoResponse (stream Request) returns (stream Empty) {}
+}
+
+message Request {
+  string uuid = 1;
+}
+
+message Response {
+  string uuid = 1;
+}
+
+message Empty {}
