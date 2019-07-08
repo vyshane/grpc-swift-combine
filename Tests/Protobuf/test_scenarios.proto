@@ -9,8 +9,6 @@ service UnaryScenarios {
 
   rpc UnaryOk (Request) returns (Response) {}
 
-  rpc UnaryUnimplemented (Empty) returns (Empty) {}
-
   rpc UnaryFailedPrecondition (Request) returns (Empty) {}
 
   rpc UnaryNoResponse (Request) returns (Empty) {}
