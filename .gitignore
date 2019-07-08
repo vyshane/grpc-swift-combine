@@ -1,4 +1,4 @@
-**/Generated/
+Tests/CombineGRPCTests/Generated/
 .DS_Store
 project.xcworkspace
 xcuserdata
