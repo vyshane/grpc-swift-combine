@@ -6,7 +6,6 @@ import Combine
 import GRPC
 import SwiftProtobuf
 
-@available(OSX 10.15, *)
 public struct BidirectionalStreamingCallPublisher<Request, Response>: Publisher
   where Request: Message, Response: Message
 {

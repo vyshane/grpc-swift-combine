@@ -4,7 +4,6 @@
 import Foundation
 import Combine
 
-@available(OSX 10.15, *)
 struct MessageBridge<T> {
   let messages = PassthroughSubject<T, Error>()
   
