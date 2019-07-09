@@ -12,7 +12,7 @@ public typealias UnaryHandler<Request, Response> =
   (Request) -> AnyPublisher<Response, StatusError>
 
 public func handle<Request, Response>(_ request: Request, _ context: StatusOnlyCallContext)
-  -> (@escaping UnaryHandler<Request, Response>)
+  -> (UnaryHandler<Request, Response>)
   -> EventLoopFuture<Response>
 {
   return { handler in
