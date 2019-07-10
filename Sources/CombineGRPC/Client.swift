@@ -13,7 +13,7 @@ public typealias UnaryRPC<Request, Response> =
 
 public func call<Request, Response>(_ rpc: @escaping UnaryRPC<Request, Response>)
   -> (Request)
-  -> AnyPublisher<Response, StatusError>
+  -> AnyPublisher<Response, GRPCStatus>
   where Request: Message, Response: Message
 {
   return { request in
@@ -23,7 +23,7 @@ public func call<Request, Response>(_ rpc: @escaping UnaryRPC<Request, Response>
 
 public func call<Request, Response>(_ rpc: @escaping UnaryRPC<Request, Response>)
   -> (Request, CallOptions)
-  -> AnyPublisher<Response, StatusError>
+  -> AnyPublisher<Response, GRPCStatus>
   where Request: Message, Response: Message
 {
   return { request, callOptions in
@@ -39,7 +39,7 @@ public typealias ServerStreamingRPC<Request, Response> =
 
 public func call<Request, Response>(_ rpc: @escaping ServerStreamingRPC<Request, Response>)
   -> (Request)
-  -> AnyPublisher<Response, StatusError>
+  -> AnyPublisher<Response, GRPCStatus>
   where Request: Message, Response: Message
 {
   return { request in
@@ -51,7 +51,7 @@ public func call<Request, Response>(_ rpc: @escaping ServerStreamingRPC<Request,
 
 public func call<Request, Response>(_ rpc: @escaping ServerStreamingRPC<Request, Response>)
   -> (Request, CallOptions)
-  -> AnyPublisher<Response, StatusError>
+  -> AnyPublisher<Response, GRPCStatus>
   where Request: Message, Response: Message
 {
   return { request, callOptions in
@@ -69,7 +69,7 @@ public typealias ClientStreamingRPC<Request, Response> =
 
 public func call<Request, Response>(_ rpc: @escaping ClientStreamingRPC<Request, Response>)
   -> (AnyPublisher<Request, Error>)
-  -> AnyPublisher<Response, StatusError>
+  -> AnyPublisher<Response, GRPCStatus>
   where Request: Message, Response: Message
 {
   return { requests in
@@ -80,7 +80,7 @@ public func call<Request, Response>(_ rpc: @escaping ClientStreamingRPC<Request,
 
 public func call<Request, Response>(_ rpc: @escaping ClientStreamingRPC<Request, Response>)
   -> (AnyPublisher<Request, Error>, CallOptions?)
-  -> AnyPublisher<Response, StatusError>
+  -> AnyPublisher<Response, GRPCStatus>
   where Request: Message, Response: Message
 {
   return { requests, callOptions in
@@ -97,7 +97,7 @@ public typealias BidirectionalStreamingRPC<Request, Response> =
 
 public func call<Request, Response>(_ rpc: @escaping BidirectionalStreamingRPC<Request, Response>)
   -> (AnyPublisher<Request, Error>)
-  -> AnyPublisher<Response, StatusError>
+  -> AnyPublisher<Response, GRPCStatus>
   where Request: Message, Response: Message
 {
   return { requests in
@@ -110,7 +110,7 @@ public func call<Request, Response>(_ rpc: @escaping BidirectionalStreamingRPC<R
 
 public func call<Request, Response>(_ rpc: @escaping BidirectionalStreamingRPC<Request, Response>)
   -> (AnyPublisher<Request, Error>, CallOptions?)
-  -> AnyPublisher<Response, StatusError>
+  -> AnyPublisher<Response, GRPCStatus>
   where Request: Message, Response: Message
 {
   return { requests, callOptions in

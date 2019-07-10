@@ -7,7 +7,7 @@ import NIO
 import Foundation
 @testable import CombineGRPC
 
-class UnaryScenarios: UnaryScenariosProvider {
+class UnaryTestScenarios: UnaryScenariosProvider {
   
   func unaryOk(request: Request, context: StatusOnlyCallContext) -> EventLoopFuture<Response> {
     return handle(request, context) { request in

@@ -10,7 +10,7 @@ public struct BidirectionalStreamingCallPublisher<Request, Response>: Publisher
   where Request: Message, Response: Message
 {
   public typealias Output = Response
-  public typealias Failure = StatusError
+  public typealias Failure = GRPCStatus
   
   let call: BidirectionalStreamingCall<Request, Response>
   let bridge: MessageBridge<Response>
@@ -31,7 +31,7 @@ public struct BidirectionalStreamingCallPublisher<Request, Response>: Publisher
     _ = requests.map { self.call.sendMessage($0) }
     
     bridge.messages
-      .mapError { error in StatusError(code: .internalError) }
+      .mapError { error in GRPCStatus.processingError }
       .receive(subscriber: subscriber)
     
     call.status.whenSuccess { sendCompletion(toSubscriber: subscriber, forStatus: $0) }

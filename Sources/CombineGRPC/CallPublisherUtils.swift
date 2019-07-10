@@ -6,12 +6,12 @@ import Combine
 import GRPC
 
 func sendCompletion<S>(toSubscriber: S, forStatus: GRPCStatus) -> Void
-  where S: Subscriber, S.Failure == StatusError
+  where S: Subscriber, S.Failure == GRPCStatus
 {
   switch forStatus.code {
   case .ok:
     toSubscriber.receive(completion: .finished)
   default:
-    toSubscriber.receive(completion: .failure(StatusError(code: forStatus.code, message: forStatus.message)))
+    toSubscriber.receive(completion: .failure(forStatus))
   }
 }

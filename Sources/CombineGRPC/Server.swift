@@ -9,7 +9,7 @@ import SwiftProtobuf
 // MARK: Unary
 
 public typealias UnaryHandler<Request, Response> =
-  (Request) -> AnyPublisher<Response, StatusError>
+  (Request) -> AnyPublisher<Response, GRPCStatus>
 
 public func handle<Request, Response>(_ request: Request, _ context: StatusOnlyCallContext)
   -> (UnaryHandler<Request, Response>)
@@ -24,14 +24,15 @@ public func handle<Request, Response>(_ request: Request, _ context: StatusOnlyC
           context.responseStatus = GRPCStatus(code: error.code, message: error.message)
           future = context.eventLoop.makeFailedFuture(error)
         case .finished:
-          context.responseStatus = GRPCStatus(
-            code: .aborted,
-            message: "Response publisher completed without sending a value"
-          )
-          future = context.eventLoop.makeFailedFuture(StatusError(code: .aborted))
+          // TODO
+          // Should we use GRPCStatus everywhere in the lib instead of StatusError?
+          let error = GRPCStatus(code: .aborted, message: "Response publisher completed without sending a value")
+          context.responseStatus = GRPCStatus(code: error.code, message: error.message)
+          future = context.eventLoop.makeFailedFuture(error)
         }
       },
       receiveValue: { response in
+        // First value received will complete the call
         future = context.eventLoop.makeSucceededFuture(response)
       }
     )

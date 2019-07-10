@@ -8,7 +8,7 @@ import SwiftProtobuf
 
 public struct ClientStreamingCallPublisher<Request, Response>: Publisher where Request: Message, Response: Message {
   public typealias Output = Response
-  public typealias Failure = StatusError
+  public typealias Failure = GRPCStatus
   
   let call: ClientStreamingCall<Request, Response>
   let requests: AnyPublisher<Request, Error>

@@ -8,7 +8,7 @@ import SwiftProtobuf
 
 public struct UnaryCallPublisher<Request, Response>: Publisher where Request: Message, Response: Message {
   public typealias Output = Response
-  public typealias Failure = StatusError
+  public typealias Failure = GRPCStatus
   
   let call: UnaryCall<Request, Response>
   
