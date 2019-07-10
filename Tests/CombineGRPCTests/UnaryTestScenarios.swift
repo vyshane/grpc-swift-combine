@@ -7,6 +7,7 @@ import NIO
 import Foundation
 @testable import CombineGRPC
 
+@available(OSX 10.15, *)
 class UnaryTestScenarios: UnaryScenariosProvider {
   
   func unaryOk(request: Request, context: StatusOnlyCallContext) -> EventLoopFuture<Response> {

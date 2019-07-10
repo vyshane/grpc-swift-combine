@@ -8,9 +8,11 @@ import SwiftProtobuf
 
 // MARK: Unary
 
+@available(OSX 10.15, *)
 public typealias UnaryHandler<Request, Response> =
   (Request) -> AnyPublisher<Response, GRPCStatus>
 
+@available(OSX 10.15, *)
 public func handle<Request, Response>(_ request: Request, _ context: StatusOnlyCallContext)
   -> (UnaryHandler<Request, Response>)
   -> EventLoopFuture<Response>

@@ -5,6 +5,7 @@ import Foundation
 import Combine
 import GRPC
 
+@available(OSX 10.15, *)
 func sendCompletion<S>(toSubscriber: S, forStatus: GRPCStatus) -> Void
   where S: Subscriber, S.Failure == GRPCStatus
 {

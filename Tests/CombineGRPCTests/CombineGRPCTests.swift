@@ -8,6 +8,7 @@ import NIO
 import Foundation
 @testable import CombineGRPC
 
+@available(OSX 10.15, *)
 final class CombineGRPCTests: XCTestCase {
   
   func wip() {
