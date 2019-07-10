@@ -26,9 +26,8 @@ public func handle<Request, Response>(_ request: Request, _ context: StatusOnlyC
           context.responseStatus = GRPCStatus(code: error.code, message: error.message)
           future = context.eventLoop.makeFailedFuture(error)
         case .finished:
-          // TODO
-          // Should we use GRPCStatus everywhere in the lib instead of StatusError?
-          let error = GRPCStatus(code: .aborted, message: "Response publisher completed without sending a value")
+          let error = GRPCStatus(code: .aborted,
+                                 message: "Response publisher completed without sending a value")
           context.responseStatus = GRPCStatus(code: error.code, message: error.message)
           future = context.eventLoop.makeFailedFuture(error)
         }
