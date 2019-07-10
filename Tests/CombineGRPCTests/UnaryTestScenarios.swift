@@ -19,9 +19,7 @@ class UnaryTestScenarios: UnaryScenariosProvider {
   }
   
   func unaryFailedPrecondition(request: Request, context: StatusOnlyCallContext) -> EventLoopFuture<Empty> {
-    // TODO: Check how errors should be sent to client
     let error = GRPCStatus(code: .failedPrecondition, message: "Failed Precondition")
-    context.responseStatus = error
     return context.eventLoop.makeFailedFuture(error)
   }
   
