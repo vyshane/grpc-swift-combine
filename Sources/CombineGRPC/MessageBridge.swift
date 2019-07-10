@@ -3,10 +3,11 @@
 
 import Foundation
 import Combine
+import GRPC
 
 @available(OSX 10.15, *)
 struct MessageBridge<T> {
-  let messages = PassthroughSubject<T, Error>()
+  let messages = PassthroughSubject<T, GRPCStatus>()
   
   func receive(message: T) -> Void {
     _ = messages.append(message)

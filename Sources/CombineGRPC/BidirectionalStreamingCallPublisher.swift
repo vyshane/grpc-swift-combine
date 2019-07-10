@@ -30,11 +30,7 @@ public struct BidirectionalStreamingCallPublisher<Request, Response>: Publisher
     BidirectionalStreamingCallPublisher.Output == S.Input
   {
     _ = requests.map { self.call.sendMessage($0) }
-    
-    bridge.messages
-      .mapError { error in GRPCStatus.processingError }
-      .receive(subscriber: subscriber)
-    
+    bridge.messages.receive(subscriber: subscriber)
     call.status.whenSuccess { sendCompletion(toSubscriber: subscriber, forStatus: $0) }
   }
 }

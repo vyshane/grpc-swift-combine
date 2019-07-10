@@ -23,10 +23,7 @@ public struct ServerStreamingCallPublisher<Request, Response>: Publisher where R
     where S : Subscriber, ServerStreamingCallPublisher.Failure == S.Failure,
     ServerStreamingCallPublisher.Output == S.Input
   {
-    bridge.messages
-      .mapError { error in GRPCStatus.processingError }
-      .receive(subscriber: subscriber)
-    
+    bridge.messages.receive(subscriber: subscriber)
     call.status.whenSuccess { sendCompletion(toSubscriber: subscriber, forStatus: $0) }
   }
 }

@@ -22,14 +22,12 @@ public func handle<Request, Response>(_ request: Request, _ context: StatusOnlyC
     _ = handler(request).sink(
       receiveCompletion: { completion in
         switch completion {
-        case .failure(let error):
-          context.responseStatus = GRPCStatus(code: error.code, message: error.message)
-          future = context.eventLoop.makeFailedFuture(error)
+        case .failure(let status):
+          future = context.eventLoop.makeFailedFuture(status)
         case .finished:
-          let error = GRPCStatus(code: .aborted,
-                                 message: "Response publisher completed without sending a value")
-          context.responseStatus = GRPCStatus(code: error.code, message: error.message)
-          future = context.eventLoop.makeFailedFuture(error)
+          let status = GRPCStatus(code: .aborted,
+                                  message: "Response publisher completed without sending a value")
+          future = context.eventLoop.makeFailedFuture(status)
         }
       },
       receiveValue: { response in
