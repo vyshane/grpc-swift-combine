@@ -26,7 +26,7 @@ class UnaryHandlerSubscriber<Response>: Subscriber, Cancellable {
   
   func receive(_ input: Response) -> Subscribers.Demand {
     promise.succeed(input)
-    return .unlimited
+    return Subscribers.Demand.max(1)
   }
   
   func receive(completion: Subscribers.Completion<GRPCStatus>) {
