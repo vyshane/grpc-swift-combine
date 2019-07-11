@@ -26,3 +26,15 @@ public func handle<Request, Response>(_ request: Request, _ context: StatusOnlyC
   _ = handler(request).subscribe(unarySubscriber)
   return unarySubscriber.promise.futureResult
 }
+
+// MARK: Server Streaming
+
+// TODO
+
+// MARK: Client Streaming
+
+// TODO
+
+// MARK: Bidirectional Streaming
+
+// TODO
