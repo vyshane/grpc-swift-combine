@@ -13,7 +13,7 @@ public func handle<Response>(_ context: StatusOnlyCallContext,
                              handler: () -> AnyPublisher<Response, GRPCStatus>) -> EventLoopFuture<Response>
 {
   let unarySubscriber = UnaryHandlerSubscriber<Response>(context: context)
-  _ = handler().subscribe(unarySubscriber)
+  handler().subscribe(unarySubscriber)
   return unarySubscriber.promise.futureResult
 }
 
@@ -23,7 +23,7 @@ public func handle<Request, Response>(_ request: Request, _ context: StatusOnlyC
                                      -> EventLoopFuture<Response>
 {
   let unarySubscriber = UnaryHandlerSubscriber<Response>(context: context)
-  _ = handler(request).subscribe(unarySubscriber)
+  handler(request).subscribe(unarySubscriber)
   return unarySubscriber.promise.futureResult
 }
 
