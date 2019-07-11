@@ -7,46 +7,46 @@ syntax = "proto3";
 
 service UnaryScenarios {
 
-  rpc UnaryOk (Request) returns (Response) {}
+  rpc UnaryOk (EchoRequest) returns (EchoResponse) {}
 
-  rpc UnaryFailedPrecondition (Request) returns (Empty) {}
+  rpc UnaryFailedPrecondition (EchoRequest) returns (Empty) {}
 
-  rpc UnaryNoResponse (Request) returns (Empty) {}
+  rpc UnaryNoResponse (EchoRequest) returns (Empty) {}
 }
 
 service ClientStreamingScenarios {
 
-  rpc ClientStreamOk (stream Request) returns (Response) {}
+  rpc ClientStreamOk (stream EchoRequest) returns (EchoResponse) {}
 
-  rpc ClientStreamFailedPrecondition (stream Request) returns (Empty) {}
+  rpc ClientStreamFailedPrecondition (stream EchoRequest) returns (Empty) {}
 
-  rpc ClientStreamNoResponse (stream Request) returns (Empty) {}
+  rpc ClientStreamNoResponse (stream EchoRequest) returns (Empty) {}
 }
 
 service ServerStreamingScenarios {
 
-  rpc ServerStreamOk (Request) returns (stream Response) {}
+  rpc ServerStreamOk (EchoRequest) returns (stream EchoResponse) {}
 
-  rpc ServerStreamFailedPrecondition (Request) returns (stream Empty) {}
+  rpc ServerStreamFailedPrecondition (EchoRequest) returns (stream Empty) {}
 
-  rpc ServerStreamNoResponse (Request) returns (stream Empty) {}
+  rpc ServerStreamNoResponse (EchoRequest) returns (stream Empty) {}
 }
 
 service BidirectionalStreamingScenarios {
 
-  rpc BidirectionalStreamOk (stream Request) returns (stream Response) {}
+  rpc BidirectionalStreamOk (stream EchoRequest) returns (stream EchoResponse) {}
 
-  rpc BidirectionalStreamFailedPrecondition (stream Request) returns (stream Empty) {}
+  rpc BidirectionalStreamFailedPrecondition (stream EchoRequest) returns (stream Empty) {}
 
-  rpc BidirectionalStreamNoResponse (stream Request) returns (stream Empty) {}
+  rpc BidirectionalStreamNoResponse (stream EchoRequest) returns (stream Empty) {}
 }
 
-message Request {
-  string uuid = 1;
+message EchoRequest {
+  string message = 1;
 }
 
-message Response {
-  string uuid = 1;
+message EchoResponse {
+  string message = 1;
 }
 
 message Empty {}
