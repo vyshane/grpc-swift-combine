@@ -22,10 +22,10 @@ final class CombineGRPCTests: XCTestCase {
       connection: connection, defaultCallOptions: CallOptions(timeout: try! .seconds(5))
     )
     
-    _ = call(client.unaryOk)(Request())
+    _ = call(client.unaryOk)(EchoRequest())
       .sink(receiveCompletion: { print ($0) }, receiveValue: { print ($0) })
 
-    _ = call(client.unaryOk)(Request(), CallOptions())
+    _ = call(client.unaryOk)(EchoRequest(), CallOptions())
       .sink(receiveCompletion: { print ($0) }, receiveValue: { print ($0) })
   }
 
