@@ -38,7 +38,7 @@ class UnaryTestsService: UnaryScenariosProvider {
     return Publishers.Once(request)
       .map { req in
         EchoResponse.with { $0.message = req.message }
-    }
-    .eraseToAnyPublisher()
+      }
+      .eraseToAnyPublisher()
   }
 }
