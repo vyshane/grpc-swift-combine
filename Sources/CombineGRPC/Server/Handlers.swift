@@ -14,7 +14,7 @@ public func handle<Response>(_ context: StatusOnlyCallContext,
 {
   let unarySubscriber = UnaryHandlerSubscriber<Response>(context: context)
   handler().subscribe(unarySubscriber)
-  return unarySubscriber.promise.futureResult
+  return unarySubscriber.futureResult
 }
 
 @available(OSX 10.15, *)
@@ -24,7 +24,7 @@ public func handle<Request, Response>(_ request: Request, _ context: StatusOnlyC
 {
   let unarySubscriber = UnaryHandlerSubscriber<Response>(context: context)
   handler(request).subscribe(unarySubscriber)
-  return unarySubscriber.promise.futureResult
+  return unarySubscriber.futureResult
 }
 
 // MARK: Server Streaming
