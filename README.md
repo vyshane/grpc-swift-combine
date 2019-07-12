@@ -8,6 +8,27 @@ CombineGRPC is a library that provides [Combine framework](https://developer.app
 
 This project is a work in progress and should be considered experimental.
 
+RPC Client Calls
+
+- [x] Unary
+- [x] Client streaming
+- [x] Server streaming
+- [x] Bidirectional streaming
+
+Server Side Handlers
+
+- [x] Unary
+- [ ] Client streaming
+- [ ] Server streaming
+- [ ] Bidirectional streaming
+
+End-to-end Tests
+
+- [ ] Unary
+- [ ] Client streaming
+- [ ] Server streaming
+- [ ] Bidirectional streaming
+
 ## Open Questions
 
 ### Future and Just
