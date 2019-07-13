@@ -29,6 +29,10 @@ End-to-end Tests
 - [ ] Server streaming
 - [ ] Bidirectional streaming
 
+Maybe
+
+- [ ] Automatic client call retries, e.g. to support ID token refresh on expire
+
 ## Open Questions
 
 ### Future and Just
