@@ -28,14 +28,21 @@ final class UnaryTests: XCTestCase {
   }
   
   func testUnaryOk() {
-    let promise = expectation(description: "Response contains request message")
+    let promise = expectation(description: "Call completes successfully")
     let client = UnaryTests.client!
     
     _ = call(client.unaryOk)(EchoRequest.with { $0.message = "hello" })
-      .sink(receiveValue: { response in
-        if response.message == "hello" {
-          promise.fulfill()
-        }
+      .sink(
+        receiveCompletion: { completion in
+          switch completion {
+          case .failure(let status):
+            XCTFail("Unexpected status: " + status.localizedDescription)
+          case .finished:
+            promise.fulfill()
+          }
+        },
+        receiveValue: { response in
+          XCTAssert(response.message == "hello")
       })
     
     wait(for: [promise], timeout: 1)
