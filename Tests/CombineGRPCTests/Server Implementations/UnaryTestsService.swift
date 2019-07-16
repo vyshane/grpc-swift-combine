@@ -26,7 +26,7 @@ class UnaryTestsService: UnaryScenariosProvider {
     }
   }
   
-  // Exceeds deadline
+  // Times out
   func unaryNoResponse(request: EchoRequest, context: StatusOnlyCallContext) -> EventLoopFuture<Empty> {
     return handle(context) {
       return Publishers.Empty().eraseToAnyPublisher()
