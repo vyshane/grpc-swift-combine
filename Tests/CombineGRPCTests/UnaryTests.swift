@@ -71,10 +71,8 @@ final class UnaryTests: XCTestCase {
     let client = UnaryTests.client!
     let options = CallOptions(timeout: try! .milliseconds(50))
     
-    let callWithTimeout:
-      (@escaping UnaryRPC<EchoRequest, Empty>)
-      -> (EchoRequest)
-      -> AnyPublisher<Empty, GRPCStatus> = call(options)
+    // Example of partial application of call options to create a pre-configured client call.
+    let callWithTimeout: ConfiguredUnaryRPC<EchoRequest, Empty> = call(options)
 
     _ = callWithTimeout(client.unaryNoResponse)(EchoRequest.with { $0.message = "hello" })
       .sink(

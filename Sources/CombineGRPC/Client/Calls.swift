@@ -12,6 +12,13 @@ public typealias UnaryRPC<Request, Response> =
   where Request: Message, Response: Message
 
 @available(OSX 10.15, *)
+public typealias ConfiguredUnaryRPC<Request, Response> =
+  (@escaping UnaryRPC<Request, Response>)
+  -> (Request)
+  -> AnyPublisher<Response, GRPCStatus>
+  where Request: Message, Response: Message
+
+@available(OSX 10.15, *)
 public func call<Request, Response>(_ rpc: @escaping UnaryRPC<Request, Response>)
   -> (Request)
   -> AnyPublisher<Response, GRPCStatus>
@@ -40,6 +47,13 @@ public func call<Request, Response>(_ callOptions: CallOptions)
 
 public typealias ServerStreamingRPC<Request, Response> =
   (Request, CallOptions?, @escaping (Response) -> Void) -> ServerStreamingCall<Request, Response>
+  where Request: Message, Response: Message
+
+@available(OSX 10.15, *)
+public typealias ConfiguredServerStreamingRPC<Request, Response> =
+  (@escaping ServerStreamingRPC<Request, Response>)
+  -> (Request)
+  -> AnyPublisher<Response, GRPCStatus>
   where Request: Message, Response: Message
 
 @available(OSX 10.15, *)
@@ -78,6 +92,13 @@ public typealias ClientStreamingRPC<Request, Response> =
   where Request: Message, Response: Message
 
 @available(OSX 10.15, *)
+public typealias ConfiguredClientStreamingRPC<Request, Response> =
+  (@escaping ClientStreamingRPC<Request, Response>)
+  -> (AnyPublisher<Request, Error>)
+  -> AnyPublisher<Response, GRPCStatus>
+  where Request: Message, Response: Message
+
+@available(OSX 10.15, *)
 public func call<Request, Response>(_ rpc: @escaping ClientStreamingRPC<Request, Response>)
   -> (AnyPublisher<Request, Error>)
   -> AnyPublisher<Response, GRPCStatus>
@@ -109,6 +130,13 @@ public func call<Request, Response>(_ callOptions: CallOptions)
 @available(OSX 10.15, *)
 public typealias BidirectionalStreamingRPC<Request, Response> =
   (CallOptions?, @escaping (Response) -> Void) -> BidirectionalStreamingCall<Request, Response>
+  where Request: Message, Response: Message
+
+@available(OSX 10.15, *)
+public typealias ConfiguredBidirectionalStreamingRPC<Request, Response> =
+  (@escaping BidirectionalStreamingRPC<Request, Response>)
+  -> (AnyPublisher<Request, Error>)
+  -> AnyPublisher<Response, GRPCStatus>
   where Request: Message, Response: Message
 
 @available(macOS 10.15, iOS 13.0, *)
