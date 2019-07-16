@@ -23,13 +23,16 @@ public func call<Request, Response>(_ rpc: @escaping UnaryRPC<Request, Response>
 }
 
 @available(OSX 10.15, *)
-public func call<Request, Response>(_ rpc: @escaping UnaryRPC<Request, Response>)
-  -> (Request, CallOptions)
+public func call<Request, Response>(_ callOptions: CallOptions)
+  -> (@escaping UnaryRPC<Request, Response>)
+  -> (Request)
   -> AnyPublisher<Response, GRPCStatus>
   where Request: Message, Response: Message
 {
-  return { request, callOptions in
-    UnaryCallPublisher(unaryCall: rpc(request, callOptions)).eraseToAnyPublisher()
+  return { rpc in
+    return { request in
+      UnaryCallPublisher(unaryCall: rpc(request, callOptions)).eraseToAnyPublisher()
+    }
   }
 }
 
@@ -53,15 +56,18 @@ public func call<Request, Response>(_ rpc: @escaping ServerStreamingRPC<Request,
 }
 
 @available(OSX 10.15, *)
-public func call<Request, Response>(_ rpc: @escaping ServerStreamingRPC<Request, Response>)
-  -> (Request, CallOptions)
+public func call<Request, Response>(_ callOptions: CallOptions)
+  -> (@escaping ServerStreamingRPC<Request, Response>)
+  -> (Request)
   -> AnyPublisher<Response, GRPCStatus>
   where Request: Message, Response: Message
 {
-  return { request, callOptions in
-    let bridge = MessageBridge<Response>()
-    let call = rpc(request, callOptions, bridge.receive)
-    return ServerStreamingCallPublisher(serverStreamingCall: call, messageBridge: bridge).eraseToAnyPublisher()
+  return { rpc in
+    return { request in
+      let bridge = MessageBridge<Response>()
+      let call = rpc(request, callOptions, bridge.receive)
+      return ServerStreamingCallPublisher(serverStreamingCall: call, messageBridge: bridge).eraseToAnyPublisher()
+    }
   }
 }
 
@@ -84,14 +90,17 @@ public func call<Request, Response>(_ rpc: @escaping ClientStreamingRPC<Request,
 }
 
 @available(OSX 10.15, *)
-public func call<Request, Response>(_ rpc: @escaping ClientStreamingRPC<Request, Response>)
-  -> (AnyPublisher<Request, Error>, CallOptions?)
+public func call<Request, Response>(_ callOptions: CallOptions)
+  -> (@escaping ClientStreamingRPC<Request, Response>)
+  -> (AnyPublisher<Request, Error>)
   -> AnyPublisher<Response, GRPCStatus>
   where Request: Message, Response: Message
 {
-  return { requests, callOptions in
-    let call = rpc(callOptions)
-    return ClientStreamingCallPublisher(clientStreamingCall: call, requests: requests).eraseToAnyPublisher()
+  return { rpc in
+    return { requests in
+      let call = rpc(callOptions)
+      return ClientStreamingCallPublisher(clientStreamingCall: call, requests: requests).eraseToAnyPublisher()
+    }
   }
 }
 
@@ -117,15 +126,18 @@ public func call<Request, Response>(_ rpc: @escaping BidirectionalStreamingRPC<R
 }
 
 @available(OSX 10.15, *)
-public func call<Request, Response>(_ rpc: @escaping BidirectionalStreamingRPC<Request, Response>)
-  -> (AnyPublisher<Request, Error>, CallOptions?)
+public func call<Request, Response>(_ callOptions: CallOptions)
+  -> (@escaping BidirectionalStreamingRPC<Request, Response>)
+  -> (AnyPublisher<Request, Error>)
   -> AnyPublisher<Response, GRPCStatus>
   where Request: Message, Response: Message
 {
-  return { requests, callOptions in
-    let bridge = MessageBridge<Response>()
-    let call = rpc(callOptions, bridge.receive)
-    return BidirectionalStreamingCallPublisher(bidirectionalStreamingCall: call, messageBridge: bridge,
-                                               requests: requests).eraseToAnyPublisher()
+  return { rpc in
+    return { requests in
+      let bridge = MessageBridge<Response>()
+      let call = rpc(callOptions, bridge.receive)
+      return BidirectionalStreamingCallPublisher(bidirectionalStreamingCall: call, messageBridge: bridge,
+                                                 requests: requests).eraseToAnyPublisher()
+    }
   }
 }

@@ -10,12 +10,12 @@ import Combine
 import GRPC
 import NIO
 
-let socketPath = "/tmp/grpc-swift-combine.sock"
+let connectionTarget = ConnectionTarget.hostAndPort("localhost", 30120)
 
-func makeTestServer(services: [CallHandlerProvider]) throws -> EventLoopGroup {
+func makeTestServer(services: [CallHandlerProvider]) throws -> EventLoopGroup {  
   let eventLoopGroup = GRPCNIO.makeEventLoopGroup(loopCount: 1)
   let configuration = Server.Configuration(
-    target: .unixDomainSocket(socketPath),
+    target: connectionTarget,
     eventLoopGroup: eventLoopGroup,
     serviceProviders: services
   )
@@ -28,10 +28,10 @@ func makeTestClient<Client>(_ clientCreator: (ClientConnection, CallOptions) -> 
 {
   let eventLoopGroup = GRPCNIO.makeEventLoopGroup(loopCount: 1)
   let configuration = ClientConnection.Configuration(
-    target: .unixDomainSocket(socketPath),
+    target: connectionTarget,
     eventLoopGroup: eventLoopGroup
   )
   let connection = ClientConnection(configuration: configuration)
-  let callOptions = CallOptions(timeout: try! .milliseconds(10))
+  let callOptions = CallOptions(timeout: try! .milliseconds(100))
   return clientCreator(connection, callOptions)
 }

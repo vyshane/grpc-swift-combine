@@ -10,22 +10,28 @@ import NIO
 @available(OSX 10.15, *)
 final class UnaryTests: XCTestCase {
   
-  static let serverEventLoopGroup = try! makeTestServer(services: [UnaryTestsService()])
+  static var serverEventLoopGroup: EventLoopGroup?
+  static var client: UnaryScenariosServiceClient?
   
-  static let client = makeTestClient { connection, callOptions in
-    UnaryScenariosServiceClient(connection: connection, defaultCallOptions: callOptions)
+  override class func setUp() {
+    super.setUp()
+    serverEventLoopGroup = try! makeTestServer(services: [UnaryTestsService()])
+    client = makeTestClient { connection, callOptions in
+      UnaryScenariosServiceClient(connection: connection, defaultCallOptions: callOptions)
+    }
   }
   
   override class func tearDown() {
-    try! client.connection.close().wait()
-    try! serverEventLoopGroup.syncShutdownGracefully()
+    try! client?.connection.close().wait()
+    try! serverEventLoopGroup?.syncShutdownGracefully()
     super.tearDown()
   }
   
-  func unaryOk() {
+  func testUnaryOk() {
     let promise = expectation(description: "Response contains request message")
+    let client = UnaryTests.client!
     
-    _ = call(UnaryTests.client.unaryOk)(EchoRequest.with { $0.message = "hello" })
+    _ = call(client.unaryOk)(EchoRequest.with { $0.message = "hello" })
       .sink(receiveValue: { response in
         if response.message == "hello" {
           promise.fulfill()
@@ -35,19 +41,65 @@ final class UnaryTests: XCTestCase {
     wait(for: [promise], timeout: 1)
   }
 
-  func unaryFailedPrecondition() {
-    // TODO
-    XCTFail("Unimplemented test")
+  func testUnaryFailedPrecondition() {
+    let promise = expectation(description: "Call fails with failed precondition status")
+    let unaryFailedPrecondition = UnaryTests.client!.unaryFailedPrecondition
+    
+    _ = call(unaryFailedPrecondition)(EchoRequest.with { $0.message = "hello" })
+      .sink(
+        receiveCompletion: { completion in
+          switch completion {
+          case .failure(let status):
+            if status.code == .failedPrecondition {
+              promise.fulfill()
+            } else {
+              XCTFail("Unexpected status: " + status.localizedDescription)
+            }
+          case .finished:
+            XCTFail("Call should not succeed")
+          }
+        },
+        receiveValue: { empty in
+          XCTFail("Call should not succeed")
+        })
+    
+    wait(for: [promise], timeout: 1)
   }
 
-  func unaryNoResponse() {
-    // TODO
-    XCTFail("Unimplemented test")
+  func testUnaryNoResponse() {
+    let promise = expectation(description: "Call fails with deadline exceeded status")
+    let client = UnaryTests.client!
+    let options = CallOptions(timeout: try! .milliseconds(50))
+    
+    let callWithTimeout:
+      (@escaping UnaryRPC<EchoRequest, Empty>)
+      -> (EchoRequest)
+      -> AnyPublisher<Empty, GRPCStatus> = call(options)
+
+    _ = callWithTimeout(client.unaryNoResponse)(EchoRequest.with { $0.message = "hello" })
+      .sink(
+        receiveCompletion: { completion in
+          switch completion {
+          case .failure(let status):
+            if status.code == .aborted {
+              promise.fulfill()
+            } else {
+              XCTFail("Unexpected status: " + status.localizedDescription)
+            }
+          case .finished:
+            XCTFail("Call should not succeed")
+          }
+        },
+        receiveValue: { empty in
+          XCTFail("Call should not succeed")
+      })
+    
+    wait(for: [promise], timeout: 1)
   }
   
   static var allTests = [
-    ("Unary OK", unaryOk),
-    ("Unary failed precondition", unaryFailedPrecondition),
-    ("Unary no response", unaryNoResponse),
+    ("Unary OK", testUnaryOk),
+    ("Unary failed precondition", testUnaryFailedPrecondition),
+    ("Unary no response", testUnaryNoResponse),
   ]
 }
