@@ -67,7 +67,7 @@ final class UnaryTests: XCTestCase {
           }
         },
         receiveValue: { empty in
-          XCTFail("Call should not succeed")
+          XCTFail("Call should not return a response")
         })
     
     wait(for: [promise], timeout: 1)
@@ -96,7 +96,7 @@ final class UnaryTests: XCTestCase {
           }
         },
         receiveValue: { empty in
-          XCTFail("Call should not succeed")
+          XCTFail("Call should not return a response")
       })
     
     wait(for: [promise], timeout: 1)
