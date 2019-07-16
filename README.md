@@ -24,7 +24,7 @@ Server Side Handlers
 
 End-to-end Tests
 
-- [ ] Unary
+- [x] Unary
 - [ ] Client streaming
 - [ ] Server streaming
 - [ ] Bidirectional streaming
