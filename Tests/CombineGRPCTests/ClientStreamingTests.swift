@@ -10,13 +10,13 @@ import NIO
 class ClientStreamingTests: XCTestCase {
   
   static var serverEventLoopGroup: EventLoopGroup?
-  static var client: UnaryScenariosServiceClient?
+  static var client: ClientStreamingScenariosServiceClient?
   
   override class func setUp() {
     super.setUp()
     serverEventLoopGroup = try! makeTestServer(services: [ClientStreamingTestsService()])
     client = makeTestClient { connection, callOptions in
-      UnaryScenariosServiceClient(connection: connection, defaultCallOptions: callOptions)
+      ClientStreamingScenariosServiceClient(connection: connection, defaultCallOptions: callOptions)
     }
   }
   

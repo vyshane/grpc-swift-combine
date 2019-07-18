@@ -13,21 +13,26 @@ class ServerStreamingTestsService: ServerStreamingScenariosProvider {
   func serverStreamOk(request: EchoRequest, context: StreamingResponseCallContext<EchoResponse>)
     -> EventLoopFuture<GRPCStatus>
   {
-    // TODO
-    return context.eventLoop.makeFailedFuture(GRPCStatus(code: .unimplemented, message: "TODO"))
+    return handle(context) {
+      let responses = repeatElement(EchoResponse.with { $0.message = request.message}, count: 3)
+      return Publishers.Sequence(sequence: responses).eraseToAnyPublisher()
+    }
   }
 
   func serverStreamFailedPrecondition(request: EchoRequest, context: StreamingResponseCallContext<Empty>)
     -> EventLoopFuture<GRPCStatus>
   {
-    // TODO
-    return context.eventLoop.makeFailedFuture(GRPCStatus(code: .unimplemented, message: "TODO"))
+    return handle(context) {
+      let status = GRPCStatus(code: .failedPrecondition, message: "Failed precondition message")
+      return Publishers.Fail<Empty, GRPCStatus>(error: status).eraseToAnyPublisher()
+    }
   }
 
   func serverStreamNoResponse(request: EchoRequest, context: StreamingResponseCallContext<Empty>)
     -> EventLoopFuture<GRPCStatus>
   {
-    // TODO
-    return context.eventLoop.makeFailedFuture(GRPCStatus(code: .unimplemented, message: "TODO"))
+    return handle(context) {
+      return Publishers.Empty(completeImmediately: false).eraseToAnyPublisher()
+    }
   }
 }

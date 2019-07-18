@@ -29,7 +29,7 @@ class UnaryTestsService: UnaryScenariosProvider {
   // Times out
   func unaryNoResponse(request: EchoRequest, context: StatusOnlyCallContext) -> EventLoopFuture<Empty> {
     return handle(context) {
-      return Publishers.Empty().eraseToAnyPublisher()
+      return Publishers.Empty(completeImmediately: false).eraseToAnyPublisher()
     }
   }
   

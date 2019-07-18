@@ -74,7 +74,7 @@ final class UnaryTests: XCTestCase {
   }
 
   func testUnaryNoResponse() {
-    let promise = expectation(description: "Call fails with aborted status")
+    let promise = expectation(description: "Call fails with deadline exceeded status")
     let client = UnaryTests.client!
     let options = CallOptions(timeout: try! .milliseconds(50))
     
@@ -86,7 +86,7 @@ final class UnaryTests: XCTestCase {
         receiveCompletion: { completion in
           switch completion {
           case .failure(let status):
-            if status.code == .aborted {
+            if status.code == .deadlineExceeded {
               promise.fulfill()
             } else {
               XCTFail("Unexpected status: " + status.localizedDescription)
