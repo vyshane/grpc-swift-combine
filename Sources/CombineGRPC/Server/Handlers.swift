@@ -29,6 +29,25 @@ public func handle<Request, Response>(_ request: Request, _ context: StatusOnlyC
 
 // MARK: Server Streaming
 
+@available(OSX 10.15, *)
+public func handle<Response>(_ context: StreamingResponseCallContext<Response>,
+                             handler: () -> AnyPublisher<Response, GRPCStatus>) -> EventLoopFuture<GRPCStatus>
+{
+  let serverStreamingSubscriber = ServerStreamingHandlerSubscriber<Response>(context: context)
+  handler().subscribe(serverStreamingSubscriber)
+  return serverStreamingSubscriber.futureStatus
+}
+
+@available(OSX 10.15, *)
+public func handle<Request, Response>(_ request: Request, _ context: StreamingResponseCallContext<Response>,
+                                      handler: (Request) -> AnyPublisher<Response, GRPCStatus>)
+                                     -> EventLoopFuture<GRPCStatus>
+{
+  let serverStreamingSubscriber = ServerStreamingHandlerSubscriber<Response>(context: context)
+  handler(request).subscribe(serverStreamingSubscriber)
+  return serverStreamingSubscriber.futureStatus
+}
+
 // TODO
 
 // MARK: Client Streaming

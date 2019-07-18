@@ -8,21 +8,23 @@ import NIO
 import SwiftProtobuf
 
 @available(OSX 10.15, *)
-class UnaryHandlerSubscriber<Response>: Subscriber, Cancellable {
+class ServerStreamingHandlerSubscriber<Response>: Subscriber, Cancellable where Response: Message {
   typealias Input = Response
   typealias Failure = GRPCStatus
   
   var subscription: Subscription?
-  var futureResult: EventLoopFuture<Response> {
+  var context: StreamingResponseCallContext<Response>
+  var futureStatus: EventLoopFuture<GRPCStatus> {
     get {
-      return promise.futureResult
+      return statusPromise.futureResult
     }
   }
   
-  private let promise: EventLoopPromise<Response>
+  private let statusPromise: EventLoopPromise<GRPCStatus>
   
-  init(context: StatusOnlyCallContext) {
-    self.promise = context.eventLoop.makePromise()
+  init(context: StreamingResponseCallContext<Response>) {
+    self.context = context
+    self.statusPromise = context.eventLoop.makePromise()
   }
   
   func receive(subscription: Subscription) {
@@ -31,17 +33,16 @@ class UnaryHandlerSubscriber<Response>: Subscriber, Cancellable {
   }
   
   func receive(_ input: Response) -> Subscribers.Demand {
-    promise.succeed(input)
-    return .max(1)
+    _ = context.sendResponse(input)
+    return .unlimited
   }
   
   func receive(completion: Subscribers.Completion<GRPCStatus>) {
     switch completion {
     case .failure(let status):
-      promise.fail(status)
+      statusPromise.fail(status)
     case .finished:
-      let status = GRPCStatus(code: .aborted, message: "Response publisher completed without sending a value")
-      promise.fail(status)
+      statusPromise.succeed(.ok)
     }
   }
   
