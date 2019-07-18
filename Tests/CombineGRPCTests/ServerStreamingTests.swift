@@ -7,14 +7,14 @@ import GRPC
 import NIO
 @testable import CombineGRPC
 
-class ClientStreamingTests: XCTestCase {
+class ServerStreamingTests: XCTestCase {
   
   static var serverEventLoopGroup: EventLoopGroup?
   static var client: UnaryScenariosServiceClient?
   
   override class func setUp() {
     super.setUp()
-    serverEventLoopGroup = try! makeTestServer(services: [ClientStreamingTestsService()])
+    serverEventLoopGroup = try! makeTestServer(services: [ServerStreamingTestsService()])
     client = makeTestClient { connection, callOptions in
       UnaryScenariosServiceClient(connection: connection, defaultCallOptions: callOptions)
     }
@@ -26,21 +26,21 @@ class ClientStreamingTests: XCTestCase {
     super.tearDown()
   }
   
-  func testClientStreamOk() {
+  func testServerStreamOk() {
     XCTFail("TODO")
   }
   
-  func testClientStreamFailedPrecondition() {
+  func testServerStreamFailedPrecondition() {
     XCTFail("TODO")
   }
   
-  func testClientStreamNoResponse() {
+  func testServerStreamNoResponse() {
     XCTFail("TODO")
   }
   
   static var allTests = [
-    ("Client stream OK", testClientStreamOk),
-    ("Client stream failed precondition", testClientStreamFailedPrecondition),
-    ("Client stream no response", testClientStreamNoResponse),
+    ("Server stream OK", testServerStreamOk),
+    ("Server stream failed precondition", testServerStreamFailedPrecondition),
+    ("Server stream no response", testServerStreamNoResponse),
   ]
 }

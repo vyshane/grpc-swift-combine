@@ -7,6 +7,9 @@ import XCTest
 public func allTests() -> [XCTestCaseEntry] {
   return [
     testCase(UnaryTests.allTests),
+    testCase(ClientStreamingTests.allTests),
+    testCase(ServerStreamingTests.allTests),
+    testCase(BidirectionalStreamingTests.allTests),
   ]
 }
 #endif

@@ -8,24 +8,24 @@ import Foundation
 @testable import CombineGRPC
 
 @available(OSX 10.15, *)
-class ClientStreamingTestsService: ClientStreamingScenariosProvider {
+class ServerStreamingTestsService: ServerStreamingScenariosProvider {
 
-  func clientStreamOk(context: UnaryResponseCallContext<EchoResponse>)
-    -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
+  func serverStreamOk(request: EchoRequest, context: StreamingResponseCallContext<EchoResponse>)
+    -> EventLoopFuture<GRPCStatus>
   {
     // TODO
     return context.eventLoop.makeFailedFuture(GRPCStatus(code: .unimplemented, message: "TODO"))
   }
 
-  func clientStreamFailedPrecondition(context: UnaryResponseCallContext<Empty>)
-    -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
+  func serverStreamFailedPrecondition(request: EchoRequest, context: StreamingResponseCallContext<Empty>)
+    -> EventLoopFuture<GRPCStatus>
   {
     // TODO
     return context.eventLoop.makeFailedFuture(GRPCStatus(code: .unimplemented, message: "TODO"))
   }
 
-  func clientStreamNoResponse(context: UnaryResponseCallContext<Empty>)
-    -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
+  func serverStreamNoResponse(request: EchoRequest, context: StreamingResponseCallContext<Empty>)
+    -> EventLoopFuture<GRPCStatus>
   {
     // TODO
     return context.eventLoop.makeFailedFuture(GRPCStatus(code: .unimplemented, message: "TODO"))

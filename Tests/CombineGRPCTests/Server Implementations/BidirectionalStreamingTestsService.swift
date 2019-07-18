@@ -8,23 +8,23 @@ import Foundation
 @testable import CombineGRPC
 
 @available(OSX 10.15, *)
-class ClientStreamingTestsService: ClientStreamingScenariosProvider {
-
-  func clientStreamOk(context: UnaryResponseCallContext<EchoResponse>)
+class BidirectionalStreamingTestsService: BidirectionalStreamingScenariosProvider {
+  
+  func bidirectionalStreamOk(context: StreamingResponseCallContext<EchoResponse>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
     // TODO
     return context.eventLoop.makeFailedFuture(GRPCStatus(code: .unimplemented, message: "TODO"))
   }
-
-  func clientStreamFailedPrecondition(context: UnaryResponseCallContext<Empty>)
+  
+  func bidirectionalStreamFailedPrecondition(context: StreamingResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
     // TODO
     return context.eventLoop.makeFailedFuture(GRPCStatus(code: .unimplemented, message: "TODO"))
   }
-
-  func clientStreamNoResponse(context: UnaryResponseCallContext<Empty>)
+  
+  func bidirectionalStreamNoResponse(context: StreamingResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
     // TODO
