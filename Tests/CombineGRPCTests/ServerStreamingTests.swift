@@ -26,11 +26,13 @@ class ServerStreamingTests: XCTestCase {
     super.tearDown()
   }
   
-  func testServerStreamCompletesWithStatusOk() {
+  func testServerStreamOk() {
     let promise = expectation(description: "Call completes successfully")
     let client = ServerStreamingTests.client!
     
     _ = call(client.serverStreamOk)(EchoRequest.with { $0.message = "hello" })
+      .filter { $0.message == "hello" }
+      .count()
       .sink(
         receiveCompletion: { completion in
           switch completion {
@@ -40,25 +42,8 @@ class ServerStreamingTests: XCTestCase {
             promise.fulfill()
           }
         },
-        receiveValue: { response in
-          XCTAssert(response.message == "hello")
-        })
-    
-    wait(for: [promise], timeout: 1)
-  }
-  
-  func testServerStreamPublishesExpectedResponses() {
-    let promise = expectation(description: "Call completes successfully")
-    let client = ServerStreamingTests.client!
-    
-    _ = call(client.serverStreamOk)(EchoRequest.with { $0.message = "hello" })
-      .filter { $0.message == "hello" }
-      .count()
-      .sink(
         receiveValue: { count in
-          if count == 3 {
-            promise.fulfill()
-          }
+          XCTAssert(count == 3)
         }
       )
     
@@ -120,8 +105,7 @@ class ServerStreamingTests: XCTestCase {
   }
   
   static var allTests = [
-    ("Server stream completes with status OK", testServerStreamCompletesWithStatusOk),
-    ("Server stream publishes expected responses", testServerStreamPublishesExpectedResponses),
+    ("Server stream OK", testServerStreamOk),
     ("Server stream failed precondition", testServerStreamFailedPrecondition),
     ("Server stream no response", testServerStreamNoResponse),
   ]

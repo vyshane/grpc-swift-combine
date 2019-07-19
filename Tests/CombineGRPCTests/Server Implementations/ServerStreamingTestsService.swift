@@ -24,7 +24,7 @@ class ServerStreamingTestsService: ServerStreamingScenariosProvider {
   {
     return handle(context) {
       let status = GRPCStatus(code: .failedPrecondition, message: "Failed precondition message")
-      return Publishers.Fail<Empty, GRPCStatus>(error: status).eraseToAnyPublisher()
+      return Fail<Empty, GRPCStatus>(error: status).eraseToAnyPublisher()
     }
   }
 
@@ -32,7 +32,7 @@ class ServerStreamingTestsService: ServerStreamingScenariosProvider {
     -> EventLoopFuture<GRPCStatus>
   {
     return handle(context) {
-      return Publishers.Empty(completeImmediately: false).eraseToAnyPublisher()
+      return Combine.Empty<Empty, GRPCStatus>(completeImmediately: false).eraseToAnyPublisher()
     }
   }
 }

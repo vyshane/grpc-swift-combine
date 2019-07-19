@@ -27,7 +27,7 @@ class UnaryHandlerSubscriber<Response>: Subscriber, Cancellable {
   
   func receive(subscription: Subscription) {
     self.subscription = subscription
-    self.subscription?.request(.unlimited)
+    self.subscription?.request(.max(1))
   }
   
   func receive(_ input: Response) -> Subscribers.Demand {

@@ -22,23 +22,21 @@ class UnaryTestsService: UnaryScenariosProvider {
                                context: StatusOnlyCallContext) -> EventLoopFuture<Empty> {
     return handle(context) {
       let status = GRPCStatus(code: .failedPrecondition, message: "Failed precondition message")
-      return Publishers.Fail<Empty, GRPCStatus>(error: status).eraseToAnyPublisher()
+      return Fail<Empty, GRPCStatus>(error: status).eraseToAnyPublisher()
     }
   }
   
   // Times out
   func unaryNoResponse(request: EchoRequest, context: StatusOnlyCallContext) -> EventLoopFuture<Empty> {
     return handle(context) {
-      return Publishers.Empty(completeImmediately: false).eraseToAnyPublisher()
+      return Combine.Empty(completeImmediately: false).eraseToAnyPublisher()
     }
   }
   
   // We define a handler here but you can imagine that it might be in its own separate class.
   private func echoHandler(request: EchoRequest) -> AnyPublisher<EchoResponse, GRPCStatus> {
-    return Publishers.Once(request)
-      .map { req in
-        EchoResponse.with { $0.message = req.message }
-      }
+    return Just<EchoResponse>(EchoResponse.with { $0.message = request.message })
+      .mapError { _ in .processingError }
       .eraseToAnyPublisher()
   }
 }

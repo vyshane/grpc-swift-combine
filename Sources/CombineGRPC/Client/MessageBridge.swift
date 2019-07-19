@@ -7,9 +7,9 @@ import GRPC
 
 @available(OSX 10.15, *)
 struct MessageBridge<T> {
-  let messages = PassthroughSubject<T, GRPCStatus>()
+  let messagePublisher = PassthroughSubject<T, GRPCStatus>()
   
   func receive(message: T) -> Void {
-    _ = messages.append(message)
+    messagePublisher.send(message)
   }
 }

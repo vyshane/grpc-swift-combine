@@ -30,7 +30,9 @@ public struct BidirectionalStreamingCallPublisher<Request, Response>: Publisher
     BidirectionalStreamingCallPublisher.Output == S.Input
   {
     _ = requests.map { self.call.sendMessage($0) }
-    bridge.messages.receive(subscriber: subscriber)
+    bridge.messagePublisher.receive(subscriber: subscriber)
+    
+    // Call status future always succeeds and signals call failure via gRPC status
     call.status.whenSuccess { sendCompletion(toSubscriber: subscriber, forStatus: $0) }
   }
 }
