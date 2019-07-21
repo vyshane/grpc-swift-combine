@@ -19,14 +19,14 @@ Server Side Handlers
 
 - [x] Unary
 - [ ] Client streaming
-- [ ] Server streaming
+- [x] Server streaming
 - [ ] Bidirectional streaming
 
 End-to-end Tests
 
 - [x] Unary
 - [ ] Client streaming
-- [ ] Server streaming
+- [x] Server streaming
 - [ ] Bidirectional streaming
 
 Maybe
