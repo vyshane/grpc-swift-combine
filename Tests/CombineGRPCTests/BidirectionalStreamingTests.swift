@@ -11,6 +11,7 @@ class BidirectionalStreamingTests: XCTestCase {
   
   static var serverEventLoopGroup: EventLoopGroup?
   static var client: BidirectionalStreamingScenariosServiceClient?
+  static var cancellables: [Cancellable] = []
   
   override class func setUp() {
     super.setUp()
@@ -23,6 +24,7 @@ class BidirectionalStreamingTests: XCTestCase {
   override class func tearDown() {
     try! client?.connection.close().wait()
     try! serverEventLoopGroup?.syncShutdownGracefully()
+    cancellables.removeAll()
     super.tearDown()
   }
   

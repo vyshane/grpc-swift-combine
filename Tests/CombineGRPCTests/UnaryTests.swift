@@ -12,6 +12,7 @@ final class UnaryTests: XCTestCase {
   
   static var serverEventLoopGroup: EventLoopGroup?
   static var client: UnaryScenariosServiceClient?
+  static var cancellables: [Cancellable] = []
   
   override class func setUp() {
     super.setUp()
@@ -24,6 +25,7 @@ final class UnaryTests: XCTestCase {
   override class func tearDown() {
     try! client?.connection.close().wait()
     try! serverEventLoopGroup?.syncShutdownGracefully()
+    cancellables.removeAll()
     super.tearDown()
   }
   
@@ -31,7 +33,7 @@ final class UnaryTests: XCTestCase {
     let promise = expectation(description: "Call completes successfully")
     let client = UnaryTests.client!
     
-    _ = call(client.unaryOk)(EchoRequest.with { $0.message = "hello" })
+    let cancellable = call(client.unaryOk)(EchoRequest.with { $0.message = "hello" })
       .sink(
         receiveCompletion: { completion in
           switch completion {
@@ -43,8 +45,9 @@ final class UnaryTests: XCTestCase {
         },
         receiveValue: { response in
           XCTAssert(response.message == "hello")
-      })
+        })
     
+    UnaryTests.cancellables.append(cancellable)
     wait(for: [promise], timeout: 1)
   }
 
@@ -52,7 +55,7 @@ final class UnaryTests: XCTestCase {
     let promise = expectation(description: "Call fails with failed precondition status")
     let unaryFailedPrecondition = UnaryTests.client!.unaryFailedPrecondition
     
-    _ = call(unaryFailedPrecondition)(EchoRequest.with { $0.message = "hello" })
+    let cancellable = call(unaryFailedPrecondition)(EchoRequest.with { $0.message = "hello" })
       .sink(
         receiveCompletion: { completion in
           switch completion {
@@ -70,6 +73,7 @@ final class UnaryTests: XCTestCase {
           XCTFail("Call should not return a response")
         })
     
+    UnaryTests.cancellables.append(cancellable)
     wait(for: [promise], timeout: 1)
   }
 
@@ -81,7 +85,7 @@ final class UnaryTests: XCTestCase {
     // Example of partial application of call options to create a pre-configured client call.
     let callWithTimeout: ConfiguredUnaryRPC<EchoRequest, Empty> = call(options)
 
-    _ = callWithTimeout(client.unaryNoResponse)(EchoRequest.with { $0.message = "hello" })
+    let cancellable = callWithTimeout(client.unaryNoResponse)(EchoRequest.with { $0.message = "hello" })
       .sink(
         receiveCompletion: { completion in
           switch completion {
@@ -97,8 +101,9 @@ final class UnaryTests: XCTestCase {
         },
         receiveValue: { empty in
           XCTFail("Call should not return a response")
-      })
+        })
     
+    UnaryTests.cancellables.append(cancellable)
     wait(for: [promise], timeout: 1)
   }
   
