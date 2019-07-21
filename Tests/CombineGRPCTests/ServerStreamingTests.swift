@@ -11,6 +11,7 @@ class ServerStreamingTests: XCTestCase {
   
   static var serverEventLoopGroup: EventLoopGroup?
   static var client: ServerStreamingScenariosServiceClient?
+  static var cancellables: [Cancellable] = []
   
   override class func setUp() {
     super.setUp()
@@ -23,14 +24,15 @@ class ServerStreamingTests: XCTestCase {
   override class func tearDown() {
     try! client?.connection.close().wait()
     try! serverEventLoopGroup?.syncShutdownGracefully()
+    cancellables.removeAll()
     super.tearDown()
   }
   
   func testServerStreamOk() {
     let promise = expectation(description: "Call completes successfully")
     let client = ServerStreamingTests.client!
-    
-    _ = call(client.serverStreamOk)(EchoRequest.with { $0.message = "hello" })
+
+    let cancellable = call(client.serverStreamOk)(EchoRequest.with { $0.message = "hello" })
       .filter { $0.message == "hello" }
       .count()
       .sink(
@@ -47,6 +49,7 @@ class ServerStreamingTests: XCTestCase {
         }
       )
     
+    ServerStreamingTests.cancellables.append(cancellable)
     wait(for: [promise], timeout: 1)
   }
   
@@ -54,7 +57,7 @@ class ServerStreamingTests: XCTestCase {
     let promise = expectation(description: "Call fails with failed precondition status")
     let serverStreamFailedPrecondition = ServerStreamingTests.client!.serverStreamFailedPrecondition
     
-    _ = call(serverStreamFailedPrecondition)(EchoRequest.with { $0.message = "hello" })
+    let cancellable = call(serverStreamFailedPrecondition)(EchoRequest.with { $0.message = "hello" })
       .sink(
         receiveCompletion: { completion in
           switch completion {
@@ -72,6 +75,7 @@ class ServerStreamingTests: XCTestCase {
           XCTFail("Call should not return a response")
       })
     
+    ServerStreamingTests.cancellables.append(cancellable)
     wait(for: [promise], timeout: 1)
   }
   
@@ -83,7 +87,7 @@ class ServerStreamingTests: XCTestCase {
     // Example of partial application of call options to create a pre-configured client call.
     let callWithTimeout: ConfiguredServerStreamingRPC<EchoRequest, Empty> = call(options)
     
-    _ = callWithTimeout(client.serverStreamNoResponse)(EchoRequest.with { $0.message = "hello" })
+    let cancellable = callWithTimeout(client.serverStreamNoResponse)(EchoRequest.with { $0.message = "hello" })
       .sink(
         receiveCompletion: { completion in
           switch completion {
@@ -101,6 +105,7 @@ class ServerStreamingTests: XCTestCase {
           XCTFail("Call should not return a response")
       })
     
+    ServerStreamingTests.cancellables.append(cancellable)
     wait(for: [promise], timeout: 1)
   }
   

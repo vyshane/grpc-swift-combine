@@ -22,35 +22,8 @@ public struct ServerStreamingCallPublisher<Request, Response>: Publisher where R
   public func receive<S>(subscriber: S)
     where S : Subscriber, ServerStreamingCallPublisher.Failure == S.Failure,
     ServerStreamingCallPublisher.Output == S.Input
-  {
-    
-    // Client subscription is cancelled before server emits:
-    
-//    receive subscription: (PassthroughSubject)
-//    request unlimited
-//    receive cancel
-    
-    // Server:
-    
-//    receive subscription: (Sequence)
-//    request unlimited
-//    receive value: (CombineGRPCTests.EchoResponse:
-//    message: "hello"
-//    )
-//    request unlimited (synchronous)
-//    receive value: (CombineGRPCTests.EchoResponse:
-//    message: "hello"
-//    )
-//    request unlimited (synchronous)
-//    receive value: (CombineGRPCTests.EchoResponse:
-//    message: "hello"
-//    )
-//    request unlimited (synchronous)
-//    receive finished
-    
-    bridge.messagePublisher
-      .print()
-      .subscribe(subscriber)
+  {    
+    bridge.messagePublisher.subscribe(subscriber)
     
     // Call status future always succeeds and signals call failure via gRPC status
     call.status.whenSuccess { sendCompletion(toSubscriber: subscriber, forStatus: $0) }
