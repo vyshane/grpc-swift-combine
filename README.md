@@ -32,9 +32,3 @@ End-to-end Tests
 Maybe
 
 - [ ] Automatic client call retries, e.g. to support ID token refresh on expire
-
-## Open Questions
-
-### Future and Just
-
-Investigate whether we can use [`Future`](https://developer.apple.com/documentation/combine/future) or [`Just`](https://developer.apple.com/documentation/combine/just) semantics for unary calls.
