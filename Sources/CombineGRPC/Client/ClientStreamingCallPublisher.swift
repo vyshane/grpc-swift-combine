@@ -23,9 +23,15 @@ public struct ClientStreamingCallPublisher<Request, Response>: Publisher where R
     where S : Subscriber, ClientStreamingCallPublisher.Failure == S.Failure,
     ClientStreamingCallPublisher.Output == S.Input
   {
-    _ = requests.map { self.call.sendMessage($0) }
+    _ = requests.sink(
+      receiveCompletion: { _ in
+        _ = self.call.sendEnd()
+      },
+      receiveValue: {
+        _ = self.call.sendMessage($0)
+      }
+    )
     call.response.whenSuccess { _ = subscriber.receive($0) }
-    
     // Call status future always succeeds and signals call failure via gRPC status
     call.status.whenSuccess { sendCompletion(toSubscriber: subscriber, forStatus: $0) }
   }

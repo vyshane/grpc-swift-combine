@@ -11,7 +11,9 @@ class ServerStreamingTests: XCTestCase {
   
   static var serverEventLoopGroup: EventLoopGroup?
   static var client: ServerStreamingScenariosServiceClient?
-  static var cancellables: [Cancellable] = []
+  
+  // Streams will be cancelled prematurely if cancellables are deinitialized
+  static var retainedCancellables: [Cancellable] = []
   
   override class func setUp() {
     super.setUp()
@@ -24,7 +26,7 @@ class ServerStreamingTests: XCTestCase {
   override class func tearDown() {
     try! client?.connection.close().wait()
     try! serverEventLoopGroup?.syncShutdownGracefully()
-    cancellables.removeAll()
+    retainedCancellables.removeAll()
     super.tearDown()
   }
   
@@ -49,7 +51,7 @@ class ServerStreamingTests: XCTestCase {
         }
       )
     
-    ServerStreamingTests.cancellables.append(cancellable)
+    ServerStreamingTests.retainedCancellables.append(cancellable)
     wait(for: [promise], timeout: 1)
   }
   
@@ -75,7 +77,7 @@ class ServerStreamingTests: XCTestCase {
           XCTFail("Call should not return a response")
       })
     
-    ServerStreamingTests.cancellables.append(cancellable)
+    ServerStreamingTests.retainedCancellables.append(cancellable)
     wait(for: [promise], timeout: 1)
   }
   
@@ -105,7 +107,7 @@ class ServerStreamingTests: XCTestCase {
           XCTFail("Call should not return a response")
       })
     
-    ServerStreamingTests.cancellables.append(cancellable)
+    ServerStreamingTests.retainedCancellables.append(cancellable)
     wait(for: [promise], timeout: 1)
   }
   

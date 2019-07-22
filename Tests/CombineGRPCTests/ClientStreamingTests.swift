@@ -11,7 +11,7 @@ class ClientStreamingTests: XCTestCase {
   
   static var serverEventLoopGroup: EventLoopGroup?
   static var client: ClientStreamingScenariosServiceClient?
-  static var cancellables: [Cancellable] = []
+  static var retainedCancellables: [Cancellable] = []
   
   override class func setUp() {
     super.setUp()
@@ -24,12 +24,34 @@ class ClientStreamingTests: XCTestCase {
   override class func tearDown() {
     try! client?.connection.close().wait()
     try! serverEventLoopGroup?.syncShutdownGracefully()
-    cancellables.removeAll()
+    retainedCancellables.removeAll()
     super.tearDown()
   }
   
   func testClientStreamOk() {
-    XCTFail("TODO")
+    let promise = expectation(description: "Call completes successfully")
+    let client = ClientStreamingTests.client!
+    let requests = Publishers.Sequence<[EchoRequest], Error>(sequence:
+      [EchoRequest.with { $0.message = "hello"}, EchoRequest.with { $0.message = "world!"}]
+    ).eraseToAnyPublisher()
+    
+    let cancellable = call(client.clientStreamOk)(requests)
+      .sink(
+        receiveCompletion: { completion in
+          switch completion {
+          case .failure(let status):
+            XCTFail("Unexpected status: " + status.localizedDescription)
+          case .finished:
+            promise.fulfill()
+          }
+        },
+        receiveValue: { response in
+          XCTAssert(response.message == "world!")
+        }
+      )
+    
+    ClientStreamingTests.retainedCancellables.append(cancellable)
+    wait(for: [promise], timeout: 1)
   }
   
   func testClientStreamFailedPrecondition() {

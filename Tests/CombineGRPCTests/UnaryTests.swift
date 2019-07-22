@@ -12,7 +12,7 @@ final class UnaryTests: XCTestCase {
   
   static var serverEventLoopGroup: EventLoopGroup?
   static var client: UnaryScenariosServiceClient?
-  static var cancellables: [Cancellable] = []
+  static var retainedCancellables: [Cancellable] = []
   
   override class func setUp() {
     super.setUp()
@@ -25,7 +25,7 @@ final class UnaryTests: XCTestCase {
   override class func tearDown() {
     try! client?.connection.close().wait()
     try! serverEventLoopGroup?.syncShutdownGracefully()
-    cancellables.removeAll()
+    retainedCancellables.removeAll()
     super.tearDown()
   }
   
@@ -47,7 +47,7 @@ final class UnaryTests: XCTestCase {
           XCTAssert(response.message == "hello")
         })
     
-    UnaryTests.cancellables.append(cancellable)
+    UnaryTests.retainedCancellables.append(cancellable)
     wait(for: [promise], timeout: 1)
   }
 
@@ -73,7 +73,7 @@ final class UnaryTests: XCTestCase {
           XCTFail("Call should not return a response")
         })
     
-    UnaryTests.cancellables.append(cancellable)
+    UnaryTests.retainedCancellables.append(cancellable)
     wait(for: [promise], timeout: 1)
   }
 
@@ -103,7 +103,7 @@ final class UnaryTests: XCTestCase {
           XCTFail("Call should not return a response")
         })
     
-    UnaryTests.cancellables.append(cancellable)
+    UnaryTests.retainedCancellables.append(cancellable)
     wait(for: [promise], timeout: 1)
   }
   
