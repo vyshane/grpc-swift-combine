@@ -11,8 +11,8 @@ public struct ServerStreamingCallPublisher<Request, Response>: Publisher where R
   public typealias Output = Response
   public typealias Failure = GRPCStatus
   
-  let call: ServerStreamingCall<Request, Response>
-  let bridge: MessageBridge<Response>
+  private let call: ServerStreamingCall<Request, Response>
+  private let bridge: MessageBridge<Response>
   
   init(serverStreamingCall: ServerStreamingCall<Request, Response>, messageBridge: MessageBridge<Response>) {
     call = serverStreamingCall

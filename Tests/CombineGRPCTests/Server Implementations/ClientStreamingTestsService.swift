@@ -28,14 +28,26 @@ class ClientStreamingTestsService: ClientStreamingScenariosProvider {
   func clientStreamFailedPrecondition(context: UnaryResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
-    // TODO
-    return context.eventLoop.makeFailedFuture(GRPCStatus(code: .unimplemented, message: "TODO"))
+    return handle(context) { _ in
+      let status = GRPCStatus(code: .failedPrecondition, message: "Failed precondition message")
+      return Fail<Empty, GRPCStatus>(error: status).eraseToAnyPublisher()
+    }
   }
+  
+//  func clientStreamFailedPrecondition(context: UnaryResponseCallContext<Empty>)
+//    -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
+//  {
+//    return context.eventLoop.makeSucceededFuture({ streamEvent in
+//      let status = GRPCStatus(code: .failedPrecondition, message: "Failed precondition message")
+//      context.responsePromise.fail(status)
+//    })
+//  }
 
   func clientStreamNoResponse(context: UnaryResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
-    // TODO
-    return context.eventLoop.makeFailedFuture(GRPCStatus(code: .unimplemented, message: "TODO"))
+    return handle(context) { _ in
+      return Combine.Empty<Empty, GRPCStatus>(completeImmediately: false).eraseToAnyPublisher()
+    }
   }
 }

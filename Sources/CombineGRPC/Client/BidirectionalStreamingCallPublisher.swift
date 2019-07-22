@@ -13,9 +13,9 @@ public struct BidirectionalStreamingCallPublisher<Request, Response>: Publisher
   public typealias Output = Response
   public typealias Failure = GRPCStatus
   
-  let call: BidirectionalStreamingCall<Request, Response>
-  let bridge: MessageBridge<Response>
-  let requests: AnyPublisher<Request, Error>
+  private let call: BidirectionalStreamingCall<Request, Response>
+  private let bridge: MessageBridge<Response>
+  private let requests: AnyPublisher<Request, Error>
   
   init(bidirectionalStreamingCall: BidirectionalStreamingCall<Request, Response>,
        messageBridge: MessageBridge<Response>,

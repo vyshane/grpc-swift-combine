@@ -12,14 +12,14 @@ class ServerStreamingHandlerSubscriber<Response>: Subscriber, Cancellable where 
   typealias Input = Response
   typealias Failure = GRPCStatus
   
-  var subscription: Subscription?
-  var context: StreamingResponseCallContext<Response>
   var futureStatus: EventLoopFuture<GRPCStatus> {
     get {
       return statusPromise.futureResult
     }
   }
   
+  private var subscription: Subscription?
+  private let context: StreamingResponseCallContext<Response>
   private let statusPromise: EventLoopPromise<GRPCStatus>
   
   init(context: StreamingResponseCallContext<Response>) {

@@ -11,8 +11,8 @@ public struct ClientStreamingCallPublisher<Request, Response>: Publisher where R
   public typealias Output = Response
   public typealias Failure = GRPCStatus
   
-  let call: ClientStreamingCall<Request, Response>
-  let requests: AnyPublisher<Request, Error>
+  private let call: ClientStreamingCall<Request, Response>
+  private let requests: AnyPublisher<Request, Error>
   
   init(clientStreamingCall: ClientStreamingCall<Request, Response>, requests: AnyPublisher<Request, Error>) {
     call = clientStreamingCall

@@ -11,7 +11,7 @@ public struct UnaryCallPublisher<Request, Response>: Publisher where Request: Me
   public typealias Output = Response
   public typealias Failure = GRPCStatus
   
-  let call: UnaryCall<Request, Response>
+  private let call: UnaryCall<Request, Response>
   
   init(unaryCall: UnaryCall<Request, Response>) {
     call = unaryCall
@@ -21,7 +21,6 @@ public struct UnaryCallPublisher<Request, Response>: Publisher where Request: Me
     where S : Subscriber, UnaryCallPublisher.Failure == S.Failure, UnaryCallPublisher.Output == S.Input
   {
     call.response.whenSuccess { _ = subscriber.receive($0) }
-    
     // Call status future always succeeds and signals call failure via gRPC status
     call.status.whenSuccess { sendCompletion(toSubscriber: subscriber, forStatus: $0) }
   }

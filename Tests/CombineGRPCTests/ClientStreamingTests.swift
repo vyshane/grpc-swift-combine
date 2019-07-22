@@ -55,8 +55,31 @@ class ClientStreamingTests: XCTestCase {
   }
   
   func testClientStreamFailedPrecondition() {
-    XCTFail("TODO")
-  }
+    let promise = expectation(description: "Call fails with failed precondition status")
+    let clientStreamFailedPrecondition = ClientStreamingTests.client!.clientStreamFailedPrecondition
+    let requests = repeatElement(EchoRequest.with { $0.message = "hello"}, count: 3)
+    let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
+    
+    let cancellable = call(clientStreamFailedPrecondition)(requestStream)
+      .sink(
+        receiveCompletion: { completion in
+          switch completion {
+          case .failure(let status):
+            if status.code == .failedPrecondition {
+              promise.fulfill()
+            } else {
+              XCTFail("Unexpected status: " + status.localizedDescription)
+            }
+          case .finished:
+            XCTFail("Call should not succeed")
+          }
+      },
+        receiveValue: { empty in
+          XCTFail("Call should not return a response")
+      })
+    
+    ClientStreamingTests.retainedCancellables.append(cancellable)
+    wait(for: [promise], timeout: 1)  }
   
   func testClientStreamNoResponse() {
     XCTFail("TODO")

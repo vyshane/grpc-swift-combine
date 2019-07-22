@@ -55,18 +55,10 @@ public func handle<Request, Response>(_ context: UnaryResponseCallContext<Respon
                                       handler: (AnyPublisher<Request, Never>) -> AnyPublisher<Response, GRPCStatus>)
                                      -> EventLoopFuture<(StreamEvent<Request>) -> Void>
 {
-  let clientStreamingSubscriber = ClientStreamingHandlerSubscriber<Request, Response>(context: context)
   let requests = PassthroughSubject<Request, Never>()
+  let clientStreamingSubscriber = ClientStreamingHandlerSubscriber<Request, Response>(context: context, requests: requests)
   handler(requests.eraseToAnyPublisher()).subscribe(clientStreamingSubscriber)
-  
-  return context.eventLoop.makeSucceededFuture({ streamEvent in
-    switch streamEvent {
-    case .message(let request):
-      requests.send(request)
-    case .end:
-      requests.send(completion: .finished)
-    }
-  })
+  return clientStreamingSubscriber.futureEventStreamProcessor
 }
 
 // MARK: Bidirectional Streaming

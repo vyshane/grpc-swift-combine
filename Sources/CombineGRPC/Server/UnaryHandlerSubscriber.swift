@@ -12,13 +12,13 @@ class UnaryHandlerSubscriber<Response>: Subscriber, Cancellable {
   typealias Input = Response
   typealias Failure = GRPCStatus
   
-  var subscription: Subscription?
   var futureResult: EventLoopFuture<Response> {
     get {
       return promise.futureResult
     }
   }
   
+  private var subscription: Subscription?
   private let promise: EventLoopPromise<Response>
   
   init(context: StatusOnlyCallContext) {
