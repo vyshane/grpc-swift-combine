@@ -13,7 +13,11 @@ import NIO
 let connectionTarget = ConnectionTarget.hostAndPort("localhost", 30120)
 
 func makeTestServer(services: [CallHandlerProvider]) throws -> EventLoopGroup {  
-  let eventLoopGroup = GRPCNIO.makeEventLoopGroup(loopCount: 1)
+  return try makeTestServer(services: services, eventLoopGroupSize: 1)
+}
+
+func makeTestServer(services: [CallHandlerProvider], eventLoopGroupSize: Int) throws -> EventLoopGroup {
+  let eventLoopGroup = GRPCNIO.makeEventLoopGroup(loopCount: eventLoopGroupSize)
   let configuration = Server.Configuration(
     target: connectionTarget,
     eventLoopGroup: eventLoopGroup,

@@ -28,6 +28,7 @@ End-to-end Tests
 - [ ] Client streaming (Done, pending upstream [grpc-swift #520](https://github.com/grpc/grpc-swift/issues/520))
 - [x] Server streaming
 - [ ] Bidirectional streaming (Done, pending upstream [grpc-swift #520](https://github.com/grpc/grpc-swift/issues/520))
+- [ ] Stress tests
 
 Documentation
 
