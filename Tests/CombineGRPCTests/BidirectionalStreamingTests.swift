@@ -85,7 +85,8 @@ class BidirectionalStreamingTests: XCTestCase {
     wait(for: [promise], timeout: 1)
   }
   
-  // TODO: Investigate crash
+  // Currently crashes because of upstream bug in grpc-swift
+  // See https://github.com/grpc/grpc-swift/issues/520
   func testBidirectionalStreamNoResponse() {
     let promise = expectation(description: "Call fails with deadline exceeded status")
     let client = BidirectionalStreamingTests.client!

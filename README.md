@@ -20,14 +20,14 @@ Server Side Handlers
 - [x] Unary
 - [x] Client streaming
 - [x] Server streaming
-- [ ] Bidirectional streaming
+- [x] Bidirectional streaming
 
 End-to-end Tests
 
 - [x] Unary
-- [ ] Client streaming (Done, pending upstream [grpc-swift#520](https://github.com/grpc/grpc-swift/issues/520))
+- [ ] Client streaming (Done, pending upstream [grpc-swift #520](https://github.com/grpc/grpc-swift/issues/520))
 - [x] Server streaming
-- [ ] Bidirectional streaming
+- [ ] Bidirectional streaming (Done, pending upstream [grpc-swift #520](https://github.com/grpc/grpc-swift/issues/520))
 
 Maybe
 

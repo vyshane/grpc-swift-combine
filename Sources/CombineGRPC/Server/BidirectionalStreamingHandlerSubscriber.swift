@@ -43,4 +43,10 @@ class BidirectionalStreamingHandlerSubscriber<Request, Response>: Subscriber, Ca
   func cancel() {
     subscription?.cancel()
   }
+  
+  deinit {
+    // Ensure that we don't leak the promise
+    context.statusPromise
+      .fail(GRPCStatus(code: .deadlineExceeded, message: "Handler didn't complete within the deadline"))
+  }
 }
