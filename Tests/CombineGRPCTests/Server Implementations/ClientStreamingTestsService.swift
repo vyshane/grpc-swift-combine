@@ -10,7 +10,7 @@ import NIO
 @available(OSX 10.15, *)
 class ClientStreamingTestsService: ClientStreamingScenariosProvider {
 
-  // Echo back the last request message
+  // OK, echoes back the last received message
   func clientStreamOk(context: UnaryResponseCallContext<EchoResponse>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
@@ -25,6 +25,7 @@ class ClientStreamingTestsService: ClientStreamingScenariosProvider {
     }
   }
   
+  // Fails
   func clientStreamFailedPrecondition(context: UnaryResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
@@ -34,6 +35,7 @@ class ClientStreamingTestsService: ClientStreamingScenariosProvider {
     }
   }
 
+  // Times out
   func clientStreamNoResponse(context: UnaryResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {

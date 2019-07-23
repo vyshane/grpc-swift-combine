@@ -10,6 +10,7 @@ import NIO
 @available(OSX 10.15, *)
 class BidirectionalStreamingTestsService: BidirectionalStreamingScenariosProvider {
   
+  // OK, echoes back each request message
   func bidirectionalStreamOk(context: StreamingResponseCallContext<EchoResponse>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
@@ -23,6 +24,7 @@ class BidirectionalStreamingTestsService: BidirectionalStreamingScenariosProvide
     }
   }
   
+  // Fails
   func bidirectionalStreamFailedPrecondition(context: StreamingResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
@@ -32,6 +34,7 @@ class BidirectionalStreamingTestsService: BidirectionalStreamingScenariosProvide
     }
   }
   
+  // Times out
   func bidirectionalStreamNoResponse(context: StreamingResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {

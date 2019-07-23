@@ -10,6 +10,7 @@ import NIO
 @available(OSX 10.15, *)
 class ServerStreamingTestsService: ServerStreamingScenariosProvider {
 
+  // OK, echoes back the request message three times
   func serverStreamOk(request: EchoRequest, context: StreamingResponseCallContext<EchoResponse>)
     -> EventLoopFuture<GRPCStatus>
   {
@@ -19,6 +20,7 @@ class ServerStreamingTestsService: ServerStreamingScenariosProvider {
     }
   }
 
+  // Fails
   func serverStreamFailedPrecondition(request: EchoRequest, context: StreamingResponseCallContext<Empty>)
     -> EventLoopFuture<GRPCStatus>
   {
@@ -28,6 +30,7 @@ class ServerStreamingTestsService: ServerStreamingScenariosProvider {
     }
   }
 
+  // Times out
   func serverStreamNoResponse(request: EchoRequest, context: StreamingResponseCallContext<Empty>)
     -> EventLoopFuture<GRPCStatus>
   {
