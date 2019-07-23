@@ -18,14 +18,14 @@ RPC Client Calls
 Server Side Handlers
 
 - [x] Unary
-- [ ] Client streaming
+- [x] Client streaming
 - [x] Server streaming
 - [ ] Bidirectional streaming
 
 End-to-end Tests
 
 - [x] Unary
-- [ ] Client streaming
+- [ ] Client streaming (Done, pending upstream grpc/grpc-swift#520)
 - [x] Server streaming
 - [ ] Bidirectional streaming
 

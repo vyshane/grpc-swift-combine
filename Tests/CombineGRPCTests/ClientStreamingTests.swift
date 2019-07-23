@@ -54,7 +54,7 @@ class ClientStreamingTests: XCTestCase {
     wait(for: [promise], timeout: 1)
   }
   
-  // Currently failing because of upstream bug in grpc-swift
+  // Currently crashes because of upstream bug in grpc-swift
   // See https://github.com/grpc/grpc-swift/issues/520
   func testClientStreamFailedPrecondition() {
     let promise = expectation(description: "Call fails with failed precondition status")
@@ -84,7 +84,33 @@ class ClientStreamingTests: XCTestCase {
     wait(for: [promise], timeout: 1)  }
   
   func testClientStreamNoResponse() {
-    XCTFail("TODO")
+    let promise = expectation(description: "Call fails with deadline exceeded status")
+    let client = ClientStreamingTests.client!
+    let options = CallOptions(timeout: try! .milliseconds(50))
+    let requests = repeatElement(EchoRequest.with { $0.message = "hello"}, count: 3)
+    let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
+    let callWithTimeout: ConfiguredClientStreamingRPC<EchoRequest, Empty> = call(options)
+        
+    let cancellable = callWithTimeout(client.clientStreamNoResponse)(requestStream)
+      .sink(
+        receiveCompletion: { completion in
+          switch completion {
+          case .failure(let status):
+            if status.code == .deadlineExceeded {
+              promise.fulfill()
+            } else {
+              XCTFail("Unexpected status: " + status.localizedDescription)
+            }
+          case .finished:
+            XCTFail("Call should not succeed")
+          }
+      },
+        receiveValue: { empty in
+          XCTFail("Call should not return a response")
+      })
+    
+    ClientStreamingTests.retainedCancellables.append(cancellable)
+    wait(for: [promise], timeout: 1)
   }
   
   static var allTests = [
