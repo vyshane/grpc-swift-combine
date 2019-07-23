@@ -54,6 +54,8 @@ class ClientStreamingTests: XCTestCase {
     wait(for: [promise], timeout: 1)
   }
   
+  // Currently failing because of upstream bug in grpc-swift
+  // See https://github.com/grpc/grpc-swift/issues/520
   func testClientStreamFailedPrecondition() {
     let promise = expectation(description: "Call fails with failed precondition status")
     let clientStreamFailedPrecondition = ClientStreamingTests.client!.clientStreamFailedPrecondition

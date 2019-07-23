@@ -24,7 +24,7 @@ class ClientStreamingTestsService: ClientStreamingScenariosProvider {
         .eraseToAnyPublisher()
     }
   }
-
+  
   func clientStreamFailedPrecondition(context: UnaryResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
@@ -33,15 +33,6 @@ class ClientStreamingTestsService: ClientStreamingScenariosProvider {
       return Fail<Empty, GRPCStatus>(error: status).eraseToAnyPublisher()
     }
   }
-  
-//  func clientStreamFailedPrecondition(context: UnaryResponseCallContext<Empty>)
-//    -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
-//  {
-//    return context.eventLoop.makeSucceededFuture({ streamEvent in
-//      let status = GRPCStatus(code: .failedPrecondition, message: "Failed precondition message")
-//      context.responsePromise.fail(status)
-//    })
-//  }
 
   func clientStreamNoResponse(context: UnaryResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>

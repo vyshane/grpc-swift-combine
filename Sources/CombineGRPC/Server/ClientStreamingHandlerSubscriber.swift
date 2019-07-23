@@ -12,23 +12,11 @@ class ClientStreamingHandlerSubscriber<Request, Response>: Subscriber, Cancellab
   typealias Input = Response
   typealias Failure = GRPCStatus
   
-  var futureEventStreamProcessor: EventLoopFuture<(StreamEvent<Request>) -> Void>
-  
   private var subscription: Subscription?
   private let context: UnaryResponseCallContext<Response>
-  private let requests: PassthroughSubject<Request, Never>
     
-  init(context: UnaryResponseCallContext<Response>, requests: PassthroughSubject<Request, Never>) {
+  init(context: UnaryResponseCallContext<Response>) {
     self.context = context
-    self.requests = requests
-    self.futureEventStreamProcessor = context.eventLoop.makeSucceededFuture({ streamEvent in
-      switch streamEvent {
-      case .message(let request):
-        requests.send(request)
-      case .end:
-        requests.send(completion: .finished)
-      }
-    })
   }
   
   func receive(subscription: Subscription) {
