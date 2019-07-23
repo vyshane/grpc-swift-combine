@@ -81,7 +81,8 @@ class ClientStreamingTests: XCTestCase {
       })
     
     ClientStreamingTests.retainedCancellables.append(cancellable)
-    wait(for: [promise], timeout: 1)  }
+    wait(for: [promise], timeout: 1)
+  }
   
   func testClientStreamNoResponse() {
     let promise = expectation(description: "Call fails with deadline exceeded status")
