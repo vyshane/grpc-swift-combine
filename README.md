@@ -29,6 +29,13 @@ End-to-end Tests
 - [x] Server streaming
 - [ ] Bidirectional streaming (Done, pending upstream [grpc-swift #520](https://github.com/grpc/grpc-swift/issues/520))
 
+Documentation
+
+- [ ] Unary
+- [ ] Client streaming
+- [ ] Server streaming
+- [ ] Bidirectional streaming
+
 Maybe
 
 - [ ] Automatic client call retries, e.g. to support ID token refresh on expire
