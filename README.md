@@ -138,6 +138,8 @@ call(BidirectionalRPC)(AnyPublisher<Request, Never>) -> AnyPublisher<Response, G
 
 ### Implementing RPC Handlers for the Server
 
+The [Server Implementation Tests](Tests/CombineGRPCTests/Server%20Implementations) are good examples of how to use the RPC handlers on the server side.
+
 #### Unary Handler
 
 ```swift
