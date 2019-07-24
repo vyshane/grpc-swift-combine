@@ -6,43 +6,6 @@ CombineGRPC is a library that provides [Combine framework](https://developer.app
 
 ## Quick Start
 
-Protobuf
-
-```protobuf
-syntax = "proto3";
-
-service HotAndCold {
-  rpc Hide(Item) returns (Empty);
-  rpc Search(stream Coordinate) returns (stream Hint);
-  rpc Found(Item) returns (Empty);
-}
-
-message Item {
-  string name = 1;
-  Coordinate coordinate = 2;
-}
-
-message Coordinate {
-  double latitude = 1;
-  double longitude = 2;
-}
-
-message Hint {
-  Temperature temperature = 1;
-}
-
-enum Temperature {
-  TEMPERATURE_UNSPECIFIED = 0;
-  COLD = 1;
-  COOL = 2;
-  NEUTRAL = 3;
-  WARM = 4;
-  HOT = 5;
-}
-
-message Empty {}
-```
-
 ### Generating Swift Code from Protobuf
 
 Install the [protoc](https://github.com/protocolbuffers/protobuf) Protocol Buffer compiler and the [swift-protobuf](https://github.com/apple/swift-protobuf) plugin.
@@ -118,7 +81,7 @@ message Profile {
 }
 ```
 
-We can make a unary RPC call like this:
+We can make a unary RPC call to the service like this:
 
 ```swift
 let request = GetProfileRequest.with {
@@ -175,7 +138,28 @@ call(BidirectionalRPC)(AnyPublisher<Request, Never>) -> AnyPublisher<Response, G
 
 ### Implementing RPC Handlers for the Server
 
+#### Unary Handler
+
 ```swift
+// TODO
+```
+
+#### Server Streaming Handler
+
+```swift
+// TODO
+```
+
+#### Client Streaming Handler
+
+```swift
+// TODO
+```
+
+#### Bidirectional Streaming Handler
+
+```swift
+// TODO
 ```
 
 ## Compatibility
