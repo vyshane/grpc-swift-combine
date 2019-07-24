@@ -138,7 +138,7 @@ call(BidirectionalRPC)(AnyPublisher<Request, Never>) -> AnyPublisher<Response, G
 
 ### Implementing RPC Handlers for the Server
 
-The [Server Implementation Tests](Tests/CombineGRPCTests/Server%20Implementations) are good examples of how to use the RPC handlers on the server side.
+The [Server Implementation Tests](Tests/CombineGRPCTests/Server%20Implementations) are good examples of how to use the RPC handlers on the server side. You can find the matching protobuf [here](Tests/Protobuf/test_scenarios.proto).
 
 #### Unary Handler
 
