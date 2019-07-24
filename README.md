@@ -10,11 +10,12 @@ Protobuf
 syntax = "proto3";
 
 service HotAndCold {
-  rpc AskOnce(AmIClose) returns (Answer);
-  rpc KeepAsking(stream AmIClose) returns (stream Answer);
+  rpc HideItem(Location) returns (Empty);
+  rpc LocateHiddenItems(Empty) returns (stream Location);
+  rpc AmIClose(stream Location) returns (stream Answer);
 }
 
-message AmIClose {
+message Location {
   double latitude = 1;
   double longitude = 2;
 }
@@ -31,13 +32,15 @@ enum Temperature {
   WARM = 4;
   HOT = 5;
 }
+
+message Empty {}
 ```
 
 Swift
 
 ```swift
-call(client.askOnce)(AmIClose) -> AnyPublisher<Answer, GRPCStatus>
-call(client.keepAsking)(AnyPublisher<AmIClose, Never>) -> AnyPublisher<Answer, GRPCStatus>
+call(client.hideItem)(Location) -> AnyPublisher<Empty, GRPCStatus>
+call(client.amIClose)(AnyPublisher<Location, Never>) -> AnyPublisher<Answer, GRPCStatus>
 ```
 
 ## Status
