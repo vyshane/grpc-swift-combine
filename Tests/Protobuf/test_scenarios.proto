@@ -6,39 +6,27 @@
 syntax = "proto3";
 
 service UnaryScenarios {
-
-  rpc UnaryOk (EchoRequest) returns (EchoResponse) {}
-
-  rpc UnaryFailedPrecondition (EchoRequest) returns (Empty) {}
-
-  rpc UnaryNoResponse (EchoRequest) returns (Empty) {}
+  rpc UnaryOk (EchoRequest) returns (EchoResponse);
+  rpc UnaryFailedPrecondition (EchoRequest) returns (Empty);
+  rpc UnaryNoResponse (EchoRequest) returns (Empty);
 }
 
 service ClientStreamingScenarios {
-
-  rpc ClientStreamOk (stream EchoRequest) returns (EchoResponse) {}
-
-  rpc ClientStreamFailedPrecondition (stream EchoRequest) returns (Empty) {}
-
-  rpc ClientStreamNoResponse (stream EchoRequest) returns (Empty) {}
+  rpc ClientStreamOk (stream EchoRequest) returns (EchoResponse);
+  rpc ClientStreamFailedPrecondition (stream EchoRequest) returns (Empty);
+  rpc ClientStreamNoResponse (stream EchoRequest) returns (Empty);
 }
 
 service ServerStreamingScenarios {
-
-  rpc ServerStreamOk (EchoRequest) returns (stream EchoResponse) {}
-
-  rpc ServerStreamFailedPrecondition (EchoRequest) returns (stream Empty) {}
-
-  rpc ServerStreamNoResponse (EchoRequest) returns (stream Empty) {}
+  rpc ServerStreamOk (EchoRequest) returns (stream EchoResponse);
+  rpc ServerStreamFailedPrecondition (EchoRequest) returns (stream Empty);
+  rpc ServerStreamNoResponse (EchoRequest) returns (stream Empty);
 }
 
 service BidirectionalStreamingScenarios {
-
-  rpc BidirectionalStreamOk (stream EchoRequest) returns (stream EchoResponse) {}
-
-  rpc BidirectionalStreamFailedPrecondition (stream EchoRequest) returns (stream Empty) {}
-
-  rpc BidirectionalStreamNoResponse (stream EchoRequest) returns (stream Empty) {}
+  rpc BidirectionalStreamOk (stream EchoRequest) returns (stream EchoResponse);
+  rpc BidirectionalStreamFailedPrecondition (stream EchoRequest) returns (stream Empty);
+  rpc BidirectionalStreamNoResponse (stream EchoRequest) returns (stream Empty);
 }
 
 message EchoRequest {
