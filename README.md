@@ -136,6 +136,13 @@ A bidirectional streaming call takes a stream of requests as a parameter and ret
 call(BidirectionalRPC)(AnyPublisher<Request, Never>) -> AnyPublisher<Response, GRPCStatus>
 ```
 
+#### Configuring RPC Calls
+
+```swift
+// TODO
+// Partial application of CallOptions
+```
+
 ### Implementing RPC Handlers for the Server
 
 The [Server Implementation Tests](Tests/CombineGRPCTests/Server%20Implementations) are good examples of how to use the RPC handlers on the server side. You can find the matching protobuf [here](Tests/Protobuf/test_scenarios.proto).
