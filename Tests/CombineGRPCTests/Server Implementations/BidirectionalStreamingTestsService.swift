@@ -10,14 +10,14 @@ import NIO
 @available(OSX 10.15, *)
 class BidirectionalStreamingTestsService: BidirectionalStreamingScenariosProvider {
   
-  // OK, echoes back each request message
+  // OK, echoes back each message in the request stream
   func bidirectionalStreamOk(context: StreamingResponseCallContext<EchoResponse>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
-    return handle(context) { requests in
+    handle(context) { requests in
       requests
-        .map { request in
-          EchoResponse.with { $0.message = request.message }
+        .map { req in
+          EchoResponse.with { $0.message = req.message }
         }
         .mapError { _ in .processingError }
         .eraseToAnyPublisher()
@@ -28,7 +28,7 @@ class BidirectionalStreamingTestsService: BidirectionalStreamingScenariosProvide
   func bidirectionalStreamFailedPrecondition(context: StreamingResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
-    return handle(context) { _ in
+    handle(context) { _ in
       let status = GRPCStatus(code: .failedPrecondition, message: "Failed precondition message")
       return Fail<Empty, GRPCStatus>(error: status).eraseToAnyPublisher()
     }
@@ -38,8 +38,8 @@ class BidirectionalStreamingTestsService: BidirectionalStreamingScenariosProvide
   func bidirectionalStreamNoResponse(context: StreamingResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
-    return handle(context) { _ in
-      return Combine.Empty<Empty, GRPCStatus>(completeImmediately: false).eraseToAnyPublisher()
+    handle(context) { _ in
+      Combine.Empty<Empty, GRPCStatus>(completeImmediately: false).eraseToAnyPublisher()
     }
   }
 }

@@ -60,7 +60,7 @@ class StressTest: XCTestCase {
   ]
   
   private func randomRequest() -> EchoRequest {
-    let messageOfRandomSize = (1..<100).map { _ in UUID().uuidString }.reduce("", { $0 + $1 })
+    let messageOfRandomSize = (0..<100).map { _ in UUID().uuidString }.reduce("", { $0 + $1 })
     return EchoRequest.with { $0.message = messageOfRandomSize }
   }
 }

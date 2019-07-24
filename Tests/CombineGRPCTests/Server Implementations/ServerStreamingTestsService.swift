@@ -14,7 +14,7 @@ class ServerStreamingTestsService: ServerStreamingScenariosProvider {
   func serverStreamOk(request: EchoRequest, context: StreamingResponseCallContext<EchoResponse>)
     -> EventLoopFuture<GRPCStatus>
   {
-    return handle(context) {
+    handle(context) {
       let responses = repeatElement(EchoResponse.with { $0.message = request.message}, count: 3)
       return Publishers.Sequence(sequence: responses).eraseToAnyPublisher()
     }
@@ -24,7 +24,7 @@ class ServerStreamingTestsService: ServerStreamingScenariosProvider {
   func serverStreamFailedPrecondition(request: EchoRequest, context: StreamingResponseCallContext<Empty>)
     -> EventLoopFuture<GRPCStatus>
   {
-    return handle(context) {
+    handle(context) {
       let status = GRPCStatus(code: .failedPrecondition, message: "Failed precondition message")
       return Fail<Empty, GRPCStatus>(error: status).eraseToAnyPublisher()
     }
@@ -34,8 +34,8 @@ class ServerStreamingTestsService: ServerStreamingScenariosProvider {
   func serverStreamNoResponse(request: EchoRequest, context: StreamingResponseCallContext<Empty>)
     -> EventLoopFuture<GRPCStatus>
   {
-    return handle(context) {
-      return Combine.Empty<Empty, GRPCStatus>(completeImmediately: false).eraseToAnyPublisher()
+    handle(context) {
+      Combine.Empty<Empty, GRPCStatus>(completeImmediately: false).eraseToAnyPublisher()
     }
   }
 }

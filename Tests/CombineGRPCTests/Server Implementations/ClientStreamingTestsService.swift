@@ -14,7 +14,7 @@ class ClientStreamingTestsService: ClientStreamingScenariosProvider {
   func clientStreamOk(context: UnaryResponseCallContext<EchoResponse>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
-    return handle(context) { requests in
+    handle(context) { requests in
       requests
         .last()
         .map { request in
@@ -29,7 +29,7 @@ class ClientStreamingTestsService: ClientStreamingScenariosProvider {
   func clientStreamFailedPrecondition(context: UnaryResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
-    return handle(context) { _ in
+    handle(context) { _ in
       let status = GRPCStatus(code: .failedPrecondition, message: "Failed precondition message")
       return Fail<Empty, GRPCStatus>(error: status).eraseToAnyPublisher()
     }
@@ -39,8 +39,8 @@ class ClientStreamingTestsService: ClientStreamingScenariosProvider {
   func clientStreamNoResponse(context: UnaryResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
-    return handle(context) { _ in
-      return Combine.Empty<Empty, GRPCStatus>(completeImmediately: false).eraseToAnyPublisher()
+    handle(context) { _ in
+      Combine.Empty<Empty, GRPCStatus>(completeImmediately: false).eraseToAnyPublisher()
     }
   }
 }

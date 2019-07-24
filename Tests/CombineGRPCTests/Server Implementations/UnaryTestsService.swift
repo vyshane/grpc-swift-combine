@@ -14,13 +14,13 @@ class UnaryTestsService: UnaryScenariosProvider {
   func unaryOk(request: EchoRequest, context: StatusOnlyCallContext) -> EventLoopFuture<EchoResponse> {
     // For large services, it is useful to be able to split each individual RPC handler out.
     // This is an example of how you might do that.
-    return handle(request, context, handler: self.echoHandler)
+    handle(request, context, handler: self.echoHandler)
   }
   
   // Fails
   func unaryFailedPrecondition(request: EchoRequest,
                                context: StatusOnlyCallContext) -> EventLoopFuture<Empty> {
-    return handle(context) {
+    handle(context) {
       let status = GRPCStatus(code: .failedPrecondition, message: "Failed precondition message")
       return Fail<Empty, GRPCStatus>(error: status).eraseToAnyPublisher()
     }
@@ -28,14 +28,14 @@ class UnaryTestsService: UnaryScenariosProvider {
   
   // Times out
   func unaryNoResponse(request: EchoRequest, context: StatusOnlyCallContext) -> EventLoopFuture<Empty> {
-    return handle(context) {
+    handle(context) {
       return Combine.Empty(completeImmediately: false).eraseToAnyPublisher()
     }
   }
   
   // We define a handler here but you can imagine that it might be in its own separate class.
   private func echoHandler(request: EchoRequest) -> AnyPublisher<EchoResponse, GRPCStatus> {
-    return Just<EchoResponse>(EchoResponse.with { $0.message = request.message })
+    Just<EchoResponse>(EchoResponse.with { $0.message = request.message })
       .mapError { _ in .processingError }
       .eraseToAnyPublisher()
   }
