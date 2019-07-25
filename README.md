@@ -4,6 +4,56 @@
 
 CombineGRPC is a library that provides [Combine framework](https://developer.apple.com/documentation/combine) integration for [gRPC Swift](https://github.com/grpc/grpc-swift). It provides two flavours of functions, `call` and `handle`. Use `call` to make gRPC calls on the client side, and `handle` to handle incoming RPC calls on the server side.
 
+```protobuf
+syntax = "proto3";
+
+service EchoService {
+  rpc SayItBack (stream EchoRequest) returns (stream EchoResponse);
+}
+
+message EchoRequest {
+  string message = 1;
+}
+
+message EchoResponse {
+  string message = 1;
+}
+```
+
+```swift
+class EchoServiceProvider: EchoProvider {
+  
+  func sayItBack(context: StreamingResponseCallContext<EchoResponse>) -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void> {
+    handle(context) { requests in
+      requests
+        .map { req in
+          EchoResponse.with { $0.message = req.message }
+        }
+        .mapError { _ in .processingError }
+        .eraseToAnyPublisher()
+    }
+  }
+}
+```
+
+```swift
+let configuration = ClientConnection.Configuration(
+  target: ConnectionTarget.hostAndPort("localhost", 8080),
+  eventLoopGroup: GRPCNIO.makeEventLoopGroup(loopCount: 1)
+)
+let echoClient = EchoServiceClient(connection: ClientConnection(configuration: configuration))
+
+let requests = repeatElement(EchoRequest.with { $0.message = "hello"}, count: 10)
+let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
+
+call(echoClient.sayItBack)(requestStream)
+  .filter { $0.message == "hello" }
+  .count()
+  .sink(receiveValue: { count in
+    XCTAssert(count == 10)
+  })
+```
+
 ## Quick Start
 
 ### Generating Swift Code from Protobuf
