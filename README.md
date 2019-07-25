@@ -4,7 +4,7 @@
 
 CombineGRPC is a library that provides [Combine framework](https://developer.apple.com/documentation/combine) integration for [gRPC Swift](https://github.com/grpc/grpc-swift). It provides two flavours of functions, `call` and `handle`. Use `call` to make gRPC calls on the client side, and `handle` to handle incoming RPC calls on the server side. CombineGRPC provides versions of `call` and `handle` for all RPC styles. Here are the input and output types for each.
 
-| --- | --- |
+--- | ---
 | Unary | `Request -> AnyPublisher<Response, GRPCStatus>` |
 | Server streaming | `Request -> AnyPublisher<Response, GRPCStatus>` |
 | Client streaming | `AnyPublisher<Request, Error> -> AnyPublisher<Response, GRPCStatus>` |
