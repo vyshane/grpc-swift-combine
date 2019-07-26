@@ -7,6 +7,7 @@ import GRPC
 import NIO
 @testable import CombineGRPC
 
+@available(OSX 10.15, *)
 class BidirectionalStreamingTests: XCTestCase {
   
   static var serverEventLoopGroup: EventLoopGroup?
@@ -55,8 +56,7 @@ class BidirectionalStreamingTests: XCTestCase {
     wait(for: [promise], timeout: 1)
   }
   
-  // Currently crashes because of upstream bug in grpc-swift
-  // See https://github.com/grpc/grpc-swift/issues/520
+  // FIXME
   func testBidirectionalStreamFailedPrecondition() {
     let promise = expectation(description: "Call fails with failed precondition status")
     let bidirectionalStreamFailedPrecondition = BidirectionalStreamingTests.client!.bidirectionalStreamFailedPrecondition
@@ -85,8 +85,7 @@ class BidirectionalStreamingTests: XCTestCase {
     wait(for: [promise], timeout: 1)
   }
   
-  // Currently crashes because of upstream bug in grpc-swift
-  // See https://github.com/grpc/grpc-swift/issues/520
+  // FIXME
   func testBidirectionalStreamNoResponse() {
     let promise = expectation(description: "Call fails with deadline exceeded status")
     let client = BidirectionalStreamingTests.client!

@@ -43,4 +43,3 @@ class ClientStreamingHandlerSubscriber<Request, Response>: Subscriber, Cancellab
     subscription?.cancel()
   }
 }
-

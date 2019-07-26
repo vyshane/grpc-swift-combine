@@ -63,7 +63,7 @@ On the client side, set up the gRPC client as you would using [swift-grpc](https
 ```swift
 let configuration = ClientConnection.Configuration(
   target: ConnectionTarget.hostAndPort("localhost", 8080),
-  eventLoopGroup: GRPCNIO.makeEventLoopGroup(loopCount: 1)
+  eventLoopGroup: PlatformSupport.makeEventLoopGroup(loopCount: 1)
 )
 let echoClient = EchoServiceClient(connection: ClientConnection(configuration: configuration))
 ```
@@ -107,7 +107,8 @@ callWithTimeout(echoClient.sayItBack)(requestStream).map { response in
 It's handy for configuring authenticated calls.
 
 ```swift
-let authenticatedCall = call(CallOptions(customMetadata: authenticationHeaders))
+let authenticatedCall: ConfiguredUnaryStreamingRPC<GetProfileRequest, Profile> =
+  call(CallOptions(customMetadata: authenticationHeaders))
 
 authenticatedCall(userClient.getProfile)(getProfileRequest).map { profile in
   // ...
@@ -185,9 +186,9 @@ Server Side Handlers
 End-to-end Tests
 
 - [x] Unary
-- [ ] Client streaming (Done, pending upstream [grpc-swift #520](https://github.com/grpc/grpc-swift/issues/520))
+- [x] Client streaming
 - [x] Server streaming
-- [ ] Bidirectional streaming (Done, pending upstream [grpc-swift #520](https://github.com/grpc/grpc-swift/issues/520))
+- [x] Bidirectional streaming
 - [ ] Stress tests
 
 Documentation

@@ -7,6 +7,7 @@ import GRPC
 import NIO
 @testable import CombineGRPC
 
+@available(OSX 10.15, *)
 class ClientStreamingTests: XCTestCase {
   
   static var serverEventLoopGroup: EventLoopGroup?
@@ -54,8 +55,6 @@ class ClientStreamingTests: XCTestCase {
     wait(for: [promise], timeout: 1)
   }
   
-  // Currently crashes because of upstream bug in grpc-swift
-  // See https://github.com/grpc/grpc-swift/issues/520
   func testClientStreamFailedPrecondition() {
     let promise = expectation(description: "Call fails with failed precondition status")
     let clientStreamFailedPrecondition = ClientStreamingTests.client!.clientStreamFailedPrecondition
@@ -91,7 +90,7 @@ class ClientStreamingTests: XCTestCase {
     let requests = repeatElement(EchoRequest.with { $0.message = "hello"}, count: 3)
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
     let callWithTimeout: ConfiguredClientStreamingRPC<EchoRequest, Empty> = call(options)
-        
+    
     let cancellable = callWithTimeout(client.clientStreamNoResponse)(requestStream)
       .sink(
         receiveCompletion: { completion in

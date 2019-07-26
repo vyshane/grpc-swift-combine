@@ -17,7 +17,7 @@ func makeTestServer(services: [CallHandlerProvider]) throws -> EventLoopGroup {
 }
 
 func makeTestServer(services: [CallHandlerProvider], eventLoopGroupSize: Int) throws -> EventLoopGroup {
-  let eventLoopGroup = GRPCNIO.makeEventLoopGroup(loopCount: eventLoopGroupSize)
+  let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: eventLoopGroupSize)
   let configuration = Server.Configuration(
     target: connectionTarget,
     eventLoopGroup: eventLoopGroup,
@@ -30,7 +30,7 @@ func makeTestServer(services: [CallHandlerProvider], eventLoopGroupSize: Int) th
 func makeTestClient<Client>(_ clientCreator: (ClientConnection, CallOptions) -> Client) -> Client
   where Client: GRPCServiceClient
 {
-  let eventLoopGroup = GRPCNIO.makeEventLoopGroup(loopCount: 1)
+  let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
   let configuration = ClientConnection.Configuration(
     target: connectionTarget,
     eventLoopGroup: eventLoopGroup
