@@ -107,7 +107,7 @@ callWithTimeout(echoClient.sayItBack)(requestStream).map { response in
 It's handy for configuring authenticated calls.
 
 ```swift
-let authenticatedCall: ConfiguredUnaryStreamingRPC<GetProfileRequest, Profile> =
+let authenticatedCall: ConfiguredUnaryRPC<GetProfileRequest, Profile> =
   call(CallOptions(customMetadata: authenticationHeaders))
 
 authenticatedCall(userClient.getProfile)(getProfileRequest).map { profile in
