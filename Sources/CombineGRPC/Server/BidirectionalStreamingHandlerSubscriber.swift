@@ -14,11 +14,9 @@ class BidirectionalStreamingHandlerSubscriber<Request, Response>: Subscriber, Ca
   
   private var subscription: Subscription?
   private let context: StreamingResponseCallContext<Response>
-  private let statusPromise: EventLoopPromise<GRPCStatus>
     
   init(context: StreamingResponseCallContext<Response>) {
     self.context = context
-    self.statusPromise = context.eventLoop.makePromise()
   }
   
   func receive(subscription: Subscription) {

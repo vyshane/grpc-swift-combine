@@ -64,6 +64,7 @@ class BidirectionalStreamingTests: XCTestCase {
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
     
     let cancellable = call(bidirectionalStreamFailedPrecondition)(requestStream)
+      .print()
       .sink(
         receiveCompletion: { completion in
           switch completion {
@@ -76,10 +77,10 @@ class BidirectionalStreamingTests: XCTestCase {
           case .finished:
             XCTFail("Call should not succeed")
           }
-      },
+        },
         receiveValue: { empty in
           XCTFail("Call should not return a response")
-      })
+        })
     
     BidirectionalStreamingTests.retainedCancellables.append(cancellable)
     wait(for: [promise], timeout: 1)
@@ -107,10 +108,10 @@ class BidirectionalStreamingTests: XCTestCase {
           case .finished:
             XCTFail("Call should not succeed")
           }
-      },
+        },
         receiveValue: { empty in
           XCTFail("Call should not return a response")
-      })
+        })
     
     BidirectionalStreamingTests.retainedCancellables.append(cancellable)
     wait(for: [promise], timeout: 1)
