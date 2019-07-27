@@ -56,7 +56,6 @@ class BidirectionalStreamingTests: XCTestCase {
     wait(for: [promise], timeout: 1)
   }
   
-  // FIXME
   func testBidirectionalStreamFailedPrecondition() {
     let promise = expectation(description: "Call fails with failed precondition status")
     let bidirectionalStreamFailedPrecondition = BidirectionalStreamingTests.client!.bidirectionalStreamFailedPrecondition
@@ -86,7 +85,6 @@ class BidirectionalStreamingTests: XCTestCase {
     wait(for: [promise], timeout: 1)
   }
   
-  // FIXME
   func testBidirectionalStreamNoResponse() {
     let promise = expectation(description: "Call fails with deadline exceeded status")
     let client = BidirectionalStreamingTests.client!
