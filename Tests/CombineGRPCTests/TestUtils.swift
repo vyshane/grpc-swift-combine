@@ -12,11 +12,7 @@ import NIO
 
 let connectionTarget = ConnectionTarget.hostAndPort("localhost", 30120)
 
-func makeTestServer(services: [CallHandlerProvider]) throws -> EventLoopGroup {  
-  return try makeTestServer(services: services, eventLoopGroupSize: 1)
-}
-
-func makeTestServer(services: [CallHandlerProvider], eventLoopGroupSize: Int) throws -> EventLoopGroup {
+func makeTestServer(services: [CallHandlerProvider], eventLoopGroupSize: Int = 1) throws -> EventLoopGroup {
   let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: eventLoopGroupSize)
   let configuration = Server.Configuration(
     target: connectionTarget,
@@ -30,12 +26,18 @@ func makeTestServer(services: [CallHandlerProvider], eventLoopGroupSize: Int) th
 func makeTestClient<Client>(_ clientCreator: (ClientConnection, CallOptions) -> Client) -> Client
   where Client: GRPCServiceClient
 {
-  let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
+  return makeTestClient(eventLoopGroupSize: 1, clientCreator)
+}
+
+func makeTestClient<Client>(eventLoopGroupSize: Int = 1, _ clientCreator: (ClientConnection, CallOptions) -> Client) -> Client
+  where Client: GRPCServiceClient
+{
+  let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: eventLoopGroupSize)
   let configuration = ClientConnection.Configuration(
     target: connectionTarget,
     eventLoopGroup: eventLoopGroup
   )
   let connection = ClientConnection(configuration: configuration)
-  let callOptions = CallOptions(timeout: try! .milliseconds(100))
+  let callOptions = CallOptions(timeout: try! .milliseconds(200))
   return clientCreator(connection, callOptions)
 }
