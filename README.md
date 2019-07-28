@@ -6,7 +6,7 @@ This project is a work in progress and should be considered experimental. It is 
 
 ## gRPC and Combine, Better Together
 
-CombineGRPC is a library that provides [Combine framework](https://developer.apple.com/documentation/combine) integration for [gRPC Swift](https://github.com/grpc/grpc-swift). It provides two flavours of functions, `call` and `handle`. Use `call` to make gRPC calls on the client side, and `handle` to handle incoming RPC calls on the server side. CombineGRPC provides versions of `call` and `handle` for all RPC styles. Here are the input and output types for each.
+CombineGRPC is a library that provides [Combine framework](https://developer.apple.com/documentation/combine) integration for [Swift gRPC](https://github.com/grpc/grpc-swift). It provides two flavours of functions, `call` and `handle`. Use `call` to make gRPC calls on the client side, and `handle` to handle incoming RPC calls on the server side. CombineGRPC provides versions of `call` and `handle` for all RPC styles. Here are the input and output types for each.
 
 RPC Style | Input and Output Types
 --- | ---
@@ -58,7 +58,18 @@ class EchoServiceProvider: EchoProvider {
 }
 ```
 
-On the client side, set up the gRPC client as you would using [Swift gRPC](https://github.com/grpc/grpc-swift). For example:
+Start the server. This is the same process as with Swift gRPC.
+
+```swift
+let configuration = Server.Configuration(
+  target: ConnectionTarget.hostAndPort("localhost", 8080),
+  eventLoopGroup: PlatformSupport.makeEventLoopGroup(loopCount: 1),
+  serviceProviders: [EchoServiceProvider()]
+)
+_ = try Server.start(configuration: configuration).wait()
+```
+
+Now let's setup our client. Again, it's the same process that you would go through when using Swift gRPC.
 
 ```swift
 let configuration = ClientConnection.Configuration(
@@ -189,13 +200,11 @@ End-to-end Tests
 - [x] Client streaming
 - [x] Server streaming
 - [x] Bidirectional streaming
-- [ ] Stress tests
 
 Documentation
 
 - [x] README.md
 - [ ] Inline documentation using Markdown in comments
-- [ ] Sample project
 
 Maybe
 
