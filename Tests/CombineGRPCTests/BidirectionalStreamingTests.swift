@@ -63,7 +63,6 @@ class BidirectionalStreamingTests: XCTestCase {
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
     
     let cancellable = call(bidirectionalStreamFailedPrecondition)(requestStream)
-      .print()
       .sink(
         receiveCompletion: { completion in
           switch completion {
