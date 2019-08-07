@@ -42,6 +42,12 @@ message EchoResponse {
 To implement the server, you provide a handler function that takes an input stream `AnyPublisher<EchoRequest, Error>` and returns an output stream `AnyPublisher<EchoResponse, GRPCStatus>`.
 
 ```swift
+import Foundation
+import Combine
+import CombineGRPC
+import GRPC
+import NIO
+
 class EchoServiceProvider: EchoProvider {
   
   // Simple bidirectional RPC that echoes back each request message
