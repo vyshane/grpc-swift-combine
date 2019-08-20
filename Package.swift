@@ -16,7 +16,7 @@ let package = Package(
             targets: ["CombineGRPC"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/grpc/grpc-swift.git", from: "1.0.0-alpha.3"),
+        .package(url: "https://github.com/grpc/grpc-swift.git", from: "1.0.0-alpha.4"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
