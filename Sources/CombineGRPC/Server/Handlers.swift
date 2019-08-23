@@ -8,7 +8,7 @@ import SwiftProtobuf
 
 // MARK: Unary
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13.0, *)
 public func handle<Response>(_ context: StatusOnlyCallContext,
                              handler: () -> AnyPublisher<Response, GRPCStatus>) -> EventLoopFuture<Response>
 {
@@ -17,7 +17,7 @@ public func handle<Response>(_ context: StatusOnlyCallContext,
   return unarySubscriber.futureResult
 }
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13.0, *)
 public func handle<Request, Response>(_ request: Request, _ context: StatusOnlyCallContext,
                                       handler: (Request) -> AnyPublisher<Response, GRPCStatus>)
                                      -> EventLoopFuture<Response>
@@ -29,7 +29,7 @@ public func handle<Request, Response>(_ request: Request, _ context: StatusOnlyC
 
 // MARK: Server Streaming
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13.0, *)
 public func handle<Response>(_ context: StreamingResponseCallContext<Response>,
                              handler: () -> AnyPublisher<Response, GRPCStatus>) -> EventLoopFuture<GRPCStatus>
 {
@@ -38,7 +38,7 @@ public func handle<Response>(_ context: StreamingResponseCallContext<Response>,
   return serverStreamingSubscriber.futureStatus
 }
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13.0, *)
 public func handle<Request, Response>(_ request: Request, _ context: StreamingResponseCallContext<Response>,
                                       handler: (Request) -> AnyPublisher<Response, GRPCStatus>)
                                      -> EventLoopFuture<GRPCStatus>
@@ -50,7 +50,7 @@ public func handle<Request, Response>(_ request: Request, _ context: StreamingRe
 
 // MARK: Client Streaming
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13.0, *)
 public func handle<Request, Response>(_ context: UnaryResponseCallContext<Response>,
                                       handler: (AnyPublisher<Request, Never>) -> AnyPublisher<Response, GRPCStatus>)
                                      -> EventLoopFuture<(StreamEvent<Request>) -> Void>
@@ -69,7 +69,7 @@ public func handle<Request, Response>(_ context: UnaryResponseCallContext<Respon
 
 // MARK: Bidirectional Streaming
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13.0, *)
 public func handle<Request, Response>(_ context: StreamingResponseCallContext<Response>,
                                       handler: (AnyPublisher<Request, Never>) -> AnyPublisher<Response, GRPCStatus>)
                                      -> EventLoopFuture<(StreamEvent<Request>) -> Void>

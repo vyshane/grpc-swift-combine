@@ -7,7 +7,7 @@ import GRPC
 import NIO
 @testable import CombineGRPC
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13.0, *)
 class ClientStreamingTests: XCTestCase {
   
   static var serverEventLoopGroup: EventLoopGroup?

@@ -7,7 +7,7 @@ import GRPC
 import NIO
 import SwiftProtobuf
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13.0, *)
 class ClientStreamingHandlerSubscriber<Request, Response>: Subscriber, Cancellable where Request: Message, Response: Message {
   typealias Input = Response
   typealias Failure = GRPCStatus
