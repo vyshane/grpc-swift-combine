@@ -5,7 +5,7 @@ import Foundation
 import Combine
 import GRPC
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 struct MessageBridge<T> {
   let messagePublisher = PassthroughSubject<T, GRPCStatus>()
   

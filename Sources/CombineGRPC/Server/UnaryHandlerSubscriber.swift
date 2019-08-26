@@ -7,7 +7,7 @@ import GRPC
 import NIO
 import SwiftProtobuf
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 class UnaryHandlerSubscriber<Response>: Subscriber, Cancellable {
   typealias Input = Response
   typealias Failure = GRPCStatus

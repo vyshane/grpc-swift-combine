@@ -7,7 +7,7 @@ import GRPC
 import NIO
 @testable import CombineGRPC
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 class ClientStreamingTestsService: ClientStreamingScenariosProvider {
 
   // OK, echoes back the last received message

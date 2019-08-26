@@ -7,7 +7,7 @@ import GRPC
 import NIO
 @testable import CombineGRPC
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 class StressTest: XCTestCase {
 
   static var serverEventLoopGroup: EventLoopGroup?
@@ -26,18 +26,18 @@ class StressTest: XCTestCase {
       ClientStreamingTestsService(),
       BidirectionalStreamingTestsService()
     ]
-    serverEventLoopGroup = try! makeTestServer(services: services, eventLoopGroupSize: 3)
+    serverEventLoopGroup = try! makeTestServer(services: services, eventLoopGroupSize: 4)
     
-    unaryClient = makeTestClient { connection, callOptions in
+    unaryClient = makeTestClient(eventLoopGroupSize: 4) { connection, callOptions in
       UnaryScenariosServiceClient(connection: connection, defaultCallOptions: callOptions)
     }
-    serverStreamingClient = makeTestClient { connection, callOptions in
+    serverStreamingClient = makeTestClient(eventLoopGroupSize: 4) { connection, callOptions in
       ServerStreamingScenariosServiceClient(connection: connection, defaultCallOptions: callOptions)
     }
-    clientStreamingClient = makeTestClient { connection, callOptions in
+    clientStreamingClient = makeTestClient(eventLoopGroupSize: 4) { connection, callOptions in
       ClientStreamingScenariosServiceClient(connection: connection, defaultCallOptions: callOptions)
     }
-    bidirectionalStreamingClient = makeTestClient { connection, callOptions in
+    bidirectionalStreamingClient = makeTestClient(eventLoopGroupSize: 4) { connection, callOptions in
       BidirectionalStreamingScenariosServiceClient(connection: connection, defaultCallOptions: callOptions)
     }
   }
@@ -52,16 +52,8 @@ class StressTest: XCTestCase {
     super.tearDown()
   }
   
-  func testStressTest() {
-    // TODO: Exercise all RPCs for a period of time
-  }
-  
-  static var allTests = [
-    ("Stress tests", testStressTest),
-  ]
-  
   private func randomRequest() -> EchoRequest {
-    let messageOfRandomSize = (0..<100).map { _ in UUID().uuidString }.reduce("", { $0 + $1 })
+    let messageOfRandomSize = (0..<50).map { _ in UUID().uuidString }.reduce("", { $0 + $1 })
     return EchoRequest.with { $0.message = messageOfRandomSize }
   }
 }

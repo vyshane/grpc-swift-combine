@@ -11,14 +11,14 @@ public typealias UnaryRPC<Request, Response> =
   (Request, CallOptions?) -> UnaryCall<Request, Response>
   where Request: Message, Response: Message
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public typealias ConfiguredUnaryRPC<Request, Response> =
   (@escaping UnaryRPC<Request, Response>)
   -> (Request)
   -> AnyPublisher<Response, GRPCStatus>
   where Request: Message, Response: Message
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public func call<Request, Response>(_ rpc: @escaping UnaryRPC<Request, Response>)
   -> (Request)
   -> AnyPublisher<Response, GRPCStatus>
@@ -29,7 +29,7 @@ public func call<Request, Response>(_ rpc: @escaping UnaryRPC<Request, Response>
   }
 }
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public func call<Request, Response>(_ callOptions: CallOptions)
   -> (@escaping UnaryRPC<Request, Response>)
   -> (Request)
@@ -49,14 +49,14 @@ public typealias ServerStreamingRPC<Request, Response> =
   (Request, CallOptions?, @escaping (Response) -> Void) -> ServerStreamingCall<Request, Response>
   where Request: Message, Response: Message
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public typealias ConfiguredServerStreamingRPC<Request, Response> =
   (@escaping ServerStreamingRPC<Request, Response>)
   -> (Request)
   -> AnyPublisher<Response, GRPCStatus>
   where Request: Message, Response: Message
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public func call<Request, Response>(_ rpc: @escaping ServerStreamingRPC<Request, Response>)
   -> (Request)
   -> AnyPublisher<Response, GRPCStatus>
@@ -69,7 +69,7 @@ public func call<Request, Response>(_ rpc: @escaping ServerStreamingRPC<Request,
   }
 }
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public func call<Request, Response>(_ callOptions: CallOptions)
   -> (@escaping ServerStreamingRPC<Request, Response>)
   -> (Request)
@@ -91,14 +91,14 @@ public typealias ClientStreamingRPC<Request, Response> =
   (CallOptions?) -> ClientStreamingCall<Request, Response>
   where Request: Message, Response: Message
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public typealias ConfiguredClientStreamingRPC<Request, Response> =
   (@escaping ClientStreamingRPC<Request, Response>)
   -> (AnyPublisher<Request, Error>)
   -> AnyPublisher<Response, GRPCStatus>
   where Request: Message, Response: Message
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public func call<Request, Response>(_ rpc: @escaping ClientStreamingRPC<Request, Response>)
   -> (AnyPublisher<Request, Error>)
   -> AnyPublisher<Response, GRPCStatus>
@@ -110,7 +110,7 @@ public func call<Request, Response>(_ rpc: @escaping ClientStreamingRPC<Request,
   }
 }
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public func call<Request, Response>(_ callOptions: CallOptions)
   -> (@escaping ClientStreamingRPC<Request, Response>)
   -> (AnyPublisher<Request, Error>)
@@ -127,12 +127,12 @@ public func call<Request, Response>(_ callOptions: CallOptions)
 
 // MARK: Bidirectional Streaming
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public typealias BidirectionalStreamingRPC<Request, Response> =
   (CallOptions?, @escaping (Response) -> Void) -> BidirectionalStreamingCall<Request, Response>
   where Request: Message, Response: Message
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public typealias ConfiguredBidirectionalStreamingRPC<Request, Response> =
   (@escaping BidirectionalStreamingRPC<Request, Response>)
   -> (AnyPublisher<Request, Error>)
@@ -153,7 +153,7 @@ public func call<Request, Response>(_ rpc: @escaping BidirectionalStreamingRPC<R
   }
 }
 
-@available(OSX 10.15, *)
+@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public func call<Request, Response>(_ callOptions: CallOptions)
   -> (@escaping BidirectionalStreamingRPC<Request, Response>)
   -> (AnyPublisher<Request, Error>)
