@@ -29,6 +29,10 @@ service BidirectionalStreamingScenarios {
   rpc BidirectionalStreamNoResponse (stream EchoRequest) returns (stream Empty);
 }
 
+service RetryScenarios {
+  rpc FailThenSucceed (FailThenSucceedRequest) returns (Empty);
+}
+
 message EchoRequest {
   string message = 1;
 }
@@ -38,3 +42,7 @@ message EchoResponse {
 }
 
 message Empty {}
+
+message FailThenSucceedRequest {
+  uint32 num_failures = 1;
+}
