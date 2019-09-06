@@ -30,7 +30,7 @@ service BidirectionalStreamingScenarios {
 }
 
 service RetryScenarios {
-  rpc FailThenSucceed (FailThenSucceedRequest) returns (Empty);
+  rpc FailThenSucceed (FailThenSucceedRequest) returns (FailThenSucceedResponse);
 }
 
 message EchoRequest {
@@ -44,5 +44,13 @@ message EchoResponse {
 message Empty {}
 
 message FailThenSucceedRequest {
+  // Key used to partition failure counts
+  string key = 1;
+  // Number of failures that the service should send before succeeding
+  uint32 num_failures = 2;
+}
+
+message FailThenSucceedResponse {
+  // Number of failures recorded before succeeding
   uint32 num_failures = 1;
 }

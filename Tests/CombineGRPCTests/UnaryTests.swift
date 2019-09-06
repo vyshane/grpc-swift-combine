@@ -32,8 +32,9 @@ final class UnaryTests: XCTestCase {
   func testUnaryOk() {
     let promise = expectation(description: "Call completes successfully")
     let client = UnaryTests.client!
+    let grpc = GRPCExecutor()
     
-    let cancellable = call(client.unaryOk)(EchoRequest.with { $0.message = "hello" })
+    let cancellable = grpc.call(client.unaryOk)(EchoRequest.with { $0.message = "hello" })
       .sink(
         receiveCompletion: { completion in
           switch completion {
@@ -54,8 +55,9 @@ final class UnaryTests: XCTestCase {
   func testUnaryFailedPrecondition() {
     let promise = expectation(description: "Call fails with failed precondition status")
     let unaryFailedPrecondition = UnaryTests.client!.unaryFailedPrecondition
+    let grpc = GRPCExecutor()
     
-    let cancellable = call(unaryFailedPrecondition)(EchoRequest.with { $0.message = "hello" })
+    let cancellable = grpc.call(unaryFailedPrecondition)(EchoRequest.with { $0.message = "hello" })
       .sink(
         receiveCompletion: { completion in
           switch completion {
@@ -81,11 +83,9 @@ final class UnaryTests: XCTestCase {
     let promise = expectation(description: "Call fails with deadline exceeded status")
     let client = UnaryTests.client!
     let options = CallOptions(timeout: try! .milliseconds(50))
+    let grpc = GRPCExecutor(callOptions: Just(options).eraseToAnyPublisher())
     
-    // Example of partial application of call options to create a pre-configured client call.
-    let callWithTimeout: ConfiguredUnaryRPC<EchoRequest, Empty> = call(options)
-
-    let cancellable = callWithTimeout(client.unaryNoResponse)(EchoRequest.with { $0.message = "hello" })
+    let cancellable = grpc.call(client.unaryNoResponse)(EchoRequest.with { $0.message = "hello" })
       .sink(
         receiveCompletion: { completion in
           switch completion {

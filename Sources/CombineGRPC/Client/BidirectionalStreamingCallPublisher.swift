@@ -39,6 +39,6 @@ public struct BidirectionalStreamingCallPublisher<Request, Response>: Publisher
     )
     bridge.messagePublisher.subscribe(subscriber)
     // Call status future always succeeds and signals call failure via gRPC status
-    call.status.whenSuccess { sendCompletion(toSubscriber: subscriber, forStatus: $0) }
+    call.status.whenSuccess { sendCompletion(status: $0, toSubscriber: subscriber) }
   }
 }

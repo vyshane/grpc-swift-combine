@@ -6,13 +6,13 @@ import Combine
 import GRPC
 
 @available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
-func sendCompletion<S>(toSubscriber: S, forStatus: GRPCStatus) -> Void
+func sendCompletion<S>(status: GRPCStatus, toSubscriber: S) -> Void
   where S: Subscriber, S.Failure == GRPCStatus
 {
-  switch forStatus.code {
+  switch status.code {
   case .ok:
     toSubscriber.receive(completion: .finished)
   default:
-    toSubscriber.receive(completion: .failure(forStatus))
+    toSubscriber.receive(completion: .failure(status))
   }
 }

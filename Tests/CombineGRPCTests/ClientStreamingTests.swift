@@ -35,8 +35,10 @@ class ClientStreamingTests: XCTestCase {
     let requests = Publishers.Sequence<[EchoRequest], Error>(sequence:
       [EchoRequest.with { $0.message = "hello"}, EchoRequest.with { $0.message = "world!"}]
     ).eraseToAnyPublisher()
+    let grpc = GRPCExecutor()
     
-    let cancellable = call(client.clientStreamOk)(requests)
+    let cancellable = grpc.call(client.clientStreamOk)(requests)
+      .print()
       .sink(
         receiveCompletion: { completion in
           switch completion {
@@ -60,8 +62,9 @@ class ClientStreamingTests: XCTestCase {
     let clientStreamFailedPrecondition = ClientStreamingTests.client!.clientStreamFailedPrecondition
     let requests = repeatElement(EchoRequest.with { $0.message = "hello"}, count: 3)
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
+    let grpc = GRPCExecutor()
     
-    let cancellable = call(clientStreamFailedPrecondition)(requestStream)
+    let cancellable = grpc.call(clientStreamFailedPrecondition)(requestStream)
       .sink(
         receiveCompletion: { completion in
           switch completion {
@@ -89,9 +92,9 @@ class ClientStreamingTests: XCTestCase {
     let options = CallOptions(timeout: try! .milliseconds(50))
     let requests = repeatElement(EchoRequest.with { $0.message = "hello"}, count: 3)
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
-    let callWithTimeout: ConfiguredClientStreamingRPC<EchoRequest, Empty> = call(options)
+    let grpc = GRPCExecutor(callOptions: Just(options).eraseToAnyPublisher())
     
-    let cancellable = callWithTimeout(client.clientStreamNoResponse)(requestStream)
+    let cancellable = grpc.call(client.clientStreamNoResponse)(requestStream)
       .sink(
         receiveCompletion: { completion in
           switch completion {
