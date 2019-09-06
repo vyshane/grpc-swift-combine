@@ -40,14 +40,12 @@ class BidirectionalStreamingTests: XCTestCase {
       .filter { $0.message == "hello" }
       .count()
       .sink(
-        receiveCompletion: { completion in
-          switch completion {
+        receiveCompletion: { switch $0 {
           case .failure(let status):
             XCTFail("Unexpected status: " + status.localizedDescription)
           case .finished:
             promise.fulfill()
-          }
-        },
+        }},
         receiveValue: { count in
           XCTAssert(count == 3)
         }
@@ -66,8 +64,7 @@ class BidirectionalStreamingTests: XCTestCase {
     
     let cancellable = grpc.call(bidirectionalStreamFailedPrecondition)(requestStream)
       .sink(
-        receiveCompletion: { completion in
-          switch completion {
+        receiveCompletion: { switch $0 {
           case .failure(let status):
             if status.code == .failedPrecondition {
               promise.fulfill()
@@ -76,8 +73,7 @@ class BidirectionalStreamingTests: XCTestCase {
             }
           case .finished:
             XCTFail("Call should not succeed")
-          }
-        },
+        }},
         receiveValue: { empty in
           XCTFail("Call should not return a response")
         })
@@ -96,8 +92,7 @@ class BidirectionalStreamingTests: XCTestCase {
     
     let cancellable = grpc.call(client.bidirectionalStreamNoResponse)(requestStream)
       .sink(
-        receiveCompletion: { completion in
-          switch completion {
+        receiveCompletion: { switch $0 {
           case .failure(let status):
             if status.code == .deadlineExceeded {
               promise.fulfill()
@@ -106,8 +101,7 @@ class BidirectionalStreamingTests: XCTestCase {
             }
           case .finished:
             XCTFail("Call should not succeed")
-          }
-        },
+        }},
         receiveValue: { empty in
           XCTFail("Call should not return a response")
         })

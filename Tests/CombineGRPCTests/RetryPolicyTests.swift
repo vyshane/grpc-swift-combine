@@ -56,7 +56,7 @@ final class RetryPolicyTests: XCTestCase {
   }
   
   func testRetriesExceededGaveUp() {
-    let promise = expectation(description: "Call fails after exceeded max number of retries")
+    let promise = expectation(description: "Call fails after exceeding max number of retries")
     let client = RetryPolicyTests.client!
     let grpc = GRPCExecutor(retry: .failedCall(upTo: 2, when: { $0.code == .failedPrecondition }))
 

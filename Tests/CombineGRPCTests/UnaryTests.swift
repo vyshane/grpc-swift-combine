@@ -36,14 +36,12 @@ final class UnaryTests: XCTestCase {
     
     let cancellable = grpc.call(client.unaryOk)(EchoRequest.with { $0.message = "hello" })
       .sink(
-        receiveCompletion: { completion in
-          switch completion {
+        receiveCompletion: { switch $0 {
           case .failure(let status):
             XCTFail("Unexpected status: " + status.localizedDescription)
           case .finished:
             promise.fulfill()
-          }
-        },
+        }},
         receiveValue: { response in
           XCTAssert(response.message == "hello")
         })
@@ -59,8 +57,7 @@ final class UnaryTests: XCTestCase {
     
     let cancellable = grpc.call(unaryFailedPrecondition)(EchoRequest.with { $0.message = "hello" })
       .sink(
-        receiveCompletion: { completion in
-          switch completion {
+        receiveCompletion: { switch $0 {
           case .failure(let status):
             if status.code == .failedPrecondition {
               promise.fulfill()
@@ -69,8 +66,7 @@ final class UnaryTests: XCTestCase {
             }
           case .finished:
             XCTFail("Call should not succeed")
-          }
-        },
+        }},
         receiveValue: { empty in
           XCTFail("Call should not return a response")
         })
@@ -87,8 +83,7 @@ final class UnaryTests: XCTestCase {
     
     let cancellable = grpc.call(client.unaryNoResponse)(EchoRequest.with { $0.message = "hello" })
       .sink(
-        receiveCompletion: { completion in
-          switch completion {
+        receiveCompletion: { switch $0 {
           case .failure(let status):
             if status.code == .deadlineExceeded {
               promise.fulfill()
@@ -97,8 +92,7 @@ final class UnaryTests: XCTestCase {
             }
           case .finished:
             XCTFail("Call should not succeed")
-          }
-        },
+        }},
         receiveValue: { empty in
           XCTFail("Call should not return a response")
         })

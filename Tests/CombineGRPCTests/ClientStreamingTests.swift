@@ -38,7 +38,6 @@ class ClientStreamingTests: XCTestCase {
     let grpc = GRPCExecutor()
     
     let cancellable = grpc.call(client.clientStreamOk)(requests)
-      .print()
       .sink(
         receiveCompletion: { completion in
           switch completion {
