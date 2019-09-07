@@ -52,7 +52,7 @@ class ServerStreamingTests: XCTestCase {
       )
     
     ServerStreamingTests.retainedCancellables.append(cancellable)
-    wait(for: [promise], timeout: 1)
+    wait(for: [promise], timeout: 0.2)
   }
   
   func testServerStreamFailedPrecondition() {
@@ -77,7 +77,7 @@ class ServerStreamingTests: XCTestCase {
       })
     
     ServerStreamingTests.retainedCancellables.append(cancellable)
-    wait(for: [promise], timeout: 1)
+    wait(for: [promise], timeout: 0.2)
   }
   
   func testServerStreamNoResponse() {
@@ -103,7 +103,7 @@ class ServerStreamingTests: XCTestCase {
       })
     
     ServerStreamingTests.retainedCancellables.append(cancellable)
-    wait(for: [promise], timeout: 1)
+    wait(for: [promise], timeout: 0.2)
   }
   
   static var allTests = [

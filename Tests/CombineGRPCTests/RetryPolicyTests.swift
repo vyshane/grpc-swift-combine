@@ -52,7 +52,7 @@ final class RetryPolicyTests: XCTestCase {
         })
     
     RetryPolicyTests.retainedCancellables.append(cancellable)
-    wait(for: [promise], timeout: 1)
+    wait(for: [promise], timeout: 0.2)
   }
   
   func testRetriesExceededGaveUp() {
@@ -80,7 +80,7 @@ final class RetryPolicyTests: XCTestCase {
         })
     
     RetryPolicyTests.retainedCancellables.append(cancellable)
-    wait(for: [promise], timeout: 1)
+    wait(for: [promise], timeout: 0.2)
   }
   
   func testRetryStatusDoesNotMatch() {
@@ -108,7 +108,7 @@ final class RetryPolicyTests: XCTestCase {
         })
     
     RetryPolicyTests.retainedCancellables.append(cancellable)
-    wait(for: [promise], timeout: 1)
+    wait(for: [promise], timeout: 0.2)
 
   }
   

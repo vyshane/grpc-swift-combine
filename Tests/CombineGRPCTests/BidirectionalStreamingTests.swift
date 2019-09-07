@@ -52,7 +52,7 @@ class BidirectionalStreamingTests: XCTestCase {
       )
     
     BidirectionalStreamingTests.retainedCancellables.append(cancellable)
-    wait(for: [promise], timeout: 1)
+    wait(for: [promise], timeout: 0.2)
   }
   
   func testBidirectionalStreamFailedPrecondition() {
@@ -79,7 +79,7 @@ class BidirectionalStreamingTests: XCTestCase {
         })
     
     BidirectionalStreamingTests.retainedCancellables.append(cancellable)
-    wait(for: [promise], timeout: 1)
+    wait(for: [promise], timeout: 0.2)
   }
   
   func testBidirectionalStreamNoResponse() {
@@ -107,7 +107,7 @@ class BidirectionalStreamingTests: XCTestCase {
         })
     
     BidirectionalStreamingTests.retainedCancellables.append(cancellable)
-    wait(for: [promise], timeout: 1)
+    wait(for: [promise], timeout: 0.2)
   }
   
   static var allTests = [

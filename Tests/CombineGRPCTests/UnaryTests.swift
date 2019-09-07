@@ -35,6 +35,7 @@ final class UnaryTests: XCTestCase {
     let grpc = GRPCExecutor()
     
     let cancellable = grpc.call(client.unaryOk)(EchoRequest.with { $0.message = "hello" })
+      .print()
       .sink(
         receiveCompletion: { switch $0 {
           case .failure(let status):
@@ -47,7 +48,7 @@ final class UnaryTests: XCTestCase {
         })
     
     UnaryTests.retainedCancellables.append(cancellable)
-    wait(for: [promise], timeout: 1)
+    wait(for: [promise], timeout: 0.2)
   }
 
   func testUnaryFailedPrecondition() {
@@ -72,7 +73,7 @@ final class UnaryTests: XCTestCase {
         })
     
     UnaryTests.retainedCancellables.append(cancellable)
-    wait(for: [promise], timeout: 1)
+    wait(for: [promise], timeout: 0.2)
   }
 
   func testUnaryNoResponse() {
@@ -98,7 +99,7 @@ final class UnaryTests: XCTestCase {
         })
     
     UnaryTests.retainedCancellables.append(cancellable)
-    wait(for: [promise], timeout: 1)
+    wait(for: [promise], timeout: 0.2)
   }
   
   static var allTests = [
