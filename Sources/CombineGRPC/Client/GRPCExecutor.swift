@@ -47,7 +47,7 @@ public struct GRPCExecutor {
   {
     return { request in
       return self.executeWithRetry(policy: self.retryPolicy, {
-        self.currentCallOption()
+        self.currentCallOptions()
           .flatMap { callOptions in
             Future<Response, GRPCStatus> { promise in
               let call = rpc(request, callOptions)
@@ -69,7 +69,7 @@ public struct GRPCExecutor {
   {
     return { request in
       return self.executeWithRetry(policy: self.retryPolicy, {
-        self.currentCallOption()
+        self.currentCallOptions()
           .flatMap { callOptions -> ServerStreamingCallPublisher<Request, Response> in
             let bridge = MessageBridge<Response>()
             let call = rpc(request, callOptions, bridge.receive)
@@ -89,7 +89,7 @@ public struct GRPCExecutor {
   {
     return { requests in
       return self.executeWithRetry(policy: self.retryPolicy, {
-        self.currentCallOption()
+        self.currentCallOptions()
           .flatMap { callOptions -> Future<Response, GRPCStatus> in
             Future<Response, GRPCStatus> { promise in
               let call = rpc(callOptions)
@@ -115,7 +115,7 @@ public struct GRPCExecutor {
   {
     return { requests in
       return self.executeWithRetry(policy: self.retryPolicy, {
-        self.currentCallOption()
+        self.currentCallOptions()
           .flatMap { callOptions -> BidirectionalStreamingCallPublisher<Request, Response> in
             let bridge = MessageBridge<Response>()
             let call = rpc(nil, bridge.receive)
@@ -129,7 +129,7 @@ public struct GRPCExecutor {
   
   // MARK: -
   
-  private func currentCallOption() -> AnyPublisher<CallOptions, GRPCStatus> {
+  private func currentCallOptions() -> AnyPublisher<CallOptions, GRPCStatus> {
     self.callOptions
       .output(at: 0)
       .setFailureType(to: GRPCStatus.self)
