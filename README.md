@@ -131,7 +131,7 @@ let grpc = GRPCExecutor(
     when: { status in
       status.code == .unauthenticated
     },
-    delayUntilNext: {
+    delayUntilNext: { retryCount in
       // Retry call with authentication
       callOptions.send(CallOptions(customMetadata: HTTPHeaders([("authorization", "Bearer xxx")])))
       return Just(()).eraseToAnyPublisher()
