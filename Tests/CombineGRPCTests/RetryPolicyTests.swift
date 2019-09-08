@@ -5,6 +5,7 @@ import XCTest
 import Combine
 import GRPC
 import NIO
+import NIOHTTP1
 @testable import CombineGRPC
 
 @available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
@@ -115,9 +116,41 @@ final class RetryPolicyTests: XCTestCase {
     wait(for: [promise], timeout: 0.2)
   }
   
+  func testAuthenticatedRpcScenario() {
+    let promise = expectation(description: "Call gets retried with authentication and succeeds")
+    let client = RetryPolicyTests.client!
+    // The first call is unauthenticated
+    let callOptions = CurrentValueSubject<CallOptions, Never>(CallOptions())
+    
+    let grpc = GRPCExecutor(
+      callOptions: callOptions.eraseToAnyPublisher(),
+      retry: .failedCall(upTo: 1, when: { $0.code == .unauthenticated }, delayUntilNext: {
+        // Subsequent calls are authenticated
+        callOptions.send(CallOptions(customMetadata: HTTPHeaders([("authorization", "Bearer xxx")])))
+        return Just(()).eraseToAnyPublisher()
+      })
+    )
+    
+    let cancellable = grpc.call(client.authenticatedRpc)(EchoRequest.with { $0.message = "hello" })
+      .sink(
+        receiveCompletion: { switch $0 {
+          case .failure(let status):
+            XCTFail("Unexpected status: " + status.localizedDescription)
+          case .finished:
+            promise.fulfill()
+        }},
+        receiveValue: { response in
+          XCTAssert(response.message == "hello")
+        })
+    
+    RetryPolicyTests.retainedCancellables.append(cancellable)
+    wait(for: [promise], timeout: 0.2)
+  }
+  
   static var allTests = [
     ("Number of retries not exceeded", testRetriesNotExceeded),
     ("Number of retries exceeded, gave up", testRetriesExceededGaveUp),
     ("Retry status does not match", testRetryStatusDoesNotMatch),
+    ("Authenticated RPC scenario", testAuthenticatedRpcScenario),
   ]
 }
