@@ -34,36 +34,35 @@ class ServerStreamingTests: XCTestCase {
   func testServerStreamOk() {
     let promise = expectation(description: "Call completes successfully")
     let client = ServerStreamingTests.client!
+    let grpc = GRPCExecutor()
 
-    let cancellable = call(client.serverStreamOk)(EchoRequest.with { $0.message = "hello" })
+    let cancellable = grpc.call(client.serverStreamOk)(EchoRequest.with { $0.message = "hello" })
       .filter { $0.message == "hello" }
       .count()
       .sink(
-        receiveCompletion: { completion in
-          switch completion {
+        receiveCompletion: { switch $0 {
           case .failure(let status):
             XCTFail("Unexpected status: " + status.localizedDescription)
           case .finished:
             promise.fulfill()
-          }
-        },
+        }},
         receiveValue: { count in
           XCTAssert(count == 3)
         }
       )
     
     ServerStreamingTests.retainedCancellables.append(cancellable)
-    wait(for: [promise], timeout: 1)
+    wait(for: [promise], timeout: 0.2)
   }
   
   func testServerStreamFailedPrecondition() {
     let promise = expectation(description: "Call fails with failed precondition status")
     let serverStreamFailedPrecondition = ServerStreamingTests.client!.serverStreamFailedPrecondition
+    let grpc = GRPCExecutor()
     
-    let cancellable = call(serverStreamFailedPrecondition)(EchoRequest.with { $0.message = "hello" })
+    let cancellable = grpc.call(serverStreamFailedPrecondition)(EchoRequest.with { $0.message = "hello" })
       .sink(
-        receiveCompletion: { completion in
-          switch completion {
+        receiveCompletion: { switch $0 {
           case .failure(let status):
             if status.code == .failedPrecondition {
               promise.fulfill()
@@ -72,28 +71,24 @@ class ServerStreamingTests: XCTestCase {
             }
           case .finished:
             XCTFail("Call should not succeed")
-          }
-      },
+        }},
         receiveValue: { empty in
           XCTFail("Call should not return a response")
       })
     
     ServerStreamingTests.retainedCancellables.append(cancellable)
-    wait(for: [promise], timeout: 1)
+    wait(for: [promise], timeout: 0.2)
   }
   
   func testServerStreamNoResponse() {
     let promise = expectation(description: "Call fails with deadline exceeded status")
     let client = ServerStreamingTests.client!
     let options = CallOptions(timeout: try! .milliseconds(50))
-    
-    // Example of partial application of call options to create a pre-configured client call.
-    let callWithTimeout: ConfiguredServerStreamingRPC<EchoRequest, Empty> = call(options)
-    
-    let cancellable = callWithTimeout(client.serverStreamNoResponse)(EchoRequest.with { $0.message = "hello" })
+    let grpc = GRPCExecutor(callOptions: Just(options).eraseToAnyPublisher())
+        
+    let cancellable = grpc.call(client.serverStreamNoResponse)(EchoRequest.with { $0.message = "hello" })
       .sink(
-        receiveCompletion: { completion in
-          switch completion {
+        receiveCompletion: { switch $0 {
           case .failure(let status):
             if status.code == .deadlineExceeded {
               promise.fulfill()
@@ -102,14 +97,13 @@ class ServerStreamingTests: XCTestCase {
             }
           case .finished:
             XCTFail("Call should not succeed")
-          }
-      },
+        }},
         receiveValue: { empty in
           XCTFail("Call should not return a response")
       })
     
     ServerStreamingTests.retainedCancellables.append(cancellable)
-    wait(for: [promise], timeout: 1)
+    wait(for: [promise], timeout: 0.2)
   }
   
   static var allTests = [

@@ -34,26 +34,25 @@ class BidirectionalStreamingTests: XCTestCase {
     let client = BidirectionalStreamingTests.client!
     let requests = repeatElement(EchoRequest.with { $0.message = "hello"}, count: 3)
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
+    let grpc = GRPCExecutor()
     
-    let cancellable = call(client.bidirectionalStreamOk)(requestStream)
+    let cancellable = grpc.call(client.bidirectionalStreamOk)(requestStream)
       .filter { $0.message == "hello" }
       .count()
       .sink(
-        receiveCompletion: { completion in
-          switch completion {
+        receiveCompletion: { switch $0 {
           case .failure(let status):
             XCTFail("Unexpected status: " + status.localizedDescription)
           case .finished:
             promise.fulfill()
-          }
-        },
+        }},
         receiveValue: { count in
           XCTAssert(count == 3)
         }
       )
     
     BidirectionalStreamingTests.retainedCancellables.append(cancellable)
-    wait(for: [promise], timeout: 1)
+    wait(for: [promise], timeout: 0.2)
   }
   
   func testBidirectionalStreamFailedPrecondition() {
@@ -61,11 +60,11 @@ class BidirectionalStreamingTests: XCTestCase {
     let bidirectionalStreamFailedPrecondition = BidirectionalStreamingTests.client!.bidirectionalStreamFailedPrecondition
     let requests = repeatElement(EchoRequest.with { $0.message = "hello"}, count: 3)
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
+    let grpc = GRPCExecutor()
     
-    let cancellable = call(bidirectionalStreamFailedPrecondition)(requestStream)
+    let cancellable = grpc.call(bidirectionalStreamFailedPrecondition)(requestStream)
       .sink(
-        receiveCompletion: { completion in
-          switch completion {
+        receiveCompletion: { switch $0 {
           case .failure(let status):
             if status.code == .failedPrecondition {
               promise.fulfill()
@@ -74,14 +73,13 @@ class BidirectionalStreamingTests: XCTestCase {
             }
           case .finished:
             XCTFail("Call should not succeed")
-          }
-        },
+        }},
         receiveValue: { empty in
           XCTFail("Call should not return a response")
         })
     
     BidirectionalStreamingTests.retainedCancellables.append(cancellable)
-    wait(for: [promise], timeout: 1)
+    wait(for: [promise], timeout: 0.2)
   }
   
   func testBidirectionalStreamNoResponse() {
@@ -90,12 +88,11 @@ class BidirectionalStreamingTests: XCTestCase {
     let options = CallOptions(timeout: try! .milliseconds(50))
     let requests = repeatElement(EchoRequest.with { $0.message = "hello"}, count: 3)
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
-    let callWithTimeout: ConfiguredBidirectionalStreamingRPC<EchoRequest, Empty> = call(options)
+    let grpc = GRPCExecutor(callOptions: Just(options).eraseToAnyPublisher())
     
-    let cancellable = callWithTimeout(client.bidirectionalStreamNoResponse)(requestStream)
+    let cancellable = grpc.call(client.bidirectionalStreamNoResponse)(requestStream)
       .sink(
-        receiveCompletion: { completion in
-          switch completion {
+        receiveCompletion: { switch $0 {
           case .failure(let status):
             if status.code == .deadlineExceeded {
               promise.fulfill()
@@ -104,14 +101,13 @@ class BidirectionalStreamingTests: XCTestCase {
             }
           case .finished:
             XCTFail("Call should not succeed")
-          }
-        },
+        }},
         receiveValue: { empty in
           XCTFail("Call should not return a response")
         })
     
     BidirectionalStreamingTests.retainedCancellables.append(cancellable)
-    wait(for: [promise], timeout: 1)
+    wait(for: [promise], timeout: 0.2)
   }
   
   static var allTests = [
