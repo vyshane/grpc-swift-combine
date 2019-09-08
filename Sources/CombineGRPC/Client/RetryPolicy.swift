@@ -12,7 +12,7 @@ public enum RetryPolicy {
   ///   - upTo: Maximum number of retries
   ///   - when: Retry when condition is true
   ///   - delayUntilNext: Wait for the next published value before retrying. Defaults to a publisher that immediately publishes,
-  ///       effectively meaning that there is no delay between retries.
+  ///       effectively meaning that there is no delay between retries. `delayUntilNext` is given the current retry count.
   ///   - onGiveUp: Called when number of retries have been exhausted. Defaults to no-op.
   ///
   /// The following example defines a `RetryPolicy` for retrying failed calls up to 3 times when the error is a `GRPCStatus.unavailable`:
@@ -22,7 +22,7 @@ public enum RetryPolicy {
   /// ```
   case failedCall(upTo: Int,
                   when: (GRPCStatus) -> Bool,
-                  delayUntilNext: () -> AnyPublisher<Void, Never> = { Just(()).eraseToAnyPublisher() },
+                  delayUntilNext: (Int) -> AnyPublisher<Void, Never> = { _ in Just(()).eraseToAnyPublisher() },
                   onGiveUp: () -> Void = {})
   /// No automatic retries
   case never

@@ -129,7 +129,8 @@ final class RetryPolicyTests: XCTestCase {
     
     let grpc = GRPCExecutor(
       callOptions: callOptions.eraseToAnyPublisher(),
-      retry: .failedCall(upTo: 1, when: { $0.code == .unauthenticated }, delayUntilNext: {
+      retry: .failedCall(upTo: 1, when: { $0.code == .unauthenticated }, delayUntilNext: { retryCount in
+        XCTAssert(retryCount <= 1)
         // Subsequent calls are authenticated
         callOptions.send(CallOptions(customMetadata: HTTPHeaders([("authorization", "Bearer xxx")])))
         return Just(()).eraseToAnyPublisher()

@@ -144,7 +144,7 @@ public struct GRPCExecutor {
         call(currentCallOptions())
           .catch { status -> AnyPublisher<T, GRPCStatus> in
             if shouldRetry(status) && retries < maxRetries {
-              return delayUntilNext()
+              return delayUntilNext(retries)
                 .setFailureType(to: GRPCStatus.self)
                 .flatMap { _ in attemptCall(retries: retries + 1) }
                 .eraseToAnyPublisher()
