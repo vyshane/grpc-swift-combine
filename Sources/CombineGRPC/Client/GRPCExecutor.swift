@@ -46,8 +46,8 @@ public struct GRPCExecutor {
     where Request: Message, Response: Message
   {
     return { request in
-      return self.executeWithRetry(policy: self.retryPolicy, {
-        self.currentCallOptions()
+      self.executeWithRetry(policy: self.retryPolicy, { callOptions in
+        callOptions
           .flatMap { callOptions in
             Future<Response, GRPCStatus> { promise in
               let call = rpc(request, callOptions)
@@ -68,8 +68,8 @@ public struct GRPCExecutor {
     where Request: Message, Response: Message
   {
     return { request in
-      return self.executeWithRetry(policy: self.retryPolicy, {
-        self.currentCallOptions()
+      self.executeWithRetry(policy: self.retryPolicy, { callOptions in
+        callOptions
           .flatMap { callOptions -> ServerStreamingCallPublisher<Request, Response> in
             let bridge = MessageBridge<Response>()
             let call = rpc(request, callOptions, bridge.receive)
@@ -88,8 +88,8 @@ public struct GRPCExecutor {
     where Request: Message, Response: Message
   {
     return { requests in
-      return self.executeWithRetry(policy: self.retryPolicy, {
-        self.currentCallOptions()
+      self.executeWithRetry(policy: self.retryPolicy, { callOptions in
+        callOptions
           .flatMap { callOptions -> Future<Response, GRPCStatus> in
             Future<Response, GRPCStatus> { promise in
               let call = rpc(callOptions)
@@ -114,11 +114,11 @@ public struct GRPCExecutor {
     where Request: Message, Response: Message
   {
     return { requests in
-      return self.executeWithRetry(policy: self.retryPolicy, {
-        self.currentCallOptions()
+      self.executeWithRetry(policy: self.retryPolicy, { callOptions in
+        callOptions
           .flatMap { callOptions -> BidirectionalStreamingCallPublisher<Request, Response> in
             let bridge = MessageBridge<Response>()
-            let call = rpc(nil, bridge.receive)
+            let call = rpc(callOptions, bridge.receive)
             return BidirectionalStreamingCallPublisher(bidirectionalStreamingCall: call, messageBridge: bridge,
                                                        requests: requests)
           }
@@ -129,25 +129,19 @@ public struct GRPCExecutor {
   
   // MARK: -
   
-  private func currentCallOptions() -> AnyPublisher<CallOptions, GRPCStatus> {
-    self.callOptions
-      .output(at: 0)
-      .setFailureType(to: GRPCStatus.self)
-      .eraseToAnyPublisher()
-  }
-  
-  private func executeWithRetry<T>(policy: RetryPolicy, _ call: @escaping () -> AnyPublisher<T, GRPCStatus>)
+  private func executeWithRetry<T>(policy: RetryPolicy,
+                                   _ call: @escaping (AnyPublisher<CallOptions, GRPCStatus>) -> AnyPublisher<T, GRPCStatus>)
     -> AnyPublisher<T, GRPCStatus>
   {
     switch policy {
     case .never:
-      return call()
+      return call(currentCallOptions())
       
     case .failedCall(let maxRetries, let shouldRetry, let delayUntilNext, let onGiveUp):
       precondition(maxRetries >= 1, "RetryPolicy.failedCall upTo parameter should be at least 1")
       
       func attemptCall(retries: Int) -> AnyPublisher<T, GRPCStatus> {
-        call()
+        call(currentCallOptions())
           .catch { status -> AnyPublisher<T, GRPCStatus> in
             if shouldRetry(status) && retries < maxRetries {
               return delayUntilNext()
@@ -165,5 +159,12 @@ public struct GRPCExecutor {
       
       return attemptCall(retries: 0)
     }
+  }
+  
+  private func currentCallOptions() -> AnyPublisher<CallOptions, GRPCStatus> {
+    self.callOptions
+      .output(at: 0)
+      .setFailureType(to: GRPCStatus.self)
+      .eraseToAnyPublisher()
   }
 }
