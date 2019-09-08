@@ -56,9 +56,13 @@ final class RetryPolicyTests: XCTestCase {
   }
   
   func testRetriesExceededGaveUp() {
-    let promise = expectation(description: "Call fails after exceeding max number of retries")
+    let callPromise = expectation(description: "Call fails after exceeding max number of retries")
+    let onGiveUpPromise = expectation(description: "On give up callback called")
+    
     let client = RetryPolicyTests.client!
-    let grpc = GRPCExecutor(retry: .failedCall(upTo: 2, when: { $0.code == .failedPrecondition }))
+    let grpc = GRPCExecutor(retry:
+      .failedCall(upTo: 2, when: { $0.code == .failedPrecondition }, onGiveUp: { onGiveUpPromise.fulfill() })
+    )
 
     let request = FailThenSucceedRequest.with {
       $0.key = "testRetriesExceededGaveUp"
@@ -70,7 +74,7 @@ final class RetryPolicyTests: XCTestCase {
         receiveCompletion: { switch $0 {
           case .failure(let status):
             if status.code == .failedPrecondition {
-              promise.fulfill()
+              callPromise.fulfill()
             }
           case .finished:
             XCTFail("Call should fail, but was completed")
@@ -80,7 +84,7 @@ final class RetryPolicyTests: XCTestCase {
         })
     
     RetryPolicyTests.retainedCancellables.append(cancellable)
-    wait(for: [promise], timeout: 0.2)
+    wait(for: [callPromise, onGiveUpPromise], timeout: 0.2)
   }
   
   func testRetryStatusDoesNotMatch() {
@@ -109,7 +113,6 @@ final class RetryPolicyTests: XCTestCase {
     
     RetryPolicyTests.retainedCancellables.append(cancellable)
     wait(for: [promise], timeout: 0.2)
-
   }
   
   static var allTests = [
