@@ -2,7 +2,7 @@
 
 ## Status
 
-This project is a work in progress and should be considered experimental. It is based on the NIO implementation of Swift gRPC, currently at version 1.0.0-alpha.4, and integrates with Apple's new Combine framework, which is still in beta. Do not use this library in production.
+This project is a work in progress and should be considered experimental. It is based on the NIO implementation of Swift gRPC, currently at version 1.0.0-alpha.5, and integrates with Apple's new Combine framework, which is still in beta. Do not use this library in production.
 
 ## gRPC and Combine, Better Together
 
@@ -57,7 +57,7 @@ class EchoServiceProvider: EchoProvider {
         .map { req in
           EchoResponse.with { $0.message = req.message }
         }
-        .mapError { _ in .processingError }
+        .setFailureType(to: GRPCStatus.self)
         .eraseToAnyPublisher()
     }
   }
@@ -147,7 +147,7 @@ brew install protobuf
 brew install swift-protobuf
 ```
 
-Next, download the latest version of grpc-swift with NIO support. Currently that means [Swift gRPC 1.0.0-alpha.4](https://github.com/grpc/grpc-swift/releases/tag/1.0.0-alpha.4). Unarchive the downloaded file and build the Swift gRPC plugin by running make in the root directory of the project.
+Next, download the latest version of grpc-swift with NIO support. Currently that means [Swift gRPC 1.0.0-alpha.5](https://github.com/grpc/grpc-swift/releases/tag/1.0.0-alpha.5). Unarchive the downloaded file and build the Swift gRPC plugin by running make in the root directory of the project.
 
 ```text
 make plugin
@@ -215,3 +215,4 @@ Documentation
 Maybe
 
 - [ ] Automatic client call retries, e.g. to support ID token refresh on expire
+- [ ] Use `Future` for unary and client streaming RPC responses?
