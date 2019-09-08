@@ -33,7 +33,12 @@ final class RetryPolicyTests: XCTestCase {
   func testRetriesNotExceeded() {
     let promise = expectation(description: "Call completes successfully after retrying twice")
     let client = RetryPolicyTests.client!
-    let grpc = GRPCExecutor(retry: .failedCall(upTo: 2, when: { $0.code == .failedPrecondition }))
+    
+    let grpc = GRPCExecutor(retry: .failedCall(
+      upTo: 2,
+      when: { $0.code == .failedPrecondition },
+      onGiveUp: { XCTFail("onGiveUp callback should not trigger") }
+    ))
 
     let request = FailThenSucceedRequest.with {
       $0.key = "testRetriesNotExceeded"
