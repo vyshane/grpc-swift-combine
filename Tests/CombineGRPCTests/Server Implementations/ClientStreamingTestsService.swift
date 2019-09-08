@@ -20,7 +20,7 @@ class ClientStreamingTestsService: ClientStreamingScenariosProvider {
         .map { request in
           EchoResponse.with { $0.message = request.message }
         }
-        .mapError { _ in .processingError }
+        .setFailureType(to: GRPCStatus.self)
         .eraseToAnyPublisher()
     }
   }

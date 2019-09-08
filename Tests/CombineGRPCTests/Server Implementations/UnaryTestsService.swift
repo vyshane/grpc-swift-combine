@@ -36,7 +36,7 @@ class UnaryTestsService: UnaryScenariosProvider {
   // We define a handler here but you can imagine that it might be in its own separate class.
   private func echoHandler(request: EchoRequest) -> AnyPublisher<EchoResponse, GRPCStatus> {
     Just<EchoResponse>(EchoResponse.with { $0.message = request.message })
-      .mapError { _ in .processingError }
+      .setFailureType(to: GRPCStatus.self)
       .eraseToAnyPublisher()
   }
 }

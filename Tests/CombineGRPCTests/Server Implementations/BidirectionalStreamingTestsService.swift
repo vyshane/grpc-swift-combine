@@ -19,7 +19,7 @@ class BidirectionalStreamingTestsService: BidirectionalStreamingScenariosProvide
         .map { req in
           EchoResponse.with { $0.message = req.message }
         }
-        .mapError { _ in .processingError }
+        .setFailureType(to: GRPCStatus.self)
         .eraseToAnyPublisher()
     }
   }
