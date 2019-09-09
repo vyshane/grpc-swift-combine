@@ -156,6 +156,8 @@ grpc.call(client.authenticatedRpc)(request)
   }
 ```
 
+You can imagine doing something along those lines to seamlessly retry calls when an ID token expires. The back-end service replies with status `.unauthenticated`, you obtain a new ID token using your refresh token, and the call is retried.
+
 ### More Examples
 
 Check out the [CombineGRPC tests](Tests/CombineGRPCTests) for examples of all the different RPC calls and handlers implementations. You can find the matching protobuf [here](Tests/Protobuf/test_scenarios.proto).
