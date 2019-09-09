@@ -42,11 +42,11 @@ public struct GRPCExecutor {
   
   public func call<Request, Response>(_ rpc: @escaping UnaryRPC<Request, Response>)
     -> (Request)
-    -> AnyPublisher<Response, GRPCStatus>  // TODO: Return Future<Response, GRPCStatus>
+    -> Future<Response, GRPCStatus>
     where Request: Message, Response: Message
   {
     return { request in
-      self.executeWithRetry(policy: self.retryPolicy, { callOptions in
+      let responsePublisher = self.executeWithRetry(policy: self.retryPolicy, { callOptions in
         callOptions
           .flatMap { callOptions in
             Future<Response, GRPCStatus> { promise in
@@ -56,7 +56,8 @@ public struct GRPCExecutor {
             }
           }
           .eraseToAnyPublisher()
-      })
+        })
+      return self.toFuture(publisher: responsePublisher)
     }
   }
   
@@ -84,11 +85,11 @@ public struct GRPCExecutor {
   
   public func call<Request, Response>(_ rpc: @escaping ClientStreamingRPC<Request, Response>)
     -> (AnyPublisher<Request, Error>)
-    -> AnyPublisher<Response, GRPCStatus>  // TODO: Return Future<Response, GRPCStatus>
+    -> Future<Response, GRPCStatus>
     where Request: Message, Response: Message
   {
     return { requests in
-      self.executeWithRetry(policy: self.retryPolicy, { callOptions in
+      let responsePublisher = self.executeWithRetry(policy: self.retryPolicy, { callOptions in
         callOptions
           .flatMap { callOptions -> Future<Response, GRPCStatus> in
             Future<Response, GRPCStatus> { promise in
@@ -102,7 +103,8 @@ public struct GRPCExecutor {
             }
           }
           .eraseToAnyPublisher()
-      })
+        })
+      return self.toFuture(publisher: responsePublisher)
     }
   }
   
@@ -166,5 +168,11 @@ public struct GRPCExecutor {
       .output(at: 0)
       .setFailureType(to: GRPCStatus.self)
       .eraseToAnyPublisher()
+  }
+  
+  private func toFuture<T>(publisher: AnyPublisher<T, GRPCStatus>) -> Future<T, GRPCStatus> {
+    let futurePublisherSubscriber = FuturePublisherSubscriber<T>()
+    publisher.subscribe(futurePublisherSubscriber)
+    return futurePublisherSubscriber.future
   }
 }

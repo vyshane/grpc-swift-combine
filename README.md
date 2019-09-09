@@ -10,12 +10,12 @@ CombineGRPC is a library that provides [Combine framework](https://developer.app
 
 RPC Style | Input and Output Types
 --- | ---
-| Unary | `Request -> AnyPublisher<Response, GRPCStatus>` |
+| Unary | `Request -> Future<Response, GRPCStatus>` |
 | Server streaming | `Request -> AnyPublisher<Response, GRPCStatus>` |
-| Client streaming | `AnyPublisher<Request, Error> -> AnyPublisher<Response, GRPCStatus>` |
+| Client streaming | `AnyPublisher<Request, Error> -> Future<Response, GRPCStatus>` |
 | Bidirectional streaming | `AnyPublisher<Request, Error> -> AnyPublisher<Response, GRPCStatus>` |
 
-When you make a unary call, you provide a request message, and get back a response publisher. The response publisher will either publish a single response, or fail with a `GRPCStatus` error. Similarly, if you are handling a unary RPC call, you provide a handler that takes a request parameter and returns an `AnyPublisher<Response, GRPCStatus>`.
+When you make a unary call, you provide a request message, and get back a response future. The response future will either publish a single response, or fail with a `GRPCStatus` error. Similarly, if you are handling a unary RPC call, you provide a handler that takes a request parameter and returns an `AnyPublisher<Response, GRPCStatus>`.
 
 You can follow the same intuition to understand the types for the other RPC styles. The only difference is that publishers for the streaming RPCs may publish zero or more messages instead of the single response message that is expected from the unary response publisher.
 

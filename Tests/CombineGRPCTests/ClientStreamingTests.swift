@@ -94,6 +94,7 @@ class ClientStreamingTests: XCTestCase {
     let grpc = GRPCExecutor(callOptions: Just(options).eraseToAnyPublisher())
     
     let cancellable = grpc.call(client.clientStreamNoResponse)(requestStream)
+      .print()
       .sink(
         receiveCompletion: { completion in
           switch completion {
