@@ -228,7 +228,3 @@ Documentation
 
 - [x] README.md
 - [ ] Inline documentation using Markdown in comments
-
-Maybe
-
-- [ ] Use `Future` for unary and client streaming RPC responses?

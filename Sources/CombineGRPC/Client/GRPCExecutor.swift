@@ -42,7 +42,7 @@ public struct GRPCExecutor {
   
   public func call<Request, Response>(_ rpc: @escaping UnaryRPC<Request, Response>)
     -> (Request)
-    -> AnyPublisher<Response, GRPCStatus>  // TODO: Return Future<Response, GRPCStatus>
+    -> AnyPublisher<Response, GRPCStatus>
     where Request: Message, Response: Message
   {
     return { request in
@@ -84,7 +84,7 @@ public struct GRPCExecutor {
   
   public func call<Request, Response>(_ rpc: @escaping ClientStreamingRPC<Request, Response>)
     -> (AnyPublisher<Request, Error>)
-    -> AnyPublisher<Response, GRPCStatus>  // TODO: Return Future<Response, GRPCStatus>
+    -> AnyPublisher<Response, GRPCStatus>
     where Request: Message, Response: Message
   {
     return { requests in
