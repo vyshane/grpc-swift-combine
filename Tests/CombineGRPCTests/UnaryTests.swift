@@ -35,7 +35,6 @@ final class UnaryTests: XCTestCase {
     let grpc = GRPCExecutor()
     
     grpc.call(client.unaryOk)(EchoRequest.with { $0.message = "hello" })
-      .print()
       .sink(
         receiveCompletion: { switch $0 {
           case .failure(let status):
