@@ -9,8 +9,8 @@ public enum RetryPolicy {
   /// Automatically retry failed calls
   ///
   /// - Parameters:
-  ///   - upTo: Maximum number of retries
-  ///   - when: Retry when condition is true
+  ///   - upTo: Maximum number of retries. Defaults to 1.
+  ///   - when: Retry when condition is true.
   ///   - delayUntilNext: Wait for the next published value before retrying. Defaults to a publisher that immediately publishes,
   ///       effectively meaning that there is no delay between retries. `delayUntilNext` is given the current retry count.
   ///   - onGiveUp: Called when number of retries have been exhausted. Defaults to no-op.
@@ -20,7 +20,7 @@ public enum RetryPolicy {
   /// ```
   ///    let retry = RetryPolicy.failedCall(upTo: 3, when: { $0.code == .unavailable }))
   /// ```
-  case failedCall(upTo: Int,
+  case failedCall(upTo: Int = 1,
                   when: (GRPCStatus) -> Bool,
                   delayUntilNext: (Int) -> AnyPublisher<Void, Never> = { _ in Just(()).eraseToAnyPublisher() },
                   onGiveUp: () -> Void = {})
