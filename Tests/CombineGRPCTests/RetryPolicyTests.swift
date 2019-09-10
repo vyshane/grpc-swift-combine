@@ -13,7 +13,7 @@ final class RetryPolicyTests: XCTestCase {
   
   static var serverEventLoopGroup: EventLoopGroup?
   static var client: RetryScenariosServiceClient?
-  static var retainedCancellables: [Cancellable] = []
+  static var retainedCancellables: Set<AnyCancellable> = []
   
   override class func setUp() {
     super.setUp()
@@ -45,7 +45,7 @@ final class RetryPolicyTests: XCTestCase {
       $0.numFailures = 2
     }
     
-    let cancellable = grpc.call(client.failThenSucceed)(request)
+    grpc.call(client.failThenSucceed)(request)
       .sink(
         receiveCompletion: { switch $0 {
           case .failure(let status):
@@ -55,9 +55,10 @@ final class RetryPolicyTests: XCTestCase {
         }},
         receiveValue: { response in
           XCTAssert(Int(response.numFailures) == 2)
-        })
+        }
+      )
+      .store(in: &RetryPolicyTests.retainedCancellables)
     
-    RetryPolicyTests.retainedCancellables.append(cancellable)
     wait(for: [promise], timeout: 0.2)
   }
   
@@ -75,7 +76,7 @@ final class RetryPolicyTests: XCTestCase {
       $0.numFailures = 3
     }
     
-    let cancellable = grpc.call(client.failThenSucceed)(request)
+    grpc.call(client.failThenSucceed)(request)
       .sink(
         receiveCompletion: { switch $0 {
           case .failure(let status):
@@ -87,9 +88,10 @@ final class RetryPolicyTests: XCTestCase {
         }},
         receiveValue: { response in
           XCTFail("Call should fail, but got response: " + response.debugDescription)
-        })
+        }
+      )
+      .store(in: &RetryPolicyTests.retainedCancellables)
     
-    RetryPolicyTests.retainedCancellables.append(cancellable)
     wait(for: [callPromise, onGiveUpPromise], timeout: 0.2)
   }
   
@@ -103,7 +105,7 @@ final class RetryPolicyTests: XCTestCase {
       $0.numFailures = 1
     }
     
-    let cancellable = grpc.call(client.failThenSucceed)(request)
+    grpc.call(client.failThenSucceed)(request)
       .sink(
         receiveCompletion: { switch $0 {
           case .failure(let status):
@@ -115,9 +117,10 @@ final class RetryPolicyTests: XCTestCase {
         }},
         receiveValue: { response in
           XCTFail("Call should fail, but got response: " + response.debugDescription)
-        })
+        }
+      )
+      .store(in: &RetryPolicyTests.retainedCancellables)
     
-    RetryPolicyTests.retainedCancellables.append(cancellable)
     wait(for: [promise], timeout: 0.2)
   }
   
@@ -137,7 +140,7 @@ final class RetryPolicyTests: XCTestCase {
       })
     )
     
-    let cancellable = grpc.call(client.authenticatedRpc)(EchoRequest.with { $0.message = "hello" })
+    grpc.call(client.authenticatedRpc)(EchoRequest.with { $0.message = "hello" })
       .sink(
         receiveCompletion: { switch $0 {
           case .failure(let status):
@@ -147,9 +150,10 @@ final class RetryPolicyTests: XCTestCase {
         }},
         receiveValue: { response in
           XCTAssert(response.message == "hello")
-        })
+        }
+      )
+      .store(in: &RetryPolicyTests.retainedCancellables)
     
-    RetryPolicyTests.retainedCancellables.append(cancellable)
     wait(for: [promise], timeout: 0.2)
   }
   

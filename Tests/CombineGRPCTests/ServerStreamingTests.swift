@@ -14,7 +14,7 @@ class ServerStreamingTests: XCTestCase {
   static var client: ServerStreamingScenariosServiceClient?
   
   // Streams will be cancelled prematurely if cancellables are deinitialized
-  static var retainedCancellables: [Cancellable] = []
+  static var retainedCancellables: Set<AnyCancellable> = []
   
   override class func setUp() {
     super.setUp()
@@ -36,7 +36,7 @@ class ServerStreamingTests: XCTestCase {
     let client = ServerStreamingTests.client!
     let grpc = GRPCExecutor()
 
-    let cancellable = grpc.call(client.serverStreamOk)(EchoRequest.with { $0.message = "hello" })
+    grpc.call(client.serverStreamOk)(EchoRequest.with { $0.message = "hello" })
       .filter { $0.message == "hello" }
       .count()
       .sink(
@@ -50,8 +50,8 @@ class ServerStreamingTests: XCTestCase {
           XCTAssert(count == 3)
         }
       )
+      .store(in: &ServerStreamingTests.retainedCancellables)
     
-    ServerStreamingTests.retainedCancellables.append(cancellable)
     wait(for: [promise], timeout: 0.2)
   }
   
@@ -60,7 +60,7 @@ class ServerStreamingTests: XCTestCase {
     let serverStreamFailedPrecondition = ServerStreamingTests.client!.serverStreamFailedPrecondition
     let grpc = GRPCExecutor()
     
-    let cancellable = grpc.call(serverStreamFailedPrecondition)(EchoRequest.with { $0.message = "hello" })
+    grpc.call(serverStreamFailedPrecondition)(EchoRequest.with { $0.message = "hello" })
       .sink(
         receiveCompletion: { switch $0 {
           case .failure(let status):
@@ -74,9 +74,10 @@ class ServerStreamingTests: XCTestCase {
         }},
         receiveValue: { empty in
           XCTFail("Call should not return a response")
-      })
+        }
+      )
+      .store(in: &ServerStreamingTests.retainedCancellables)
     
-    ServerStreamingTests.retainedCancellables.append(cancellable)
     wait(for: [promise], timeout: 0.2)
   }
   
@@ -86,7 +87,7 @@ class ServerStreamingTests: XCTestCase {
     let options = CallOptions(timeout: try! .milliseconds(50))
     let grpc = GRPCExecutor(callOptions: Just(options).eraseToAnyPublisher())
         
-    let cancellable = grpc.call(client.serverStreamNoResponse)(EchoRequest.with { $0.message = "hello" })
+    grpc.call(client.serverStreamNoResponse)(EchoRequest.with { $0.message = "hello" })
       .sink(
         receiveCompletion: { switch $0 {
           case .failure(let status):
@@ -100,9 +101,10 @@ class ServerStreamingTests: XCTestCase {
         }},
         receiveValue: { empty in
           XCTFail("Call should not return a response")
-      })
+        }
+      )
+      .store(in: &ServerStreamingTests.retainedCancellables)
     
-    ServerStreamingTests.retainedCancellables.append(cancellable)
     wait(for: [promise], timeout: 0.2)
   }
   

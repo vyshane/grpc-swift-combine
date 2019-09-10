@@ -15,7 +15,7 @@ class StressTest: XCTestCase {
   static var serverStreamingClient: ServerStreamingScenariosServiceClient?
   static var clientStreamingClient: ClientStreamingScenariosServiceClient?
   static var bidirectionalStreamingClient: BidirectionalStreamingScenariosServiceClient?
-  static var retainedCancellables: [Cancellable] = []
+  static var retainedCancellables: [AnyCancellable] = []
   
   override class func setUp() {
     super.setUp()

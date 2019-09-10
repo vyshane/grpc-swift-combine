@@ -27,14 +27,14 @@ public struct GRPCExecutor {
   let retryPolicy: RetryPolicy
   
   let callOptions: CurrentValueSubject<CallOptions, Never>
-  let retainedCallOptionsCancellable: Cancellable
+  var retainedCancellables: Set<AnyCancellable> = []
   
   init(callOptions: AnyPublisher<CallOptions, Never> = Just(CallOptions()).eraseToAnyPublisher(),
        retry: RetryPolicy = .never) {
     self.retryPolicy = retry
 
     let subject = CurrentValueSubject<CallOptions, Never>(CallOptions())
-    retainedCallOptionsCancellable = callOptions.sink(receiveValue: { subject.send($0) })
+    callOptions.sink(receiveValue: { subject.send($0) }).store(in: &retainedCancellables)
     self.callOptions = subject
   }
   

@@ -12,7 +12,7 @@ class ClientStreamingTests: XCTestCase {
   
   static var serverEventLoopGroup: EventLoopGroup?
   static var client: ClientStreamingScenariosServiceClient?
-  static var retainedCancellables: [Cancellable] = []
+  static var retainedCancellables: Set<AnyCancellable> = []
   
   override class func setUp() {
     super.setUp()
@@ -37,7 +37,7 @@ class ClientStreamingTests: XCTestCase {
     ).eraseToAnyPublisher()
     let grpc = GRPCExecutor()
     
-    let cancellable = grpc.call(client.clientStreamOk)(requests)
+    grpc.call(client.clientStreamOk)(requests)
       .sink(
         receiveCompletion: { completion in
           switch completion {
@@ -51,8 +51,8 @@ class ClientStreamingTests: XCTestCase {
           XCTAssert(response.message == "world!")
         }
       )
+      .store(in: &ClientStreamingTests.retainedCancellables)
     
-    ClientStreamingTests.retainedCancellables.append(cancellable)
     wait(for: [promise], timeout: 0.2)
   }
   
@@ -63,7 +63,7 @@ class ClientStreamingTests: XCTestCase {
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
     let grpc = GRPCExecutor()
     
-    let cancellable = grpc.call(clientStreamFailedPrecondition)(requestStream)
+    grpc.call(clientStreamFailedPrecondition)(requestStream)
       .sink(
         receiveCompletion: { completion in
           switch completion {
@@ -76,12 +76,13 @@ class ClientStreamingTests: XCTestCase {
           case .finished:
             XCTFail("Call should not succeed")
           }
-      },
+        },
         receiveValue: { empty in
           XCTFail("Call should not return a response")
-      })
+        }
+      )
+      .store(in: &ClientStreamingTests.retainedCancellables)
     
-    ClientStreamingTests.retainedCancellables.append(cancellable)
     wait(for: [promise], timeout: 0.2)
   }
   
@@ -93,7 +94,7 @@ class ClientStreamingTests: XCTestCase {
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
     let grpc = GRPCExecutor(callOptions: Just(options).eraseToAnyPublisher())
     
-    let cancellable = grpc.call(client.clientStreamNoResponse)(requestStream)
+    grpc.call(client.clientStreamNoResponse)(requestStream)
       .sink(
         receiveCompletion: { completion in
           switch completion {
@@ -106,12 +107,13 @@ class ClientStreamingTests: XCTestCase {
           case .finished:
             XCTFail("Call should not succeed")
           }
-      },
+        },
         receiveValue: { empty in
           XCTFail("Call should not return a response")
-      })
+        }
+      )
+      .store(in: &ClientStreamingTests.retainedCancellables)
     
-    ClientStreamingTests.retainedCancellables.append(cancellable)
     wait(for: [promise], timeout: 0.2)
   }
   

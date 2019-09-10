@@ -12,7 +12,7 @@ final class UnaryTests: XCTestCase {
   
   static var serverEventLoopGroup: EventLoopGroup?
   static var client: UnaryScenariosServiceClient?
-  static var retainedCancellables: [Cancellable] = []
+  static var retainedCancellables: Set<AnyCancellable> = []
   
   override class func setUp() {
     super.setUp()
@@ -34,7 +34,7 @@ final class UnaryTests: XCTestCase {
     let client = UnaryTests.client!
     let grpc = GRPCExecutor()
     
-    let cancellable = grpc.call(client.unaryOk)(EchoRequest.with { $0.message = "hello" })
+    grpc.call(client.unaryOk)(EchoRequest.with { $0.message = "hello" })
       .print()
       .sink(
         receiveCompletion: { switch $0 {
@@ -45,9 +45,10 @@ final class UnaryTests: XCTestCase {
         }},
         receiveValue: { response in
           XCTAssert(response.message == "hello")
-        })
+        }
+      )
+      .store(in: &UnaryTests.retainedCancellables)
     
-    UnaryTests.retainedCancellables.append(cancellable)
     wait(for: [promise], timeout: 0.2)
   }
 
@@ -56,7 +57,7 @@ final class UnaryTests: XCTestCase {
     let unaryFailedPrecondition = UnaryTests.client!.unaryFailedPrecondition
     let grpc = GRPCExecutor()
     
-    let cancellable = grpc.call(unaryFailedPrecondition)(EchoRequest.with { $0.message = "hello" })
+    grpc.call(unaryFailedPrecondition)(EchoRequest.with { $0.message = "hello" })
       .sink(
         receiveCompletion: { switch $0 {
           case .failure(let status):
@@ -70,9 +71,10 @@ final class UnaryTests: XCTestCase {
         }},
         receiveValue: { empty in
           XCTFail("Call should not return a response")
-        })
+        }
+      )
+      .store(in: &UnaryTests.retainedCancellables)
     
-    UnaryTests.retainedCancellables.append(cancellable)
     wait(for: [promise], timeout: 0.2)
   }
 
@@ -82,7 +84,7 @@ final class UnaryTests: XCTestCase {
     let options = CallOptions(timeout: try! .milliseconds(50))
     let grpc = GRPCExecutor(callOptions: Just(options).eraseToAnyPublisher())
     
-    let cancellable = grpc.call(client.unaryNoResponse)(EchoRequest.with { $0.message = "hello" })
+    grpc.call(client.unaryNoResponse)(EchoRequest.with { $0.message = "hello" })
       .sink(
         receiveCompletion: { switch $0 {
           case .failure(let status):
@@ -96,9 +98,10 @@ final class UnaryTests: XCTestCase {
         }},
         receiveValue: { empty in
           XCTFail("Call should not return a response")
-        })
+        }
+      )
+      .store(in: &UnaryTests.retainedCancellables)
     
-    UnaryTests.retainedCancellables.append(cancellable)
     wait(for: [promise], timeout: 0.2)
   }
   
