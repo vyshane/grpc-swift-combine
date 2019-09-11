@@ -41,10 +41,9 @@ public typealias BidirectionalStreamingRPC<Request, Response> =
 @available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public struct GRPCExecutor {
   
-  let retryPolicy: RetryPolicy
-  
-  let callOptions: CurrentValueSubject<CallOptions, Never>
-  var retainedCancellables: Set<AnyCancellable> = []
+  private let retryPolicy: RetryPolicy
+  private let callOptions: CurrentValueSubject<CallOptions, Never>
+  private var retainedCancellables: Set<AnyCancellable> = []
   
   /**
    Initialize `GRPCExecutor` with a stream of `CallOptions` and a `RetryPolicy`.
@@ -54,7 +53,7 @@ public struct GRPCExecutor {
        Defaults to a stream with just one default `CallOptions()` value.
      - retry: `RetryPolicy` to use if a gRPC call fails. Defaults to `RetryPolicy.never`.
    */
-  init(callOptions: AnyPublisher<CallOptions, Never> = Just(CallOptions()).eraseToAnyPublisher(),
+  public init(callOptions: AnyPublisher<CallOptions, Never> = Just(CallOptions()).eraseToAnyPublisher(),
        retry: RetryPolicy = .never) {
     self.retryPolicy = retry
 
