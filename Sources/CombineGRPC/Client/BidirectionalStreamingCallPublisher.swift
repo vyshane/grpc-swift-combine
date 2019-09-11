@@ -7,11 +7,11 @@ import GRPC
 import SwiftProtobuf
 
 @available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
-public struct BidirectionalStreamingCallPublisher<Request, Response>: Publisher
+struct BidirectionalStreamingCallPublisher<Request, Response>: Publisher
   where Request: Message, Response: Message
 {
-  public typealias Output = Response
-  public typealias Failure = GRPCStatus
+  typealias Output = Response
+  typealias Failure = GRPCStatus
   
   private let call: BidirectionalStreamingCall<Request, Response>
   private let bridge: MessageBridge<Response>
@@ -25,7 +25,7 @@ public struct BidirectionalStreamingCallPublisher<Request, Response>: Publisher
     self.requests = requests
   }
   
-  public func receive<S>(subscriber: S)
+  func receive<S>(subscriber: S)
     where S : Subscriber, BidirectionalStreamingCallPublisher.Failure == S.Failure,
     BidirectionalStreamingCallPublisher.Output == S.Input
   {

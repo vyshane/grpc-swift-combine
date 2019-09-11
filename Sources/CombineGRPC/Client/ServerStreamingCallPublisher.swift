@@ -7,9 +7,9 @@ import GRPC
 import SwiftProtobuf
 
 @available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
-public struct ServerStreamingCallPublisher<Request, Response>: Publisher where Request: Message, Response: Message {
-  public typealias Output = Response
-  public typealias Failure = GRPCStatus
+struct ServerStreamingCallPublisher<Request, Response>: Publisher where Request: Message, Response: Message {
+  typealias Output = Response
+  typealias Failure = GRPCStatus
   
   private let call: ServerStreamingCall<Request, Response>
   private let bridge: MessageBridge<Response>
@@ -19,7 +19,7 @@ public struct ServerStreamingCallPublisher<Request, Response>: Publisher where R
     bridge = messageBridge
   }
   
-  public func receive<S>(subscriber: S)
+  func receive<S>(subscriber: S)
     where S : Subscriber, ServerStreamingCallPublisher.Failure == S.Failure,
     ServerStreamingCallPublisher.Output == S.Input
   {    
