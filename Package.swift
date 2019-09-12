@@ -1,7 +1,7 @@
+// swift-tools-version:5.1
+//
 // Copyright 2019, Vy-Shane Xie
 // Licensed under the Apache License, Version 2.0
-//
-// swift-tools-version:5.0
 
 import PackageDescription
 
