@@ -25,7 +25,7 @@ public enum RetryPolicy {
    let retry = RetryPolicy.failedCall(upTo: 3, when: { $0.code == .unavailable }))
    ```
    */
-  case failedCall(upTo: Int = 1,
+  case failedCall(upTo: UInt = 1,
                   when: (GRPCStatus) -> Bool,
                   delayUntilNext: (Int) -> AnyPublisher<Void, Never> = { _ in Just(()).eraseToAnyPublisher() },
                   onGiveUp: () -> Void = {})
