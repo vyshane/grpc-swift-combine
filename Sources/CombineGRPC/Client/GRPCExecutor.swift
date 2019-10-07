@@ -170,7 +170,10 @@ public struct GRPCExecutor {
             Future<Response, GRPCStatus> { promise in
               let call = rpc(callOptions)
               _ = requests.sink(
-                receiveCompletion: { _ in _ = call.sendEnd() },
+                receiveCompletion: { switch $0 {
+                  case .finished: _ = call.sendEnd()
+                  case .failure: call.cancel()
+                }},
                 receiveValue: { _ = call.sendMessage($0) }
               )
               call.response.whenSuccess { _ = promise(.success($0)) }
