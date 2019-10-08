@@ -29,12 +29,12 @@ final class UnaryTests: XCTestCase {
     super.tearDown()
   }
   
-  func testUnaryOk() {
+  func testOk() {
     let promise = expectation(description: "Call completes successfully")
     let client = UnaryTests.client!
     let grpc = GRPCExecutor()
     
-    grpc.call(client.unaryOk)(EchoRequest.with { $0.message = "hello" })
+    grpc.call(client.ok)(EchoRequest.with { $0.message = "hello" })
       .sink(
         receiveCompletion: { switch $0 {
           case .failure(let status):
@@ -51,12 +51,12 @@ final class UnaryTests: XCTestCase {
     wait(for: [promise], timeout: 0.2)
   }
 
-  func testUnaryFailedPrecondition() {
+  func testFailedPrecondition() {
     let promise = expectation(description: "Call fails with failed precondition status")
-    let unaryFailedPrecondition = UnaryTests.client!.unaryFailedPrecondition
+    let failedPrecondition = UnaryTests.client!.failedPrecondition
     let grpc = GRPCExecutor()
     
-    grpc.call(unaryFailedPrecondition)(EchoRequest.with { $0.message = "hello" })
+    grpc.call(failedPrecondition)(EchoRequest.with { $0.message = "hello" })
       .sink(
         receiveCompletion: { switch $0 {
           case .failure(let status):
@@ -77,13 +77,13 @@ final class UnaryTests: XCTestCase {
     wait(for: [promise], timeout: 0.2)
   }
 
-  func testUnaryNoResponse() {
+  func testNoResponse() {
     let promise = expectation(description: "Call fails with deadline exceeded status")
     let client = UnaryTests.client!
     let options = CallOptions(timeout: try! .milliseconds(50))
     let grpc = GRPCExecutor(callOptions: Just(options).eraseToAnyPublisher())
     
-    grpc.call(client.unaryNoResponse)(EchoRequest.with { $0.message = "hello" })
+    grpc.call(client.noResponse)(EchoRequest.with { $0.message = "hello" })
       .sink(
         receiveCompletion: { switch $0 {
           case .failure(let status):
@@ -105,8 +105,8 @@ final class UnaryTests: XCTestCase {
   }
   
   static var allTests = [
-    ("Unary OK", testUnaryOk),
-    ("Unary failed precondition", testUnaryFailedPrecondition),
-    ("Unary no response", testUnaryNoResponse),
+    ("Unary OK", testOk),
+    ("Unary failed precondition", testFailedPrecondition),
+    ("Unary no response", testNoResponse),
   ]
 }

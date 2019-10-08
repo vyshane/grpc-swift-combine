@@ -11,7 +11,7 @@ import NIO
 class ServerStreamingTestsService: ServerStreamingScenariosProvider {
 
   // OK, echoes back the request message three times
-  func serverStreamOk(request: EchoRequest, context: StreamingResponseCallContext<EchoResponse>)
+  func ok(request: EchoRequest, context: StreamingResponseCallContext<EchoResponse>)
     -> EventLoopFuture<GRPCStatus>
   {
     handle(context) {
@@ -21,7 +21,7 @@ class ServerStreamingTestsService: ServerStreamingScenariosProvider {
   }
 
   // Fails
-  func serverStreamFailedPrecondition(request: EchoRequest, context: StreamingResponseCallContext<Empty>)
+  func failedPrecondition(request: EchoRequest, context: StreamingResponseCallContext<Empty>)
     -> EventLoopFuture<GRPCStatus>
   {
     handle(context) {
@@ -31,7 +31,7 @@ class ServerStreamingTestsService: ServerStreamingScenariosProvider {
   }
 
   // Times out
-  func serverStreamNoResponse(request: EchoRequest, context: StreamingResponseCallContext<Empty>)
+  func noResponse(request: EchoRequest, context: StreamingResponseCallContext<Empty>)
     -> EventLoopFuture<GRPCStatus>
   {
     handle(context) {

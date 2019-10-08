@@ -11,7 +11,7 @@ import NIO
 class ClientStreamingTestsService: ClientStreamingScenariosProvider {
 
   // OK, echoes back the last received message
-  func clientStreamOk(context: UnaryResponseCallContext<EchoResponse>)
+  func ok(context: UnaryResponseCallContext<EchoResponse>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
     handle(context) { requests in
@@ -26,7 +26,7 @@ class ClientStreamingTestsService: ClientStreamingScenariosProvider {
   }
   
   // Fails
-  func clientStreamFailedPrecondition(context: UnaryResponseCallContext<Empty>)
+  func failedPrecondition(context: UnaryResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
     handle(context) { _ in
@@ -36,7 +36,7 @@ class ClientStreamingTestsService: ClientStreamingScenariosProvider {
   }
 
   // Times out
-  func clientStreamNoResponse(context: UnaryResponseCallContext<Empty>)
+  func noResponse(context: UnaryResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
     handle(context) { _ in

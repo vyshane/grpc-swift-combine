@@ -11,7 +11,7 @@ import NIO
 class BidirectionalStreamingTestsService: BidirectionalStreamingScenariosProvider {
   
   // OK, echoes back each message in the request stream
-  func bidirectionalStreamOk(context: StreamingResponseCallContext<EchoResponse>)
+  func ok(context: StreamingResponseCallContext<EchoResponse>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
     handle(context) { requests in
@@ -25,7 +25,7 @@ class BidirectionalStreamingTestsService: BidirectionalStreamingScenariosProvide
   }
   
   // Fails
-  func bidirectionalStreamFailedPrecondition(context: StreamingResponseCallContext<Empty>)
+  func failedPrecondition(context: StreamingResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
     handle(context) { _ in
@@ -35,7 +35,7 @@ class BidirectionalStreamingTestsService: BidirectionalStreamingScenariosProvide
   }
   
   // Times out
-  func bidirectionalStreamNoResponse(context: StreamingResponseCallContext<Empty>)
+  func noResponse(context: StreamingResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
     handle(context) { _ in

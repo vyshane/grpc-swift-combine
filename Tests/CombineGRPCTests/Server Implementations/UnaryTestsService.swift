@@ -11,14 +11,14 @@ import NIO
 class UnaryTestsService: UnaryScenariosProvider {
   
   // OK, echoes back the message in the request
-  func unaryOk(request: EchoRequest, context: StatusOnlyCallContext) -> EventLoopFuture<EchoResponse> {
+  func ok(request: EchoRequest, context: StatusOnlyCallContext) -> EventLoopFuture<EchoResponse> {
     // For large services, it is useful to be able to split each individual RPC handler out.
     // This is an example of how you might do that.
     handle(request, context, handler: self.echoHandler)
   }
   
   // Fails
-  func unaryFailedPrecondition(request: EchoRequest,
+  func failedPrecondition(request: EchoRequest,
                                context: StatusOnlyCallContext) -> EventLoopFuture<Empty> {
     handle(context) {
       let status = GRPCStatus(code: .failedPrecondition, message: "Failed precondition message")
@@ -27,7 +27,7 @@ class UnaryTestsService: UnaryScenariosProvider {
   }
   
   // Times out
-  func unaryNoResponse(request: EchoRequest, context: StatusOnlyCallContext) -> EventLoopFuture<Empty> {
+  func noResponse(request: EchoRequest, context: StatusOnlyCallContext) -> EventLoopFuture<Empty> {
     handle(context) {
       return Combine.Empty(completeImmediately: false).eraseToAnyPublisher()
     }

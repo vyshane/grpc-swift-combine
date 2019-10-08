@@ -29,14 +29,14 @@ class BidirectionalStreamingTests: XCTestCase {
     super.tearDown()
   }
   
-  func testBidirectionalStreamOk() {
+  func testOk() {
     let promise = expectation(description: "Call completes successfully")
     let client = BidirectionalStreamingTests.client!
     let requests = repeatElement(EchoRequest.with { $0.message = "hello"}, count: 3)
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
     let grpc = GRPCExecutor()
     
-    grpc.call(client.bidirectionalStreamOk)(requestStream)
+    grpc.call(client.ok)(requestStream)
       .filter { $0.message == "hello" }
       .count()
       .sink(
@@ -55,14 +55,14 @@ class BidirectionalStreamingTests: XCTestCase {
     wait(for: [promise], timeout: 0.2)
   }
   
-  func testBidirectionalStreamFailedPrecondition() {
+  func testFailedPrecondition() {
     let promise = expectation(description: "Call fails with failed precondition status")
-    let bidirectionalStreamFailedPrecondition = BidirectionalStreamingTests.client!.bidirectionalStreamFailedPrecondition
+    let failedPrecondition = BidirectionalStreamingTests.client!.failedPrecondition
     let requests = repeatElement(EchoRequest.with { $0.message = "hello"}, count: 3)
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
     let grpc = GRPCExecutor()
     
-    grpc.call(bidirectionalStreamFailedPrecondition)(requestStream)
+    grpc.call(failedPrecondition)(requestStream)
       .sink(
         receiveCompletion: { switch $0 {
           case .failure(let status):
@@ -83,7 +83,7 @@ class BidirectionalStreamingTests: XCTestCase {
     wait(for: [promise], timeout: 0.2)
   }
   
-  func testBidirectionalStreamNoResponse() {
+  func testNoResponse() {
     let promise = expectation(description: "Call fails with deadline exceeded status")
     let client = BidirectionalStreamingTests.client!
     let options = CallOptions(timeout: try! .milliseconds(50))
@@ -91,7 +91,7 @@ class BidirectionalStreamingTests: XCTestCase {
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
     let grpc = GRPCExecutor(callOptions: Just(options).eraseToAnyPublisher())
     
-    grpc.call(client.bidirectionalStreamNoResponse)(requestStream)
+    grpc.call(client.noResponse)(requestStream)
       .sink(
         receiveCompletion: { switch $0 {
           case .failure(let status):
@@ -112,9 +112,41 @@ class BidirectionalStreamingTests: XCTestCase {
     wait(for: [promise], timeout: 0.2)
   }
   
+  func testClientStreamError() {
+    let promise = expectation(description: "Call fails with cancelled status")
+    let client = BidirectionalStreamingTests.client!
+    let grpc = GRPCExecutor()
+    
+    struct ClientStreamError: Error {}
+    let requests = Fail<EchoRequest, Error>(error: ClientStreamError()).eraseToAnyPublisher()
+    
+    grpc.call(client.ok)(requests)
+      .sink(
+        receiveCompletion: { completion in
+          switch completion {
+          case .failure(let status):
+            if status.code == .cancelled {
+              promise.fulfill()
+            } else {
+              XCTFail("Unexpected status: " + status.localizedDescription)
+            }
+          case .finished:
+            XCTFail("Call should not succeed")
+          }
+        },
+        receiveValue: { response in
+          XCTFail("Call should not return a response")
+        }
+      )
+      .store(in: &ClientStreamingTests.retainedCancellables)
+    
+    wait(for: [promise], timeout: 0.2)
+  }
+  
   static var allTests = [
-    ("Bidirectional stream OK", testBidirectionalStreamOk),
-    ("Bidirectional stream failed precondition", testBidirectionalStreamFailedPrecondition),
-    ("Bidirectional stream no response", testBidirectionalStreamNoResponse),
+    ("Bidirectional streaming OK", testOk),
+    ("Bidirectional streaming failed precondition", testFailedPrecondition),
+    ("Bidirectional streaming no response", testNoResponse),
+    ("Bidirectional streaming with client stream error, stream cancelled", testClientStreamError),
   ]
 }

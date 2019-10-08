@@ -31,12 +31,12 @@ class ServerStreamingTests: XCTestCase {
     super.tearDown()
   }
   
-  func testServerStreamOk() {
+  func testOk() {
     let promise = expectation(description: "Call completes successfully")
     let client = ServerStreamingTests.client!
     let grpc = GRPCExecutor()
 
-    grpc.call(client.serverStreamOk)(EchoRequest.with { $0.message = "hello" })
+    grpc.call(client.ok)(EchoRequest.with { $0.message = "hello" })
       .filter { $0.message == "hello" }
       .count()
       .sink(
@@ -55,12 +55,12 @@ class ServerStreamingTests: XCTestCase {
     wait(for: [promise], timeout: 0.2)
   }
   
-  func testServerStreamFailedPrecondition() {
+  func testFailedPrecondition() {
     let promise = expectation(description: "Call fails with failed precondition status")
-    let serverStreamFailedPrecondition = ServerStreamingTests.client!.serverStreamFailedPrecondition
+    let failedPrecondition = ServerStreamingTests.client!.failedPrecondition
     let grpc = GRPCExecutor()
     
-    grpc.call(serverStreamFailedPrecondition)(EchoRequest.with { $0.message = "hello" })
+    grpc.call(failedPrecondition)(EchoRequest.with { $0.message = "hello" })
       .sink(
         receiveCompletion: { switch $0 {
           case .failure(let status):
@@ -81,13 +81,13 @@ class ServerStreamingTests: XCTestCase {
     wait(for: [promise], timeout: 0.2)
   }
   
-  func testServerStreamNoResponse() {
+  func testNoResponse() {
     let promise = expectation(description: "Call fails with deadline exceeded status")
     let client = ServerStreamingTests.client!
     let options = CallOptions(timeout: try! .milliseconds(50))
     let grpc = GRPCExecutor(callOptions: Just(options).eraseToAnyPublisher())
         
-    grpc.call(client.serverStreamNoResponse)(EchoRequest.with { $0.message = "hello" })
+    grpc.call(client.noResponse)(EchoRequest.with { $0.message = "hello" })
       .sink(
         receiveCompletion: { switch $0 {
           case .failure(let status):
@@ -109,8 +109,8 @@ class ServerStreamingTests: XCTestCase {
   }
   
   static var allTests = [
-    ("Server stream OK", testServerStreamOk),
-    ("Server stream failed precondition", testServerStreamFailedPrecondition),
-    ("Server stream no response", testServerStreamNoResponse),
+    ("Server streaming OK", testOk),
+    ("Server streaming failed precondition", testFailedPrecondition),
+    ("Server streaming no response", testNoResponse),
   ]
 }

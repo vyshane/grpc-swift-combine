@@ -29,7 +29,7 @@ class ClientStreamingTests: XCTestCase {
     super.tearDown()
   }
   
-  func testClientStreamOk() {
+  func testOk() {
     let promise = expectation(description: "Call completes successfully")
     let client = ClientStreamingTests.client!
     let requests = Publishers.Sequence<[EchoRequest], Error>(sequence:
@@ -37,7 +37,7 @@ class ClientStreamingTests: XCTestCase {
     ).eraseToAnyPublisher()
     let grpc = GRPCExecutor()
     
-    grpc.call(client.clientStreamOk)(requests)
+    grpc.call(client.ok)(requests)
       .sink(
         receiveCompletion: { completion in
           switch completion {
@@ -56,14 +56,14 @@ class ClientStreamingTests: XCTestCase {
     wait(for: [promise], timeout: 0.2)
   }
   
-  func testClientStreamFailedPrecondition() {
+  func testFailedPrecondition() {
     let promise = expectation(description: "Call fails with failed precondition status")
-    let clientStreamFailedPrecondition = ClientStreamingTests.client!.clientStreamFailedPrecondition
+    let failedPrecondition = ClientStreamingTests.client!.failedPrecondition
     let requests = repeatElement(EchoRequest.with { $0.message = "hello"}, count: 3)
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
     let grpc = GRPCExecutor()
     
-    grpc.call(clientStreamFailedPrecondition)(requestStream)
+    grpc.call(failedPrecondition)(requestStream)
       .sink(
         receiveCompletion: { completion in
           switch completion {
@@ -86,7 +86,7 @@ class ClientStreamingTests: XCTestCase {
     wait(for: [promise], timeout: 0.2)
   }
   
-  func testClientStreamNoResponse() {
+  func testNoResponse() {
     let promise = expectation(description: "Call fails with deadline exceeded status")
     let client = ClientStreamingTests.client!
     let options = CallOptions(timeout: try! .milliseconds(50))
@@ -94,7 +94,7 @@ class ClientStreamingTests: XCTestCase {
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
     let grpc = GRPCExecutor(callOptions: Just(options).eraseToAnyPublisher())
     
-    grpc.call(client.clientStreamNoResponse)(requestStream)
+    grpc.call(client.noResponse)(requestStream)
       .sink(
         receiveCompletion: { completion in
           switch completion {
@@ -117,9 +117,41 @@ class ClientStreamingTests: XCTestCase {
     wait(for: [promise], timeout: 0.2)
   }
   
+  func testClientStreamError() {
+    let promise = expectation(description: "Call fails with cancelled status")
+    let client = ClientStreamingTests.client!
+    let grpc = GRPCExecutor()
+    
+    struct ClientStreamError: Error {}
+    let requests = Fail<EchoRequest, Error>(error: ClientStreamError()).eraseToAnyPublisher()
+    
+    grpc.call(client.ok)(requests)
+      .sink(
+        receiveCompletion: { completion in
+          switch completion {
+          case .failure(let status):
+            if status.code == .cancelled {
+              promise.fulfill()
+            } else {
+              XCTFail("Unexpected status: " + status.localizedDescription)
+            }
+          case .finished:
+            XCTFail("Call should not succeed")
+          }
+        },
+        receiveValue: { response in
+          XCTFail("Call should not return a response")
+        }
+      )
+      .store(in: &ClientStreamingTests.retainedCancellables)
+    
+    wait(for: [promise], timeout: 0.2)
+  }
+  
   static var allTests = [
-    ("Client stream OK", testClientStreamOk),
-    ("Client stream failed precondition", testClientStreamFailedPrecondition),
-    ("Client stream no response", testClientStreamNoResponse),
+    ("Client streaming OK", testOk),
+    ("Client streaming failed precondition", testFailedPrecondition),
+    ("Client streaming no response", testNoResponse),
+    ("Client streaming with client stream error, stream cancelled", testClientStreamError),
   ]
 }
