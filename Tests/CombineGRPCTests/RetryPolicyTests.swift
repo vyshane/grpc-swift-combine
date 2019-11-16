@@ -5,7 +5,7 @@ import XCTest
 import Combine
 import GRPC
 import NIO
-import NIOHTTP1
+import NIOHPACK
 @testable import CombineGRPC
 
 @available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
@@ -135,7 +135,7 @@ final class RetryPolicyTests: XCTestCase {
       retry: .failedCall(upTo: 1, when: { $0.code == .unauthenticated }, delayUntilNext: { retryCount in
         XCTAssert(retryCount <= 1)
         // Subsequent calls are authenticated
-        callOptions.send(CallOptions(customMetadata: HTTPHeaders([("authorization", "Bearer xxx")])))
+        callOptions.send(CallOptions(customMetadata: HPACKHeaders([("authorization", "Bearer xxx")])))
         return Just(()).eraseToAnyPublisher()
       })
     )

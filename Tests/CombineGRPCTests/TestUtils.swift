@@ -24,13 +24,13 @@ func makeTestServer(services: [CallHandlerProvider], eventLoopGroupSize: Int = 1
 }
 
 func makeTestClient<Client>(_ clientCreator: (ClientConnection, CallOptions) -> Client)
-  -> Client where Client: GRPCServiceClient
+  -> Client where Client: GRPCClient
 {
   return makeTestClient(eventLoopGroupSize: 1, clientCreator)
 }
 
 func makeTestClient<Client>(eventLoopGroupSize: Int = 1, _ clientCreator: (ClientConnection, CallOptions) -> Client)
-  -> Client where Client: GRPCServiceClient
+  -> Client where Client: GRPCClient
 {
   let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: eventLoopGroupSize)
   let configuration = ClientConnection.Configuration(

@@ -6,4 +6,4 @@ protobuf:
 	mkdir -p Tests/CombineGRPCTests/Generated; \
 	cd Tests/Protobuf; \
 	protoc test_scenarios.proto --swift_out=../CombineGRPCTests/Generated/; \
-	protoc test_scenarios.proto --swiftgrpc_out=../CombineGRPCTests/Generated/
+	protoc test_scenarios.proto --grpc-swift_out=../CombineGRPCTests/Generated/
