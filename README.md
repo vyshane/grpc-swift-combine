@@ -2,7 +2,7 @@
 
 ## Status
 
-This library is not ready for production use. CombineGRPC uses the NIO implementation of Swift gRPC, currently at version 1.0.0-alpha.6, and integrates with Apple's new Combine framework, which is still in beta.
+This library is not ready for production use. CombineGRPC uses the NIO implementation of Swift gRPC, currently at version 1.0.0-alpha.7, and integrates with Apple's new Combine framework, which is still in beta.
 
 ## gRPC and Combine, Better Together
 
@@ -173,7 +173,7 @@ brew install protobuf
 brew install swift-protobuf
 ```
 
-Next, download the latest version of grpc-swift with NIO support. Currently that means [Swift gRPC 1.0.0-alpha.6](https://github.com/grpc/grpc-swift/releases/tag/1.0.0-alpha.6). Unarchive the downloaded file and build the Swift gRPC plugin by running make in the root directory of the project.
+Next, download the latest version of grpc-swift with NIO support. Currently that means [Swift gRPC 1.0.0-alpha.7](https://github.com/grpc/grpc-swift/releases/tag/1.0.0-alpha.7). Unarchive the downloaded file and build the Swift gRPC plugin by running make in the root directory of the project.
 
 ```text
 make plugin
@@ -185,7 +185,7 @@ Let's generate the message types, gRPC server and gRPC client for Swift.
 
 ```text
 protoc example_service.proto --swift_out=Generated/
-protoc example_service.proto --swiftgrpc_out=Generated/
+protoc example_service.proto --grpc-swift_out=Generated/
 ```
 
 You'll see that protoc has created two source files for us.
