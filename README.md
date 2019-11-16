@@ -2,7 +2,7 @@
 
 ## Status
 
-This library is not ready for production use. CombineGRPC uses the NIO implementation of Swift gRPC, currently at version 1.0.0-alpha.7, and integrates with Apple's new Combine framework, which is still in beta.
+This library is not ready for production use. CombineGRPC uses the NIO implementation of Swift gRPC, currently at version 1.0.0-alpha.7, and integrates with Apple's new Combine framework.
 
 ## gRPC and Combine, Better Together
 
@@ -202,7 +202,7 @@ You can add CombineGRPC using Swift Package Manager by listing it as a dependenc
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/vyshane/grpc-swift-combine.git", from: "0.7.0"),
+  .package(url: "https://github.com/vyshane/grpc-swift-combine.git", from: "0.7.1"),
 ],
 ```
 
