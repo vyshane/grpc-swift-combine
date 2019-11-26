@@ -172,7 +172,7 @@ public struct GRPCExecutor {
               _ = requests.sink(
                 receiveCompletion: { switch $0 {
                   case .finished: _ = call.sendEnd()
-                  case .failure: call.cancel()
+                  case .failure: _ = call.cancel()
                 }},
                 receiveValue: { _ = call.sendMessage($0) }
               )

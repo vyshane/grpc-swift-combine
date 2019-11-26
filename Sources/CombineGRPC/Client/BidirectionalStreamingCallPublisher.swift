@@ -32,7 +32,7 @@ struct BidirectionalStreamingCallPublisher<Request, Response>: Publisher
     _ = requests.sink(
       receiveCompletion: { switch $0 {
         case .finished: _ = self.call.sendEnd()
-        case .failure: self.call.cancel()
+        case .failure: _ = self.call.cancel()
       }},
       receiveValue: {
         _ = self.call.sendMessage($0)
