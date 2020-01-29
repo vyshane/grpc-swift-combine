@@ -241,22 +241,22 @@ Documentation
 
 ## Contributing
 
-### Unit testing
+### Unit Tests
 
-#### Local code generation
+#### Local Code Generation
 
-The Unit test require some generated example code. You can easily generate this by running:
+The unit tests rely on some Swift code that is generated from Protobuf. You can easily generate these by running:
 
 ```text
 make protobuf
 ```
 
-#### Code generation with [docker](https://www.docker.com) 
+#### Code Generation with [Docker](https://www.docker.com) 
 
-If you have [docker](https://www.docker.com) installed you can also run 
+If you have [Docker](https://www.docker.com) installed you can also run:
 
 ```text
 make protobuf_docker
 ```
 
-which will run `protoc` in a docker image and copy all generated files to the correct place in the project.
+This will run `protoc` in a docker image and copy all the generated files to the correct place in the project.
