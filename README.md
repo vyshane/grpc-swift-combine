@@ -2,7 +2,7 @@
 
 ## Status
 
-This library is not ready for production use. CombineGRPC uses the NIO implementation of Swift gRPC, currently at version 1.0.0-alpha.8, and integrates with Apple's new Combine framework.
+This library is not ready for production use. CombineGRPC uses the NIO implementation of Swift gRPC, currently at version 1.0.0-alpha.9, and integrates with Apple's new Combine framework.
 
 ## gRPC and Combine, Better Together
 
@@ -173,7 +173,7 @@ brew install protobuf
 brew install swift-protobuf
 ```
 
-Next, download the latest version of grpc-swift with NIO support. Currently that means [Swift gRPC 1.0.0-alpha.8](https://github.com/grpc/grpc-swift/releases/tag/1.0.0-alpha.8). Unarchive the downloaded file and build the Swift gRPC plugin by running make in the root directory of the project.
+Next, download the latest version of grpc-swift with NIO support. Currently that means [Swift gRPC 1.0.0-alpha.9](https://github.com/grpc/grpc-swift/releases/tag/1.0.0-alpha.9). Unarchive the downloaded file and build the Swift gRPC plugin by running make in the root directory of the project.
 
 ```text
 make plugin
@@ -238,3 +238,25 @@ Documentation
 
 - [x] README.md
 - [x] Inline documentation using markup in comments
+
+## Contributing
+
+### Unit testing
+
+#### Local code generation
+
+The Unit test require some generated example code. You can easily generate this by running:
+
+```text
+make protobuf
+```
+
+#### Code generation with [docker](https://www.docker.com) 
+
+If you have [docker](https://www.docker.com) installed you can also run 
+
+```text
+make protobuf_docker
+```
+
+which will run `protoc` in a docker image and copy all generated files to the correct place in the project.
