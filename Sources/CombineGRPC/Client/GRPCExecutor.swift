@@ -92,7 +92,7 @@ public struct GRPCExecutor {
     -> AnyPublisher<Response, GRPCStatus>
     where Request: Message, Response: Message
   {
-    return { request in
+    { request in
       self.executeWithRetry(policy: self.retryPolicy, { callOptions in
         callOptions
           .flatMap { callOptions in
@@ -132,7 +132,7 @@ public struct GRPCExecutor {
     -> AnyPublisher<Response, GRPCStatus>
     where Request: Message, Response: Message
   {
-    return { request in
+    { request in
       self.executeWithRetry(policy: self.retryPolicy, { callOptions in
         callOptions
           .flatMap { callOptions -> ServerStreamingCallPublisher<Request, Response> in
@@ -163,7 +163,7 @@ public struct GRPCExecutor {
     -> AnyPublisher<Response, GRPCStatus>
     where Request: Message, Response: Message
   {
-    return { requests in
+    { requests in
       self.executeWithRetry(policy: self.retryPolicy, { callOptions in
         callOptions
           .flatMap { callOptions -> Future<Response, GRPCStatus> in
@@ -203,7 +203,7 @@ public struct GRPCExecutor {
     -> AnyPublisher<Response, GRPCStatus>
     where Request: Message, Response: Message
   {
-    return { requests in
+    { requests in
       self.executeWithRetry(policy: self.retryPolicy, { callOptions in
         callOptions
           .flatMap { callOptions -> BidirectionalStreamingCallPublisher<Request, Response> in
@@ -239,7 +239,7 @@ public struct GRPCExecutor {
                 .flatMap { _ in attemptCall(retries: retries + 1) }
                 .eraseToAnyPublisher()
             }
-            if shouldRetry(status) {
+            if shouldRetry(status) && retries == maxRetries {
               onGiveUp()
             }
             return Fail(error: status).eraseToAnyPublisher()

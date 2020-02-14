@@ -14,7 +14,7 @@ class UnaryHandlerSubscriber<Response>: Subscriber, Cancellable {
   
   var futureResult: EventLoopFuture<Response> {
     get {
-      return promise.futureResult
+      promise.futureResult
     }
   }
   
