@@ -18,13 +18,13 @@ final class RetryPolicyTests: XCTestCase {
   override class func setUp() {
     super.setUp()
     serverEventLoopGroup = try! makeTestServer(services: [RetryPolicyTestsService()])
-    client = makeTestClient { connection, callOptions in
-      RetryScenariosClient(connection: connection, defaultCallOptions: callOptions)
+    client = makeTestClient { channel, callOptions in
+      RetryScenariosClient(channel: channel, defaultCallOptions: callOptions)
     }
   }
   
   override class func tearDown() {
-    try! client?.connection.close().wait()
+    try! client?.channel.close().wait()
     try! serverEventLoopGroup?.syncShutdownGracefully()
     retainedCancellables.removeAll()
     super.tearDown()
