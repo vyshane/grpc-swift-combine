@@ -11,14 +11,14 @@ import NIO
 class BidirectionalStreamingTests: XCTestCase {
   
   static var serverEventLoopGroup: EventLoopGroup?
-  static var client: BidirectionalStreamingScenariosServiceClient?
+  static var client: BidirectionalStreamingScenariosClient?
   static var retainedCancellables: Set<AnyCancellable> = []
   
   override class func setUp() {
     super.setUp()
     serverEventLoopGroup = try! makeTestServer(services: [BidirectionalStreamingTestsService()])
     client = makeTestClient { connection, callOptions in
-      BidirectionalStreamingScenariosServiceClient(connection: connection, defaultCallOptions: callOptions)
+      BidirectionalStreamingScenariosClient(connection: connection, defaultCallOptions: callOptions)
     }
   }
   
