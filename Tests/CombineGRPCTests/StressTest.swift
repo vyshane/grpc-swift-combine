@@ -14,10 +14,10 @@ import NIO
 class StressTest: XCTestCase {
 
   static var serverEventLoopGroup: EventLoopGroup?
-  static var unaryClient: UnaryScenariosServiceClient?
-  static var serverStreamingClient: ServerStreamingScenariosServiceClient?
-  static var clientStreamingClient: ClientStreamingScenariosServiceClient?
-  static var bidirectionalStreamingClient: BidirectionalStreamingScenariosServiceClient?
+  static var unaryClient: UnaryScenariosClient?
+  static var serverStreamingClient: ServerStreamingScenariosClient?
+  static var clientStreamingClient: ClientStreamingScenariosClient?
+  static var bidirectionalStreamingClient: BidirectionalStreamingScenariosClient?
   static var retainedCancellables: [AnyCancellable] = []
   
   override class func setUp() {
@@ -32,16 +32,16 @@ class StressTest: XCTestCase {
     serverEventLoopGroup = try! makeTestServer(services: services, eventLoopGroupSize: 4)
     
     unaryClient = makeTestClient(eventLoopGroupSize: 4) { connection, callOptions in
-      UnaryScenariosServiceClient(connection: connection, defaultCallOptions: callOptions)
+      UnaryScenariosClient(connection: connection, defaultCallOptions: callOptions)
     }
     serverStreamingClient = makeTestClient(eventLoopGroupSize: 4) { connection, callOptions in
-      ServerStreamingScenariosServiceClient(connection: connection, defaultCallOptions: callOptions)
+      ServerStreamingScenariosClient(connection: connection, defaultCallOptions: callOptions)
     }
     clientStreamingClient = makeTestClient(eventLoopGroupSize: 4) { connection, callOptions in
-      ClientStreamingScenariosServiceClient(connection: connection, defaultCallOptions: callOptions)
+      ClientStreamingScenariosClient(connection: connection, defaultCallOptions: callOptions)
     }
     bidirectionalStreamingClient = makeTestClient(eventLoopGroupSize: 4) { connection, callOptions in
-      BidirectionalStreamingScenariosServiceClient(connection: connection, defaultCallOptions: callOptions)
+      BidirectionalStreamingScenariosClient(connection: connection, defaultCallOptions: callOptions)
     }
   }
   

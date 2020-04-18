@@ -2,17 +2,17 @@
   "object": {
     "pins": [
       {
-        "package": "GRPC",
+        "package": "grpc-swift",
         "repositoryURL": "https://github.com/grpc/grpc-swift.git",
         "state": {
           "branch": null,
-          "revision": "be70633c91d722496e5fcb225f822edbd5c36a5a",
-          "version": "1.0.0-alpha.9"
+          "revision": "373ffd54c1c1a319d0ddac9476d13be9023584bb",
+          "version": "1.0.0-alpha.11"
         }
       },
       {
         "package": "swift-log",
-        "repositoryURL": "https://github.com/apple/swift-log",
+        "repositoryURL": "https://github.com/apple/swift-log.git",
         "state": {
           "branch": null,
           "revision": "74d7b91ceebc85daf387ebb206003f78813f71aa",
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "4409b57d4c0c40d41ac2b320fccf02e4d451e3db",
-          "version": "2.13.0"
+          "revision": "e876fb37410e0036b98b5361bb18e6854739572b",
+          "version": "2.16.0"
         }
       },
       {
@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio-http2.git",
         "state": {
           "branch": null,
-          "revision": "c1bfb7ce3f201e41ff60ef38fa63e67e0eb66a24",
-          "version": "1.9.0"
+          "revision": "82eb3fa0974b838358ee46bc6c5381e5ae5de6b9",
+          "version": "1.11.0"
         }
       },
       {
@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio-ssl.git",
         "state": {
           "branch": null,
-          "revision": "cf54f5c1db1c3740a6c7d662dc8569c150c3846c",
-          "version": "2.6.0"
+          "revision": "ae213938e151964aa691f0e902462fbe06baeeb6",
+          "version": "2.7.1"
         }
       },
       {
@@ -51,8 +51,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio-transport-services.git",
         "state": {
           "branch": null,
-          "revision": "c7f06384dc5ce7e8506de5ed9b59e35b4d88c64b",
-          "version": "1.3.0"
+          "revision": "85a67aea7caf5396ed599543dd23cffeb6dbbf96",
+          "version": "1.5.1"
         }
       },
       {
@@ -60,8 +60,8 @@
         "repositoryURL": "https://github.com/apple/swift-protobuf.git",
         "state": {
           "branch": null,
-          "revision": "da75a93ac017534e0028e83c0e4fc4610d2acf48",
-          "version": "1.7.0"
+          "revision": "7790acf0a81d08429cb20375bf42a8c7d279c5fe",
+          "version": "1.8.0"
         }
       }
     ]

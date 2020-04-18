@@ -7,7 +7,7 @@ import GRPC
 import SwiftProtobuf
 
 @available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
-struct ServerStreamingCallPublisher<Request, Response>: Publisher where Request: Message, Response: Message {
+struct ServerStreamingCallPublisher<Request, Response>: Publisher where Request: GRPCPayload, Response: GRPCPayload {
   typealias Output = Response
   typealias Failure = GRPCStatus
   

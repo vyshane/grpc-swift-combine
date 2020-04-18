@@ -11,7 +11,7 @@ import NIO
 class ServerStreamingTests: XCTestCase {
   
   static var serverEventLoopGroup: EventLoopGroup?
-  static var client: ServerStreamingScenariosServiceClient?
+  static var client: ServerStreamingScenariosClient?
   
   // Streams will be cancelled prematurely if cancellables are deinitialized
   static var retainedCancellables: Set<AnyCancellable> = []
@@ -20,7 +20,7 @@ class ServerStreamingTests: XCTestCase {
     super.setUp()
     serverEventLoopGroup = try! makeTestServer(services: [ServerStreamingTestsService()])
     client = makeTestClient { connection, callOptions in
-      ServerStreamingScenariosServiceClient(connection: connection, defaultCallOptions: callOptions)
+      ServerStreamingScenariosClient(connection: connection, defaultCallOptions: callOptions)
     }
   }
   

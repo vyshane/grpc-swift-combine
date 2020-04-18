@@ -11,14 +11,14 @@ import NIO
 class ClientStreamingTests: XCTestCase {
   
   static var serverEventLoopGroup: EventLoopGroup?
-  static var client: ClientStreamingScenariosServiceClient?
+  static var client: ClientStreamingScenariosClient?
   static var retainedCancellables: Set<AnyCancellable> = []
   
   override class func setUp() {
     super.setUp()
     serverEventLoopGroup = try! makeTestServer(services: [ClientStreamingTestsService()])
     client = makeTestClient { connection, callOptions in
-      ClientStreamingScenariosServiceClient(connection: connection, defaultCallOptions: callOptions)
+      ClientStreamingScenariosClient(connection: connection, defaultCallOptions: callOptions)
     }
   }
   

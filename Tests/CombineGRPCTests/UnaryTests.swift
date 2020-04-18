@@ -11,14 +11,14 @@ import NIO
 final class UnaryTests: XCTestCase {
   
   static var serverEventLoopGroup: EventLoopGroup?
-  static var client: UnaryScenariosServiceClient?
+  static var client: UnaryScenariosClient?
   static var retainedCancellables: Set<AnyCancellable> = []
   
   override class func setUp() {
     super.setUp()
     serverEventLoopGroup = try! makeTestServer(services: [UnaryTestsService()])
     client = makeTestClient { connection, callOptions in
-      UnaryScenariosServiceClient(connection: connection, defaultCallOptions: callOptions)
+      UnaryScenariosClient(connection: connection, defaultCallOptions: callOptions)
     }
   }
   
