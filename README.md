@@ -2,7 +2,7 @@
 
 ## Status
 
-This library is not ready for production use. CombineGRPC uses the NIO implementation of Swift gRPC, currently at version 1.0.0-alpha.9, and integrates with Apple's new Combine framework.
+CombineGRPC depends on Swift gRPC v1.0.0-alpha.11, and integrates with Apple's new Combine framework.
 
 ## gRPC and Combine, Better Together
 
@@ -82,11 +82,11 @@ _ = try Server.start(configuration: configuration).wait()
 Now let's setup our client. Again, it's the same process that you would go through when using Swift gRPC.
 
 ```swift
-let configuration = ClientConnection.Configuration(
-  target: ConnectionTarget.hostAndPort("localhost", 8080),
-  eventLoopGroup: PlatformSupport.makeEventLoopGroup(loopCount: 1)
-)
-let echoClient = EchoServiceClient(connection: ClientConnection(configuration: configuration))
+let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: eventLoopGroupSize)
+let channel = ClientConnection
+  .insecure(group: eventLoopGroup)
+  .connect(host: "localhost", port: 8080)
+let echoClient = EchoServiceClient(channel: channel)
 ```
 
 To call the service, create a `GRPCExecutor` and use its `call` method. You provide it with a stream of requests `AnyPublisher<EchoRequest, Error>` and you get back a stream `AnyPublisher<EchoResponse, GRPCStatus>` of responses from the server.
@@ -173,7 +173,7 @@ brew install protobuf
 brew install swift-protobuf
 ```
 
-Next, download the latest version of grpc-swift with NIO support. Currently that means [Swift gRPC 1.0.0-alpha.9](https://github.com/grpc/grpc-swift/releases/tag/1.0.0-alpha.9). Unarchive the downloaded file and build the Swift gRPC plugin by running make in the root directory of the project.
+Next, download the latest version of grpc-swift with NIO support. Currently that means [Swift gRPC 1.0.0-alpha.11](https://github.com/grpc/grpc-swift/releases/tag/1.0.0-alpha.11). Unarchive the downloaded file and build the Swift gRPC plugin by running make in the root directory of the project.
 
 ```text
 make plugin
@@ -202,7 +202,7 @@ You can add CombineGRPC using Swift Package Manager by listing it as a dependenc
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/vyshane/grpc-swift-combine.git", from: "0.9.0"),
+  .package(url: "https://github.com/vyshane/grpc-swift-combine.git", from: "0.10.0"),
 ],
 ```
 
