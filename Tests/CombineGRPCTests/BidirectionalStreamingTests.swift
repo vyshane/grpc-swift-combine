@@ -17,13 +17,13 @@ class BidirectionalStreamingTests: XCTestCase {
   override class func setUp() {
     super.setUp()
     serverEventLoopGroup = try! makeTestServer(services: [BidirectionalStreamingTestsService()])
-    client = makeTestClient { connection, callOptions in
-      BidirectionalStreamingScenariosClient(connection: connection, defaultCallOptions: callOptions)
+    client = makeTestClient { channel, callOptions in
+      BidirectionalStreamingScenariosClient(channel: channel, defaultCallOptions: callOptions)
     }
   }
   
   override class func tearDown() {
-    try! client?.connection.close().wait()
+    try! client?.channel.close().wait()
     try! serverEventLoopGroup?.syncShutdownGracefully()
     retainedCancellables.removeAll()
     super.tearDown()

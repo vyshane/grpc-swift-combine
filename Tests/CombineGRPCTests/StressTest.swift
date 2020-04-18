@@ -31,25 +31,25 @@ class StressTest: XCTestCase {
     ]
     serverEventLoopGroup = try! makeTestServer(services: services, eventLoopGroupSize: 4)
     
-    unaryClient = makeTestClient(eventLoopGroupSize: 4) { connection, callOptions in
-      UnaryScenariosClient(connection: connection, defaultCallOptions: callOptions)
+    unaryClient = makeTestClient(eventLoopGroupSize: 4) { channel, callOptions in
+      UnaryScenariosClient(channel: channel, defaultCallOptions: callOptions)
     }
-    serverStreamingClient = makeTestClient(eventLoopGroupSize: 4) { connection, callOptions in
-      ServerStreamingScenariosClient(connection: connection, defaultCallOptions: callOptions)
+    serverStreamingClient = makeTestClient(eventLoopGroupSize: 4) { channel, callOptions in
+      ServerStreamingScenariosClient(channel: channel, defaultCallOptions: callOptions)
     }
-    clientStreamingClient = makeTestClient(eventLoopGroupSize: 4) { connection, callOptions in
-      ClientStreamingScenariosClient(connection: connection, defaultCallOptions: callOptions)
+    clientStreamingClient = makeTestClient(eventLoopGroupSize: 4) { channel, callOptions in
+      ClientStreamingScenariosClient(channel: channel, defaultCallOptions: callOptions)
     }
-    bidirectionalStreamingClient = makeTestClient(eventLoopGroupSize: 4) { connection, callOptions in
-      BidirectionalStreamingScenariosClient(connection: connection, defaultCallOptions: callOptions)
+    bidirectionalStreamingClient = makeTestClient(eventLoopGroupSize: 4) { channel, callOptions in
+      BidirectionalStreamingScenariosClient(channel: channel, defaultCallOptions: callOptions)
     }
   }
   
   override class func tearDown() {
-    try! unaryClient?.connection.close().wait()
-    try! serverStreamingClient?.connection.close().wait()
-    try! clientStreamingClient?.connection.close().wait()
-    try! bidirectionalStreamingClient?.connection.close().wait()
+    try! unaryClient?.channel.close().wait()
+    try! serverStreamingClient?.channel.close().wait()
+    try! clientStreamingClient?.channel.close().wait()
+    try! bidirectionalStreamingClient?.channel.close().wait()
     try! serverEventLoopGroup?.syncShutdownGracefully()
     retainedCancellables.removeAll()
     super.tearDown()

@@ -19,13 +19,13 @@ class ServerStreamingTests: XCTestCase {
   override class func setUp() {
     super.setUp()
     serverEventLoopGroup = try! makeTestServer(services: [ServerStreamingTestsService()])
-    client = makeTestClient { connection, callOptions in
-      ServerStreamingScenariosClient(connection: connection, defaultCallOptions: callOptions)
+    client = makeTestClient { channel, callOptions in
+      ServerStreamingScenariosClient(channel: channel, defaultCallOptions: callOptions)
     }
   }
   
   override class func tearDown() {
-    try! client?.connection.close().wait()
+    try! client?.channel.close().wait()
     try! serverEventLoopGroup?.syncShutdownGracefully()
     retainedCancellables.removeAll()
     super.tearDown()
