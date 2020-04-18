@@ -227,7 +227,7 @@ public struct GRPCExecutor {
     case .never:
       return call(currentCallOptions())
       
-    case .failedCall(let maxRetries, let shouldRetry, let delayUntilNext, let onGiveUp):
+    case .failedCall(let maxRetries, let shouldRetry, let delayUntilNext, let didGiveUp):
       precondition(maxRetries >= 1, "RetryPolicy.failedCall upTo parameter should be at least 1")
       
       func attemptCall(retries: Int) -> AnyPublisher<T, GRPCStatus> {
@@ -240,7 +240,7 @@ public struct GRPCExecutor {
                 .eraseToAnyPublisher()
             }
             if shouldRetry(status) && retries == maxRetries {
-              onGiveUp()
+              didGiveUp()
             }
             return Fail(error: status).eraseToAnyPublisher()
           }

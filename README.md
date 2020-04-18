@@ -144,7 +144,7 @@ let grpc = GRPCExecutor(
       callOptions.send(CallOptions(customMetadata: HTTPHeaders([("authorization", "Bearer xxx")])))
       return Just(()).eraseToAnyPublisher()
     },
-    onGiveUp: {
+    didGiveUp: {
       print("Authenticated call failed.")
     }
   )

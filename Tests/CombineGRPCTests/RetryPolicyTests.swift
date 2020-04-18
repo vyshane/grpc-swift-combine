@@ -37,7 +37,7 @@ final class RetryPolicyTests: XCTestCase {
     let grpc = GRPCExecutor(retry: .failedCall(
       upTo: 2,
       when: { $0.code == .failedPrecondition },
-      onGiveUp: { XCTFail("onGiveUp callback should not trigger") }
+      didGiveUp: { XCTFail("onGiveUp callback should not trigger") }
     ))
 
     let request = FailThenSucceedRequest.with {
@@ -68,7 +68,7 @@ final class RetryPolicyTests: XCTestCase {
     
     let client = RetryPolicyTests.client!
     let grpc = GRPCExecutor(retry:
-      .failedCall(upTo: 2, when: { $0.code == .failedPrecondition }, onGiveUp: { onGiveUpPromise.fulfill() })
+      .failedCall(upTo: 2, when: { $0.code == .failedPrecondition }, didGiveUp: { onGiveUpPromise.fulfill() })
     )
 
     let request = FailThenSucceedRequest.with {
