@@ -1,7 +1,7 @@
 FROM swift:latest
 
 ARG PROTOC_VERSION=3.11.2
-ARG GRPC_SWIFT_VERSION=1.0.0-alpha.9
+ARG GRPC_SWIFT_VERSION=1.0.0-alpha.11
 
 RUN apt-get -q update \
     && apt-get install --yes --no-install-recommends --no-install-suggests \
