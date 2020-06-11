@@ -2,7 +2,7 @@
 
 ## Status
 
-CombineGRPC depends on Swift gRPC v1.0.0-alpha.13, and integrates with Apple's new Combine framework.
+CombineGRPC depends on Swift gRPC v1.0.0-alpha.14, and integrates with Apple's new Combine framework.
 
 ## gRPC and Combine, Better Together
 
@@ -173,7 +173,7 @@ brew install protobuf
 brew install swift-protobuf
 ```
 
-Next, download the latest version of grpc-swift with NIO support. Currently that means [Swift gRPC 1.0.0-alpha.13](https://github.com/grpc/grpc-swift/releases/tag/1.0.0-alpha.13). Unarchive the downloaded file and build the Swift gRPC plugin by running make in the root directory of the project.
+Next, download the latest version of grpc-swift with NIO support. Currently that means [Swift gRPC 1.0.0-alpha.14](https://github.com/grpc/grpc-swift/releases/tag/1.0.0-alpha.14). Unarchive the downloaded file and build the Swift gRPC plugin by running make in the root directory of the project.
 
 ```text
 make plugin
@@ -202,7 +202,7 @@ You can add CombineGRPC using Swift Package Manager by listing it as a dependenc
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/vyshane/grpc-swift-combine.git", from: "0.12.0"),
+  .package(url: "https://github.com/vyshane/grpc-swift-combine.git", from: "0.13.0"),
 ],
 ```
 
