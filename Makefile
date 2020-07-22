@@ -7,8 +7,8 @@ project: protobuf
 
 protobuf:
 	mkdir -p ${PROTO_GEN_DIR}
-	protoc ${PROTO_DIR}/*.proto --swift_out=FileNaming=DropPath:${PROTO_GEN_DIR}
-	protoc ${PROTO_DIR}/*.proto --grpc-swift_out=FileNaming=DropPath:${PROTO_GEN_DIR}
+	protoc ${PROTO_DIR}/*.proto --plugin=/Users/abrampers/Downloads/1.0.0-alpha.16/protoc-gen-swift --swift_out=FileNaming=DropPath:${PROTO_GEN_DIR}
+	protoc ${PROTO_DIR}/*.proto --plugin=/Users/abrampers/Downloads/1.0.0-alpha.16/protoc-gen-grpc-swift --grpc-swift_out=FileNaming=DropPath:${PROTO_GEN_DIR}
 
 protobuf_docker:
 	mkdir -p ${PROTO_GEN_DIR}
