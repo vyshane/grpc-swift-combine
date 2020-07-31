@@ -13,6 +13,6 @@ protobuf:
 protobuf_docker:
 	mkdir -p ${PROTO_GEN_DIR}
 	docker run --rm -v "${PWD}":/protobuf -w="/protobuf" cyborgthefirst/grpc-swift:1.0.0-alpha.11 \
-	protoc ${PROTO_DIR}/*.proto --plugin=${PROTOC_SWIFT_PLUGIN_PATH} --swift_opt=FileNaming=DropPath \
+	protoc ${PROTO_DIR}/*.proto --swift_opt=FileNaming=DropPath \
 	--swift_out=${PROTO_GEN_DIR} \
 	--grpc-swift_out=FileNaming=DropPath:${PROTO_GEN_DIR}
