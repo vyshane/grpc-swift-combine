@@ -89,7 +89,7 @@ class ClientStreamingTests: XCTestCase {
   func testNoResponse() {
     let promise = expectation(description: "Call fails with deadline exceeded status")
     let client = ClientStreamingTests.client!
-    let options = CallOptions(timeout: try! .milliseconds(50))
+    let options = CallOptions(timeLimit: TimeLimit.timeout(.milliseconds(20)))
     let requests = repeatElement(EchoRequest.with { $0.message = "hello"}, count: 3)
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
     let grpc = GRPCExecutor(callOptions: Just(options).eraseToAnyPublisher())

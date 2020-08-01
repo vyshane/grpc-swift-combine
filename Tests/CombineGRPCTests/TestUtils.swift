@@ -37,6 +37,6 @@ func makeTestClient<Client>(eventLoopGroupSize: Int = 1, _ clientCreator: (Clien
   let channel = ClientConnection
     .insecure(group: eventLoopGroup)
     .connect(host: host, port: port)
-  let callOptions = CallOptions(timeout: try! .milliseconds(200))
+  let callOptions = CallOptions(timeLimit: TimeLimit.timeout(.milliseconds(200)))
   return clientCreator(channel, callOptions)
 }
