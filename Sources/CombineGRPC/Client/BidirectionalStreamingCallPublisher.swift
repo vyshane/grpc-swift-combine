@@ -8,7 +8,7 @@ import SwiftProtobuf
 
 @available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 struct BidirectionalStreamingCallPublisher<Request, Response>: Publisher
-  where Request: GRPCPayload, Response: GRPCPayload
+  where Request: Message, Response: Message
 {
   typealias Output = Response
   typealias Failure = GRPCStatus

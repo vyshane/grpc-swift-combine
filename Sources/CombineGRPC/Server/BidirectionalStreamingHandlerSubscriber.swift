@@ -8,13 +8,13 @@ import NIO
 import SwiftProtobuf
 
 @available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
-class BidirectionalStreamingHandlerSubscriber<Request, Response>: Subscriber, Cancellable where Response: GRPCPayload {
+class BidirectionalStreamingHandlerSubscriber<Request, Response>: Subscriber, Cancellable where Response: Message {
   typealias Input = Response
   typealias Failure = GRPCStatus
   
   private var subscription: Subscription?
   private let context: StreamingResponseCallContext<Response>
-    
+  
   init(context: StreamingResponseCallContext<Response>) {
     self.context = context
   }

@@ -16,8 +16,9 @@ import SwiftProtobuf
    - handler: A function that returns a publisher that either publishes a `Response` or fails with a `GRPCStatus`.
  */
 @available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
-public func handle<Response>(_ context: StatusOnlyCallContext,
-                             handler: () -> AnyPublisher<Response, GRPCStatus>) -> EventLoopFuture<Response>
+public func handle<Response>
+  (_ context: StatusOnlyCallContext, handler: () -> AnyPublisher<Response, GRPCStatus>)
+  -> EventLoopFuture<Response>
 {
   let unarySubscriber = UnaryHandlerSubscriber<Response>(context: context)
   handler().subscribe(unarySubscriber)
@@ -32,9 +33,9 @@ public func handle<Response>(_ context: StatusOnlyCallContext,
    - handler: A function that takes a `Request` and returns a publisher that either publishes a `Response` or fails with a `GRPCStatus`.
  */
 @available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
-public func handle<Request, Response>(_ request: Request, _ context: StatusOnlyCallContext,
-                                      handler: (Request) -> AnyPublisher<Response, GRPCStatus>)
-                                     -> EventLoopFuture<Response>
+public func handle<Request, Response>
+  (_ request: Request, _ context: StatusOnlyCallContext, handler: (Request) -> AnyPublisher<Response, GRPCStatus>)
+  -> EventLoopFuture<Response>
 {
   let unarySubscriber = UnaryHandlerSubscriber<Response>(context: context)
   handler(request).subscribe(unarySubscriber)
@@ -51,8 +52,9 @@ public func handle<Request, Response>(_ request: Request, _ context: StatusOnlyC
    - handler: A function that returns a publisher that publishes a stream of `Response`s. The publisher may fail with a `GRPCStatus` error.
  */
 @available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
-public func handle<Response>(_ context: StreamingResponseCallContext<Response>,
-                             handler: () -> AnyPublisher<Response, GRPCStatus>) -> EventLoopFuture<GRPCStatus>
+public func handle<Response: Message>
+  (_ context: StreamingResponseCallContext<Response>, handler: () -> AnyPublisher<Response, GRPCStatus>)
+  -> EventLoopFuture<GRPCStatus>
 {
   let serverStreamingSubscriber = ServerStreamingHandlerSubscriber<Response>(context: context)
   handler().subscribe(serverStreamingSubscriber)
@@ -68,9 +70,10 @@ public func handle<Response>(_ context: StreamingResponseCallContext<Response>,
      The publisher may fail with a `GRPCStatus` error.
  */
 @available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
-public func handle<Request, Response>(_ request: Request, _ context: StreamingResponseCallContext<Response>,
-                                      handler: (Request) -> AnyPublisher<Response, GRPCStatus>)
-                                     -> EventLoopFuture<GRPCStatus>
+public func handle<Request, Response: Message>
+  (_ request: Request, _ context: StreamingResponseCallContext<Response>, handler: (Request)
+  -> AnyPublisher<Response, GRPCStatus>)
+  -> EventLoopFuture<GRPCStatus>
 {
   let serverStreamingSubscriber = ServerStreamingHandlerSubscriber<Response>(context: context)
   handler(request).subscribe(serverStreamingSubscriber)
@@ -87,9 +90,10 @@ public func handle<Request, Response>(_ request: Request, _ context: StreamingRe
    - handler: A function that takes a stream of `Request`s and returns a publisher that publishes a `Response` or fails with a `GRPCStatus` error.
  */
 @available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
-public func handle<Request, Response>(_ context: UnaryResponseCallContext<Response>,
-                                      handler: (AnyPublisher<Request, Never>) -> AnyPublisher<Response, GRPCStatus>)
-                                     -> EventLoopFuture<(StreamEvent<Request>) -> Void>
+public func handle<Request: Message, Response: Message>
+  (_ context: UnaryResponseCallContext<Response>, handler: (AnyPublisher<Request, Never>)
+  -> AnyPublisher<Response, GRPCStatus>)
+  -> EventLoopFuture<(StreamEvent<Request>) -> Void>
 {
   let requests = PassthroughSubject<Request, Never>()
   let clientStreamingSubscriber = ClientStreamingHandlerSubscriber<Request, Response>(context: context)
@@ -114,9 +118,10 @@ public func handle<Request, Response>(_ context: UnaryResponseCallContext<Respon
      The response publisher may fail with a `GRPCStatus` error.
  */
 @available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
-public func handle<Request, Response>(_ context: StreamingResponseCallContext<Response>,
-                                      handler: (AnyPublisher<Request, Never>) -> AnyPublisher<Response, GRPCStatus>)
-                                     -> EventLoopFuture<(StreamEvent<Request>) -> Void>
+public func handle<Request, Response: Message>
+  (_ context: StreamingResponseCallContext<Response>, handler: (AnyPublisher<Request, Never>)
+  -> AnyPublisher<Response, GRPCStatus>)
+  -> EventLoopFuture<(StreamEvent<Request>) -> Void>
 {
   let requests = PassthroughSubject<Request, Never>()
   let bidirectionalStreamingSubscriber = BidirectionalStreamingHandlerSubscriber<Request, Response>(context: context)
