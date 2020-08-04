@@ -202,7 +202,7 @@ You can add CombineGRPC using Swift Package Manager by listing it as a dependenc
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/vyshane/grpc-swift-combine.git", from: "0.14.0"),
+  .package(url: "https://github.com/vyshane/grpc-swift-combine.git", from: "0.15.0"),
 ],
 ```
 
