@@ -1,7 +1,7 @@
 PROTO_DIR = Tests/Protobuf
 PROTO_GEN_DIR = Tests/CombineGRPCTests/Generated
 
-project: protobuf
+project: clean protobuf
 	swift package generate-xcodeproj --output CombineGRPC.xcodeproj
 	@-ruby Scripts/fix-project-settings.rb CombineGRPC.xcodeproj || echo "Consider running 'sudo gem install xcodeproj' to automatically set correct indentation settings for the generated project."
 
@@ -16,3 +16,9 @@ protobuf_docker:
 	protoc ${PROTO_DIR}/*.proto --swift_opt=FileNaming=DropPath \
 	--swift_out=${PROTO_GEN_DIR} \
 	--grpc-swift_out=FileNaming=DropPath:${PROTO_GEN_DIR}
+
+clean:
+	rm -rf .build/
+	rm -rf .swiftpm/
+	rm -rf $PROTO_GEN_DIR
+	rm -rf CombineGRPC.xcodeproj
