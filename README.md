@@ -198,17 +198,29 @@ example_service.pb.swift
 
 ### Adding CombineGRPC to Your Project
 
-You can add CombineGRPC using Swift Package Manager by listing it as a dependency to your Package.swift configuration file.
+You can easily add CombineGRPC to your project using either Swift Package Manager or CocoaPods.
+
+#### Swift Package Manager
+
+Add the package dependency to your `Package.swift`:
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/vyshane/grpc-swift-combine.git", from: "0.15.0"),
+  .package(url: "https://github.com/vyshane/grpc-swift-combine.git", from: "0.16.0"),
 ],
+```
+
+#### CocoaPods
+
+Add the following line to your `Podfile`:
+
+```text
+pod 'CombineGRPC', '0.16.0'
 ```
 
 ## Compatibility
 
-Since this library integrates with Combine, it only works on platforms that support Combine. This currently means the following minimum versions: macOS 10.15 Catalina, iOS 13, watchOS 6 and tvOS 13.
+Since this library integrates with Combine, it only works on platforms that support Combine. This currently means the following minimum versions: macOS 10.15 Catalina, iOS 13 and tvOS 13. WatchOS is not supported because upstream gRPC Swift does not support it.
 
 ## Project Status
 
@@ -243,20 +255,8 @@ Documentation
 
 ### Unit Tests
 
-#### Local Code Generation
-
 The unit tests rely on some Swift code that is generated from Protobuf. You can easily generate these by running:
 
 ```text
 make protobuf
 ```
-
-#### Code Generation with [Docker](https://www.docker.com) 
-
-If you have [Docker](https://www.docker.com) installed you can also run:
-
-```text
-make protobuf_docker
-```
-
-This will run `protoc` in a docker image and copy all the generated files to the correct place in the project.
