@@ -16,7 +16,7 @@ Pod::Spec.new do |spec|
   spec.ios.deployment_target = "13.0"
   spec.osx.deployment_target = "10.15"
   spec.tvos.deployment_target = "13.0"
-  source_files = 'Sources/CombineGRPC/**/*.swift'
+  spec.source_files = 'Sources/CombineGRPC/**/*.swift'
 
   spec.dependency "gRPC-Swift", "1.0.0-alpha.18"
 
