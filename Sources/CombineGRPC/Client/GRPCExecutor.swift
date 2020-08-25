@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0
 
 import Combine
+import CombineExt
 import GRPC
 import SwiftProtobuf
 
@@ -38,7 +39,7 @@ public typealias BidirectionalStreamingRPC<Request, Response> =
  
  Can be configured with `CallOptions` to use when making RPC calls, as well as a `RetryPolicy` for automatic retries of failed RPC calls.
  */
-@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
+@available(OSX 10.15, iOS 13, tvOS 13, *)
 public struct GRPCExecutor {
   
   private let retryPolicy: RetryPolicy
@@ -93,8 +94,8 @@ public struct GRPCExecutor {
     where Request: Message, Response: Message
   {
     { request in
-      self.executeWithRetry(policy: self.retryPolicy, { callOptions in
-        callOptions
+      self.executeWithRetry(policy: self.retryPolicy, { currentCallOptions in
+        currentCallOptions
           .flatMap { callOptions in
             Future<Response, GRPCStatus> { promise in
               let call = rpc(request, callOptions)
@@ -133,12 +134,16 @@ public struct GRPCExecutor {
     where Request: Message, Response: Message
   {
     { request in
-      self.executeWithRetry(policy: self.retryPolicy, { callOptions in
-        callOptions
-          .flatMap { callOptions -> ServerStreamingCallPublisher<Request, Response> in
-            let bridge = MessageBridge<Response>()
-            let call = rpc(request, callOptions, bridge.receive)
-            return ServerStreamingCallPublisher(serverStreamingCall: call, messageBridge: bridge)
+      self.executeWithRetry(policy: self.retryPolicy, { currentCallOptions in
+        currentCallOptions
+          .flatMap { callOptions in
+            AnyPublisher<Response, GRPCStatus>.create { subscriber in
+              let call = rpc(request, callOptions, subscriber.send)
+              call.status.whenSuccess(sendCompletion(toSubscriber: subscriber))
+              return AnyCancellable {
+                call.cancel(promise: nil)
+              }
+            }
           }
           .eraseToAnyPublisher()
       })
@@ -164,23 +169,29 @@ public struct GRPCExecutor {
     where Request: Message, Response: Message
   {
     { requests in
-      self.executeWithRetry(policy: self.retryPolicy, { callOptions in
-        callOptions
-          .flatMap { callOptions -> Future<Response, GRPCStatus> in
-            Future<Response, GRPCStatus> { promise in
+      self.executeWithRetry(policy: self.retryPolicy, { currentCallOptions in
+        currentCallOptions
+          .flatMap { callOptions in
+            AnyPublisher<Response, GRPCStatus>.create { subscriber in
               let call = rpc(callOptions)
-              _ = requests.sink(
+              
+              // TODO: Can we avoid .sink() here in order to support backpressure?
+              let requestsCancellable = requests.sink(
                 receiveCompletion: { switch $0 {
                   case .finished: _ = call.sendEnd()
                   case .failure: _ = call.cancel(promise: nil)
                 }},
                 receiveValue: { _ = call.sendMessage($0) }
               )
-              call.response.whenSuccess { _ = promise(.success($0)) }
-              call.status.whenSuccess { promise(.failure($0)) }
+              call.response.whenSuccess { subscriber.send($0) }
+              call.status.whenSuccess(sendCompletion(toSubscriber: subscriber))
+              return AnyCancellable {
+                call.cancel(promise: nil)
+                requestsCancellable.cancel()
+              }
             }
-          }
-          .eraseToAnyPublisher()
+        }
+        .eraseToAnyPublisher()
       })
     }
   }
@@ -204,13 +215,28 @@ public struct GRPCExecutor {
     where Request: Message, Response: Message
   {
     { requests in
-      self.executeWithRetry(policy: self.retryPolicy, { callOptions in
-        callOptions
-          .flatMap { callOptions -> BidirectionalStreamingCallPublisher<Request, Response> in
-            let bridge = MessageBridge<Response>()
-            let call = rpc(callOptions, bridge.receive)
-            return BidirectionalStreamingCallPublisher(bidirectionalStreamingCall: call, messageBridge: bridge,
-                                                       requests: requests)
+      self.executeWithRetry(policy: self.retryPolicy, { currentCallOptions in
+        currentCallOptions
+          .flatMap { callOptions in
+            AnyPublisher<Response, GRPCStatus>.create { subscriber in
+              let call = rpc(callOptions, subscriber.send)
+              
+              // TODO: Can we avoid .sink() here in order to support backpressure?
+              let requestsCancellable = requests.sink(
+                receiveCompletion: { switch $0 {
+                  case .finished: _ = call.sendEnd()
+                  case .failure: _ = call.cancel(promise: nil)
+                }},
+                receiveValue: {
+                  _ = call.sendMessage($0)
+                }
+              )
+              call.status.whenSuccess(sendCompletion(toSubscriber: subscriber))
+              return AnyCancellable {
+                call.cancel(promise: nil)
+                requestsCancellable.cancel()
+              }
+            }
           }
           .eraseToAnyPublisher()
       })
@@ -219,10 +245,10 @@ public struct GRPCExecutor {
   
   // MARK: -
   
-  private func executeWithRetry<T>(policy: RetryPolicy,
-                                   _ call: @escaping (AnyPublisher<CallOptions, GRPCStatus>) -> AnyPublisher<T, GRPCStatus>)
-    -> AnyPublisher<T, GRPCStatus>
-  {
+  private func executeWithRetry<T>(
+    policy: RetryPolicy,
+    _ call: @escaping (AnyPublisher<CallOptions, GRPCStatus>) -> AnyPublisher<T, GRPCStatus>
+  ) -> AnyPublisher<T, GRPCStatus> {
     switch policy {
     case .never:
       return call(currentCallOptions())
