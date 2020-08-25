@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "CombineExt",
+        "repositoryURL": "https://github.com/CombineCommunity/CombineExt.git",
+        "state": {
+          "branch": null,
+          "revision": "6664678135c6aec049c887a51c9da2545f184882",
+          "version": "1.2.0"
+        }
+      },
+      {
         "package": "grpc-swift",
         "repositoryURL": "https://github.com/grpc/grpc-swift.git",
         "state": {
@@ -24,8 +33,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "acf5465b5e7fb9aeda54a34d16fb44c31a399715",
-          "version": "2.20.2"
+          "revision": "cf6f2b1807219643270616e03de697b96c46384c",
+          "version": "2.21.0"
         }
       },
       {
@@ -33,8 +42,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio-http2.git",
         "state": {
           "branch": null,
-          "revision": "e9627350bdb85bde7e0dc69a29799e40961ced72",
-          "version": "1.13.0"
+          "revision": "9f4eff06038a9d1301e939a55a0db935634a2f6e",
+          "version": "1.14.0"
         }
       },
       {

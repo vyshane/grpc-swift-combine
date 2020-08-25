@@ -10,7 +10,7 @@ import NIO
 /**
  TODO
  */
-@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
+@available(OSX 10.15, iOS 13, tvOS 13, *)
 class StressTest: XCTestCase {
 
   static var serverEventLoopGroup: EventLoopGroup?
