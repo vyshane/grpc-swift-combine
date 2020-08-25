@@ -15,7 +15,7 @@ import SwiftProtobuf
    - context: The gRPC call context.
    - handler: A function that returns a publisher that either publishes a `Response` or fails with a `GRPCStatus`.
  */
-@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
+@available(OSX 10.15, iOS 13, tvOS 13, *)
 public func handle<Response>
   (_ context: StatusOnlyCallContext, handler: () -> AnyPublisher<Response, GRPCStatus>)
   -> EventLoopFuture<Response>
@@ -32,7 +32,7 @@ public func handle<Response>
    - context: The gRPC call context.
    - handler: A function that takes a `Request` and returns a publisher that either publishes a `Response` or fails with a `GRPCStatus`.
  */
-@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
+@available(OSX 10.15, iOS 13, tvOS 13, *)
 public func handle<Request, Response>
   (_ request: Request, _ context: StatusOnlyCallContext, handler: (Request) -> AnyPublisher<Response, GRPCStatus>)
   -> EventLoopFuture<Response>
@@ -51,7 +51,7 @@ public func handle<Request, Response>
    - context: The gRPC call context.
    - handler: A function that returns a publisher that publishes a stream of `Response`s. The publisher may fail with a `GRPCStatus` error.
  */
-@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
+@available(OSX 10.15, iOS 13, tvOS 13, *)
 public func handle<Response: Message>
   (_ context: StreamingResponseCallContext<Response>, handler: () -> AnyPublisher<Response, GRPCStatus>)
   -> EventLoopFuture<GRPCStatus>
@@ -69,7 +69,7 @@ public func handle<Response: Message>
    - handler: A function that takes a `Request` and  returns a publisher that publishes a stream of `Response`s.
      The publisher may fail with a `GRPCStatus` error.
  */
-@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
+@available(OSX 10.15, iOS 13, tvOS 13, *)
 public func handle<Request, Response: Message>
   (_ request: Request, _ context: StreamingResponseCallContext<Response>, handler: (Request)
   -> AnyPublisher<Response, GRPCStatus>)
@@ -89,7 +89,7 @@ public func handle<Request, Response: Message>
    - context: The gRPC call context.
    - handler: A function that takes a stream of `Request`s and returns a publisher that publishes a `Response` or fails with a `GRPCStatus` error.
  */
-@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
+@available(OSX 10.15, iOS 13, tvOS 13, *)
 public func handle<Request: Message, Response: Message>
   (_ context: UnaryResponseCallContext<Response>, handler: (AnyPublisher<Request, Never>)
   -> AnyPublisher<Response, GRPCStatus>)
@@ -117,7 +117,7 @@ public func handle<Request: Message, Response: Message>
    - handler: A function that takes a stream of `Request`s and returns a publisher that publishes a stream of `Response`s.
      The response publisher may fail with a `GRPCStatus` error.
  */
-@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
+@available(OSX 10.15, iOS 13, tvOS 13, *)
 public func handle<Request, Response: Message>
   (_ context: StreamingResponseCallContext<Response>, handler: (AnyPublisher<Request, Never>)
   -> AnyPublisher<Response, GRPCStatus>)

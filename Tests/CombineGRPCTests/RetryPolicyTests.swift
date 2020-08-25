@@ -8,7 +8,7 @@ import NIO
 import NIOHPACK
 @testable import CombineGRPC
 
-@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
+@available(OSX 10.15, iOS 13, tvOS 13, *)
 final class RetryPolicyTests: XCTestCase {
   
   static var serverEventLoopGroup: EventLoopGroup?
