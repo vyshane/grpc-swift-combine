@@ -140,6 +140,7 @@ public struct GRPCExecutor {
             AnyPublisher<Response, GRPCStatus>.create { subscriber in
               let call = rpc(request, callOptions, subscriber.send)
               call.status.whenSuccess(sendCompletion(toSubscriber: subscriber))
+              
               return AnyCancellable {
                 call.cancel(promise: nil)
               }
@@ -185,6 +186,7 @@ public struct GRPCExecutor {
               )
               call.response.whenSuccess { subscriber.send($0) }
               call.status.whenSuccess(sendCompletion(toSubscriber: subscriber))
+              
               return AnyCancellable {
                 call.cancel(promise: nil)
                 requestsCancellable.cancel()
@@ -232,6 +234,7 @@ public struct GRPCExecutor {
                 }
               )
               call.status.whenSuccess(sendCompletion(toSubscriber: subscriber))
+              
               return AnyCancellable {
                 call.cancel(promise: nil)
                 requestsCancellable.cancel()

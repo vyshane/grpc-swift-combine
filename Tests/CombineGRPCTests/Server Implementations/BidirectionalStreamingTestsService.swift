@@ -34,7 +34,7 @@ class BidirectionalStreamingTestsService: BidirectionalStreamingScenariosProvide
     }
   }
   
-  // Times out
+  // An RPC that never completes
   func noResponse(context: StreamingResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {

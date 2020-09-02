@@ -34,9 +34,9 @@ class BidirectionalStreamingTests: XCTestCase {
     let client = BidirectionalStreamingTests.client!
     let requests = repeatElement(EchoRequest.with { $0.message = "hello"}, count: 3)
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
-    let grpc = GRPCExecutor()
-    
-    grpc.call(client.ok)(requestStream)
+
+    GRPCExecutor()
+      .call(client.ok)(requestStream)
       .filter { $0.message == "hello" }
       .count()
       .sink(
@@ -60,9 +60,9 @@ class BidirectionalStreamingTests: XCTestCase {
     let failedPrecondition = BidirectionalStreamingTests.client!.failedPrecondition
     let requests = repeatElement(EchoRequest.with { $0.message = "hello"}, count: 3)
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
-    let grpc = GRPCExecutor()
-    
-    grpc.call(failedPrecondition)(requestStream)
+
+    GRPCExecutor()
+      .call(failedPrecondition)(requestStream)
       .sink(
         receiveCompletion: { switch $0 {
           case .failure(let status):
@@ -89,9 +89,9 @@ class BidirectionalStreamingTests: XCTestCase {
     let options = CallOptions(timeLimit: TimeLimit.timeout(.milliseconds(20)))
     let requests = repeatElement(EchoRequest.with { $0.message = "hello"}, count: 3)
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
-    let grpc = GRPCExecutor(callOptions: Just(options).eraseToAnyPublisher())
     
-    grpc.call(client.noResponse)(requestStream)
+    GRPCExecutor(callOptions: Just(options).eraseToAnyPublisher())
+      .call(client.noResponse)(requestStream)
       .sink(
         receiveCompletion: { switch $0 {
           case .failure(let status):
@@ -115,12 +115,12 @@ class BidirectionalStreamingTests: XCTestCase {
   func testClientStreamError() {
     let promise = expectation(description: "Call fails with cancelled status")
     let client = BidirectionalStreamingTests.client!
-    let grpc = GRPCExecutor()
-    
+
     struct ClientStreamError: Error {}
     let requests = Fail<EchoRequest, Error>(error: ClientStreamError()).eraseToAnyPublisher()
     
-    grpc.call(client.ok)(requests)
+    GRPCExecutor()
+      .call(client.ok)(requests)
       .sink(
         receiveCompletion: { completion in
           switch completion {
@@ -138,7 +138,7 @@ class BidirectionalStreamingTests: XCTestCase {
           XCTFail("Call should not return a response")
         }
       )
-      .store(in: &ClientStreamingTests.retainedCancellables)
+      .store(in: &BidirectionalStreamingTests.retainedCancellables)
     
     wait(for: [promise], timeout: 0.2)
   }
