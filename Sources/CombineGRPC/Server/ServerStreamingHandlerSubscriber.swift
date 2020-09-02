@@ -29,12 +29,12 @@ class ServerStreamingHandlerSubscriber<Response>: Subscriber, Cancellable where 
   
   func receive(subscription: Subscription) {
     self.subscription = subscription
-    self.subscription?.request(.unlimited)
+    self.subscription?.request(.max(1))
   }
   
   func receive(_ input: Response) -> Subscribers.Demand {
     _ = context.sendResponse(input)
-    return .unlimited
+    return .max(1)
   }
   
   func receive(completion: Subscribers.Completion<GRPCStatus>) {
