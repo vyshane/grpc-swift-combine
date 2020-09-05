@@ -166,20 +166,16 @@ Check out the [CombineGRPC tests](Tests/CombineGRPCTests) for examples of all th
 
 ### Generating Swift Code from Protobuf
 
-To generate Swift code from your .proto files, you'll need to first install the [protoc](https://github.com/protocolbuffers/protobuf) Protocol Buffer compiler and the [swift-protobuf](https://github.com/apple/swift-protobuf) plugin.
+To generate Swift code from your .proto files, you'll need to first install the [protoc](https://github.com/protocolbuffers/protobuf) Protocol Buffer compiler.
 
 ```text
 brew install protobuf
-brew install swift-protobuf
 ```
 
-Next, download the latest version of grpc-swift with NIO support. Currently that means [Swift gRPC 1.0.0-alpha.19](https://github.com/grpc/grpc-swift/releases/tag/1.0.0-alpha.19). Unarchive the downloaded file and build the Swift gRPC plugin by running make in the root directory of the project.
+Next, download the swift and grpc-swift protoc plugins from the the latest version of grpc-swift. Currently that means [protoc-grpc-swift-plugins-1.0.0-alpha.19.zip
+](https://github.com/grpc/grpc-swift/releases/download/1.0.0-alpha.19/protoc-grpc-swift-plugins-1.0.0-alpha.19.zip). Unarchive the downloaded file and move the binaries from the `bin/` directory somewhere in your `$PATH`.
 
-```text
-make plugin
-```
-
-Put the built binary somewhere in your $PATH. Now you are ready to generate Swift code from protobuf interface definition files.
+Now you are ready to generate Swift code from protobuf interface definition files.
 
 Let's generate the message types, gRPC server and gRPC client for Swift.
 
