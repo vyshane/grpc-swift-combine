@@ -5,6 +5,7 @@ import Foundation
 import Combine
 import GRPC
 import NIO
+import NIOHPACK
 @testable import CombineGRPC
 
 @available(OSX 10.15, iOS 13, tvOS 13, *)
@@ -22,7 +23,9 @@ class UnaryTestsService: UnaryScenariosProvider {
                                context: StatusOnlyCallContext) -> EventLoopFuture<Empty> {
     handle(context) {
       let status = GRPCStatus(code: .failedPrecondition, message: "Failed precondition message")
-      return Fail<Empty, GRPCStatus>(error: status).eraseToAnyPublisher()
+      let additionalMetadata = HPACKHeaders([("custom", "info")])
+      return Fail<Empty, RPCError>(error: RPCError(status: status, trailingMetadata: additionalMetadata))
+        .eraseToAnyPublisher()
     }
   }
   
@@ -34,9 +37,9 @@ class UnaryTestsService: UnaryScenariosProvider {
   }
   
   // We define a handler here but you can imagine that it might be in its own separate class.
-  private func echoHandler(request: EchoRequest) -> AnyPublisher<EchoResponse, GRPCStatus> {
+  private func echoHandler(request: EchoRequest) -> AnyPublisher<EchoResponse, RPCError> {
     Just<EchoResponse>(EchoResponse.with { $0.message = request.message })
-      .setFailureType(to: GRPCStatus.self)
+      .setFailureType(to: RPCError.self)
       .eraseToAnyPublisher()
   }
 }

@@ -63,11 +63,12 @@ class ServerStreamingTests: XCTestCase {
     grpc.call(failedPrecondition)(EchoRequest.with { $0.message = "hello" })
       .sink(
         receiveCompletion: { switch $0 {
-          case .failure(let status):
-            if status.code == .failedPrecondition {
+          case .failure(let error):
+            if error.status.code == .failedPrecondition {
+              XCTAssert(error.trailingMetadata?.first(name: "custom") == "info")
               promise.fulfill()
             } else {
-              XCTFail("Unexpected status: " + status.localizedDescription)
+              XCTFail("Unexpected status: " + error.status.localizedDescription)
             }
           case .finished:
             XCTFail("Call should not succeed")
@@ -90,11 +91,11 @@ class ServerStreamingTests: XCTestCase {
     grpc.call(client.noResponse)(EchoRequest.with { $0.message = "hello" })
       .sink(
         receiveCompletion: { switch $0 {
-          case .failure(let status):
-            if status.code == .deadlineExceeded {
+          case .failure(let error):
+            if error.status.code == .deadlineExceeded {
               promise.fulfill()
             } else {
-              XCTFail("Unexpected status: " + status.localizedDescription)
+              XCTFail("Unexpected status: " + error.status.localizedDescription)
             }
           case .finished:
             XCTFail("Call should not succeed")

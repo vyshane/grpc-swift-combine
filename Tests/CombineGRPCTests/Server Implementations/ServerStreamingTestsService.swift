@@ -5,6 +5,7 @@ import Foundation
 import Combine
 import GRPC
 import NIO
+import NIOHPACK
 @testable import CombineGRPC
 
 @available(OSX 10.15, iOS 13, tvOS 13, *)
@@ -26,7 +27,9 @@ class ServerStreamingTestsService: ServerStreamingScenariosProvider {
   {
     handle(context) {
       let status = GRPCStatus(code: .failedPrecondition, message: "Failed precondition message")
-      return Fail<Empty, GRPCStatus>(error: status).eraseToAnyPublisher()
+      let additionalMetadata = HPACKHeaders([("custom", "info")])
+      return Fail<Empty, RPCError>(error: RPCError(status: status, trailingMetadata: additionalMetadata))
+        .eraseToAnyPublisher()
     }
   }
 
@@ -35,7 +38,7 @@ class ServerStreamingTestsService: ServerStreamingScenariosProvider {
     -> EventLoopFuture<GRPCStatus>
   {
     handle(context) {
-      Combine.Empty<Empty, GRPCStatus>(completeImmediately: false).eraseToAnyPublisher()
+      Combine.Empty<Empty, RPCError>(completeImmediately: false).eraseToAnyPublisher()
     }
   }
 }

@@ -10,19 +10,21 @@ import SwiftProtobuf
 @available(OSX 10.15, iOS 13, tvOS 13, *)
 class UnaryHandlerSubscriber<Response>: Subscriber, Cancellable {
   typealias Input = Response
-  typealias Failure = GRPCStatus
+  typealias Failure = RPCError
   
   var futureResult: EventLoopFuture<Response> {
     get {
-      promise.futureResult
+      responsePromise.futureResult
     }
   }
   
   private var subscription: Subscription?
-  private let promise: EventLoopPromise<Response>
-  
+  private let context: StatusOnlyCallContext
+  private let responsePromise: EventLoopPromise<Response>
+
   init(context: StatusOnlyCallContext) {
-    self.promise = context.eventLoop.makePromise()
+    self.context = context
+    responsePromise = context.eventLoop.makePromise()
   }
   
   func receive(subscription: Subscription) {
@@ -31,17 +33,18 @@ class UnaryHandlerSubscriber<Response>: Subscriber, Cancellable {
   }
   
   func receive(_ input: Response) -> Subscribers.Demand {
-    promise.succeed(input)
+    responsePromise.succeed(input)
     return .max(1)
   }
   
-  func receive(completion: Subscribers.Completion<GRPCStatus>) {
+  func receive(completion: Subscribers.Completion<RPCError>) {
     switch completion {
-    case .failure(let status):
-      promise.fail(status)
+    case .failure(let error):
+      context.trailingMetadata = augment(headers: context.trailingMetadata, withError: error)
+      responsePromise.fail(error.status)
     case .finished:
       let status = GRPCStatus(code: .aborted, message: "Response publisher completed without sending a value")
-      promise.fail(status)
+      responsePromise.fail(status)
     }
   }
   

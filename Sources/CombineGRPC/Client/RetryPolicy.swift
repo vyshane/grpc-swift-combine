@@ -26,7 +26,7 @@ public enum RetryPolicy {
    ```
    */
   case failedCall(upTo: UInt = 1,
-                  when: (GRPCStatus) -> Bool,
+                  when: (RPCError) -> Bool,
                   delayUntilNext: (Int) -> AnyPublisher<Void, Never> = { _ in Just(()).eraseToAnyPublisher() },
                   didGiveUp: () -> Void = {})
   /**

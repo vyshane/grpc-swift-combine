@@ -10,7 +10,7 @@ import SwiftProtobuf
 @available(OSX 10.15, iOS 13, tvOS 13, *)
 class BidirectionalStreamingHandlerSubscriber<Request, Response>: Subscriber, Cancellable where Response: Message {
   typealias Input = Response
-  typealias Failure = GRPCStatus
+  typealias Failure = RPCError
   
   private var subscription: Subscription?
   private let context: StreamingResponseCallContext<Response>
@@ -29,10 +29,11 @@ class BidirectionalStreamingHandlerSubscriber<Request, Response>: Subscriber, Ca
     return .max(1)
   }
   
-  func receive(completion: Subscribers.Completion<GRPCStatus>) {
+  func receive(completion: Subscribers.Completion<RPCError>) {
     switch completion {
-    case .failure(let status):
-      context.statusPromise.fail(status)
+    case .failure(let error):
+      context.trailingMetadata = augment(headers: context.trailingMetadata, withError: error)
+      context.statusPromise.fail(error.status)
     case .finished:
       context.statusPromise.succeed(.ok)
     }

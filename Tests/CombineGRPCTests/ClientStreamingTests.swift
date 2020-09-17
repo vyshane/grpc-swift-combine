@@ -67,11 +67,12 @@ class ClientStreamingTests: XCTestCase {
       .sink(
         receiveCompletion: { completion in
           switch completion {
-          case .failure(let status):
-            if status.code == .failedPrecondition {
+          case .failure(let error):
+            if error.status.code == .failedPrecondition {
+              XCTAssert(error.trailingMetadata?.first(name: "custom") == "info")
               promise.fulfill()
             } else {
-              XCTFail("Unexpected status: " + status.localizedDescription)
+              XCTFail("Unexpected status: " + error.status.localizedDescription)
             }
           case .finished:
             XCTFail("Call should not succeed")
@@ -98,11 +99,11 @@ class ClientStreamingTests: XCTestCase {
       .sink(
         receiveCompletion: { completion in
           switch completion {
-          case .failure(let status):
-            if status.code == .deadlineExceeded {
+          case .failure(let error):
+            if error.status.code == .deadlineExceeded {
               promise.fulfill()
             } else {
-              XCTFail("Unexpected status: " + status.localizedDescription)
+              XCTFail("Unexpected status: " + error.status.localizedDescription)
             }
           case .finished:
             XCTFail("Call should not succeed")
@@ -129,11 +130,11 @@ class ClientStreamingTests: XCTestCase {
       .sink(
         receiveCompletion: { completion in
           switch completion {
-          case .failure(let status):
-            if status.code == .cancelled {
+          case .failure(let error):
+            if error.status.code == .cancelled {
               promise.fulfill()
             } else {
-              XCTFail("Unexpected status: " + status.localizedDescription)
+              XCTFail("Unexpected status: " + error.status.localizedDescription)
             }
           case .finished:
             XCTFail("Call should not succeed")
