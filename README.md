@@ -1,21 +1,17 @@
 # CombineGRPC
 
-## Status
+CombineGRPC is a library that provides [Combine framework](https://developer.apple.com/documentation/combine) integration for [Swift gRPC](https://github.com/grpc/grpc-swift).
 
-CombineGRPC depends on Swift gRPC v1.0.0-alpha.19, and integrates with Apple's new Combine framework.
-
-## gRPC and Combine, Better Together
-
-CombineGRPC is a library that provides [Combine framework](https://developer.apple.com/documentation/combine) integration for [Swift gRPC](https://github.com/grpc/grpc-swift). It provides two flavours of functionality, `call` and `handle`. Use `call` to make gRPC calls on the client side, and `handle` to handle incoming RPC calls on the server side. CombineGRPC provides versions of `call` and `handle` for all RPC styles. Here are the input and output types for each.
+CombineGRPC provides two flavours of functionality, `call` and `handle`. Use `call` to make gRPC calls on the client side, and `handle` to handle incoming requests on the server side. The library provides versions of `call` and `handle` for all RPC styles. Here are the input and output types for each.
 
 RPC Style | Input and Output Types
 --- | ---
-| Unary | `Request -> AnyPublisher<Response, GRPCStatus>` |
-| Server streaming | `Request -> AnyPublisher<Response, GRPCStatus>` |
-| Client streaming | `AnyPublisher<Request, Error> -> AnyPublisher<Response, GRPCStatus>` |
-| Bidirectional streaming | `AnyPublisher<Request, Error> -> AnyPublisher<Response, GRPCStatus>` |
+Unary | `Request -> AnyPublisher<Response, RPCError>`
+Server streaming | `Request -> AnyPublisher<Response, RPCError>`
+Client streaming | `AnyPublisher<Request, Error> -> AnyPublisher<Response, RPCError>`
+Bidirectional streaming | `AnyPublisher<Request, Error> -> AnyPublisher<Response, RPCError>`
 
-When you make a unary call, you provide a request message, and get back a response publisher. The response publisher will either publish a single response, or fail with a `GRPCStatus` error. Similarly, if you are handling a unary RPC call, you provide a handler that takes a request parameter and returns an `AnyPublisher<Response, GRPCStatus>`.
+When you make a unary call, you provide a request message, and get back a response publisher. The response publisher will either publish a single response, or fail with a `RPCError` error. Similarly, if you are handling a unary RPC call, you provide a handler that takes a request parameter and returns an `AnyPublisher<Response, RPCError>`.
 
 You can follow the same intuition to understand the types for the other RPC styles. The only difference is that publishers for the streaming RPCs may publish zero or more messages instead of the single response message that is expected from the unary response publisher.
 
@@ -41,7 +37,7 @@ message EchoResponse {
 
 ### Server Side
 
-To implement the server, you provide a handler function that takes an input stream `AnyPublisher<EchoRequest, Error>` and returns an output stream `AnyPublisher<EchoResponse, GRPCStatus>`.
+To implement the server, you provide a handler function that takes an input stream `AnyPublisher<EchoRequest, Error>` and returns an output stream `AnyPublisher<EchoResponse, RPCError>`.
 
 ```swift
 import Foundation
@@ -59,7 +55,7 @@ class EchoServiceProvider: EchoProvider {
         .map { req in
           EchoResponse.with { $0.message = req.message }
         }
-        .setFailureType(to: GRPCStatus.self)
+        .setFailureType(to: RPCError.self)
         .eraseToAnyPublisher()
     }
   }
@@ -89,7 +85,7 @@ let channel = ClientConnection
 let echoClient = EchoServiceClient(channel: channel)
 ```
 
-To call the service, create a `GRPCExecutor` and use its `call` method. You provide it with a stream of requests `AnyPublisher<EchoRequest, Error>` and you get back a stream `AnyPublisher<EchoResponse, GRPCStatus>` of responses from the server.
+To call the service, create a `GRPCExecutor` and use its `call` method. You provide it with a stream of requests `AnyPublisher<EchoRequest, Error>` and you get back a stream `AnyPublisher<EchoResponse, RPCError>` of responses from the server.
 
 ```swift
 let requests = repeatElement(EchoRequest.with { $0.message = "hello"}, count: 10)
@@ -136,8 +132,8 @@ let grpc = GRPCExecutor(
   callOptions: callOptions.eraseToAnyPublisher(),
   retry: .failedCall(
     upTo: 1,
-    when: { status in
-      status.code == .unauthenticated
+    when: { error in
+      error.status.code == .unauthenticated
     },
     delayUntilNext: { retryCount in  // Useful for implementing exponential backoff
       // Retry the call with authentication
@@ -216,9 +212,17 @@ pod 'CombineGRPC', '~> 0.17'
 
 ## Compatibility
 
-Since this library integrates with Combine, it only works on platforms that support Combine. This currently means the following minimum versions: macOS 10.15 Catalina, iOS 13 and tvOS 13. WatchOS is not supported because upstream gRPC Swift does not support it.
+Since this library integrates with Combine, it only works on platforms that support Combine. This currently means the following minimum versions:
 
-## Project Status
+Platform | Minimum Supported Version
+--- | ---
+macOS | 10.15 (Catalina)
+iOS & iPadOS | 13
+tvOS | 13
+
+WatchOS is not supported because upstream gRPC Swift does not support it.
+
+## Feature Status
 
 RPC Client Calls
 
@@ -242,17 +246,12 @@ End-to-end Tests
 - [x] Server streaming
 - [x] Bidirectional streaming
 
-Documentation
-
-- [x] README.md
-- [x] Inline documentation using markup in comments
-
 ## Contributing
 
-### Unit Tests
-
-The unit tests rely on some Swift code that is generated from Protobuf. You can easily generate these by running:
+To generate the Xcode project, run:
 
 ```text
-make protobuf
+make project
 ```
+
+You can then open the project in Xcode, build and run the tests.
