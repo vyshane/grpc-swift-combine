@@ -5,6 +5,7 @@ import XCTest
 import Combine
 import GRPC
 import NIO
+import NIOHPACK
 @testable import CombineGRPC
 
 @available(OSX 10.15, iOS 13, tvOS 13, *)
@@ -65,11 +66,12 @@ class BidirectionalStreamingTests: XCTestCase {
       .call(failedPrecondition)(requestStream)
       .sink(
         receiveCompletion: { switch $0 {
-          case .failure(let status):
-            if status.code == .failedPrecondition {
+          case .failure(let error):
+            if error.status.code == .failedPrecondition {
+              XCTAssert(error.trailingMetadata?.first(name: "custom") == "info")
               promise.fulfill()
             } else {
-              XCTFail("Unexpected status: " + status.localizedDescription)
+              XCTFail("Unexpected status: " + error.status.localizedDescription)
             }
           case .finished:
             XCTFail("Call should not succeed")
@@ -94,11 +96,11 @@ class BidirectionalStreamingTests: XCTestCase {
       .call(client.noResponse)(requestStream)
       .sink(
         receiveCompletion: { switch $0 {
-          case .failure(let status):
-            if status.code == .deadlineExceeded {
+          case .failure(let error):
+            if error.status.code == .deadlineExceeded {
               promise.fulfill()
             } else {
-              XCTFail("Unexpected status: " + status.localizedDescription)
+              XCTFail("Unexpected status: " + error.status.localizedDescription)
             }
           case .finished:
             XCTFail("Call should not succeed")
@@ -124,11 +126,11 @@ class BidirectionalStreamingTests: XCTestCase {
       .sink(
         receiveCompletion: { completion in
           switch completion {
-          case .failure(let status):
-            if status.code == .cancelled {
+          case .failure(let error):
+            if error.status.code == .cancelled {
               promise.fulfill()
             } else {
-              XCTFail("Unexpected status: " + status.localizedDescription)
+              XCTFail("Unexpected status: " + error.status.localizedDescription)
             }
           case .finished:
             XCTFail("Call should not succeed")

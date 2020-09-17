@@ -10,21 +10,19 @@ import SwiftProtobuf
 @available(OSX 10.15, iOS 13, tvOS 13, *)
 class ServerStreamingHandlerSubscriber<Response>: Subscriber, Cancellable where Response: Message {
   typealias Input = Response
-  typealias Failure = GRPCStatus
+  typealias Failure = RPCError
   
   var futureStatus: EventLoopFuture<GRPCStatus> {
     get {
-      return statusPromise.futureResult
+      return context.statusPromise.futureResult
     }
   }
   
   private var subscription: Subscription?
   private let context: StreamingResponseCallContext<Response>
-  private let statusPromise: EventLoopPromise<GRPCStatus>
-  
+
   init(context: StreamingResponseCallContext<Response>) {
     self.context = context
-    self.statusPromise = context.eventLoop.makePromise()
   }
   
   func receive(subscription: Subscription) {
@@ -37,12 +35,13 @@ class ServerStreamingHandlerSubscriber<Response>: Subscriber, Cancellable where 
     return .max(1)
   }
   
-  func receive(completion: Subscribers.Completion<GRPCStatus>) {
+  func receive(completion: Subscribers.Completion<RPCError>) {
     switch completion {
-    case .failure(let status):
-      statusPromise.fail(status)
+    case .failure(let error):
+      context.trailingMetadata = augment(headers: context.trailingMetadata, withError: error)
+      context.statusPromise.fail(error.status)
     case .finished:
-      statusPromise.succeed(.ok)
+      context.statusPromise.succeed(.ok)
     }
   }
   

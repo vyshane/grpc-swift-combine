@@ -4,16 +4,28 @@
 import Foundation
 import Combine
 import GRPC
+import NIO
+import NIOHPACK
+import NIOHTTP1
 
 @available(OSX 10.15, iOS 13, tvOS 13, *)
-func sendCompletion<Response>(toSubscriber: Publishers.Create<Response, GRPCStatus>.Subscriber) -> (GRPCStatus) -> Void
-{
-  { status in
+func sendCompletion<Response>(
+  status: EventLoopFuture<GRPCStatus>,
+  trailingMetadata: EventLoopFuture<HPACKHeaders>,
+  toSubscriber: Publishers.Create<Response, RPCError>.Subscriber
+) -> Void {
+  var resolvedMetadata: HPACKHeaders?
+  
+  // Trailing metadata will be available before status.
+  trailingMetadata.whenSuccess { resolvedMetadata = $0 }
+  
+  status.whenSuccess { status in
     switch status.code {
     case .ok:
       toSubscriber.send(completion: .finished)
     default:
-      toSubscriber.send(completion: .failure(status))
+      let error = RPCError(status: status, trailingMetadata: resolvedMetadata)
+      toSubscriber.send(completion: .failure(error))
     }
   }
 }

@@ -10,7 +10,7 @@ import SwiftProtobuf
 @available(OSX 10.15, iOS 13, tvOS 13, *)
 class ClientStreamingHandlerSubscriber<Request, Response>: Subscriber, Cancellable where Request: Message, Response: Message {
   typealias Input = Response
-  typealias Failure = GRPCStatus
+  typealias Failure = RPCError
   
   private var subscription: Subscription?
   private let context: UnaryResponseCallContext<Response>
@@ -29,10 +29,11 @@ class ClientStreamingHandlerSubscriber<Request, Response>: Subscriber, Cancellab
     return .max(1)
   }
   
-  func receive(completion: Subscribers.Completion<GRPCStatus>) {
+  func receive(completion: Subscribers.Completion<RPCError>) {
     switch completion {
-    case .failure(let status):
-      context.responsePromise.fail(status)
+    case .failure(let error):
+      context.trailingMetadata = augment(headers: context.trailingMetadata, withError: error)
+      context.responsePromise.fail(error.status)
     case .finished:
       let status = GRPCStatus(code: .aborted, message: "Handler completed without a response")
       context.responsePromise.fail(status)

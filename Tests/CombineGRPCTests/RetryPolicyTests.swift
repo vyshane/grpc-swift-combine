@@ -36,7 +36,7 @@ final class RetryPolicyTests: XCTestCase {
     
     let grpc = GRPCExecutor(retry: .failedCall(
       upTo: 2,
-      when: { $0.code == .failedPrecondition },
+      when: { $0.status.code == .failedPrecondition },
       didGiveUp: { XCTFail("onGiveUp callback should not trigger") }
     ))
 
@@ -68,7 +68,7 @@ final class RetryPolicyTests: XCTestCase {
     
     let client = RetryPolicyTests.client!
     let grpc = GRPCExecutor(retry:
-      .failedCall(upTo: 2, when: { $0.code == .failedPrecondition }, didGiveUp: { onGiveUpPromise.fulfill() })
+      .failedCall(upTo: 2, when: { $0.status.code == .failedPrecondition }, didGiveUp: { onGiveUpPromise.fulfill() })
     )
 
     let request = FailThenSucceedRequest.with {
@@ -79,8 +79,8 @@ final class RetryPolicyTests: XCTestCase {
     grpc.call(client.failThenSucceed)(request)
       .sink(
         receiveCompletion: { switch $0 {
-          case .failure(let status):
-            if status.code == .failedPrecondition {
+          case .failure(let error):
+            if error.status.code == .failedPrecondition {
               callPromise.fulfill()
             }
           case .finished:
@@ -98,7 +98,7 @@ final class RetryPolicyTests: XCTestCase {
   func testRetryStatusDoesNotMatch() {
     let promise = expectation(description: "Call fails when retry status does not match")
     let client = RetryPolicyTests.client!
-    let grpc = GRPCExecutor(retry: .failedCall(upTo: 2, when: { $0.code == .notFound }))
+    let grpc = GRPCExecutor(retry: .failedCall(upTo: 2, when: { $0.status.code == .notFound }))
 
     let request = FailThenSucceedRequest.with {
       $0.key = "testRetryStatusDoesNotMatch"
@@ -108,8 +108,8 @@ final class RetryPolicyTests: XCTestCase {
     grpc.call(client.failThenSucceed)(request)
       .sink(
         receiveCompletion: { switch $0 {
-          case .failure(let status):
-            if status.code == .failedPrecondition {
+          case .failure(let error):
+            if error.status.code == .failedPrecondition {
               promise.fulfill()
             }
           case .finished:
@@ -132,7 +132,7 @@ final class RetryPolicyTests: XCTestCase {
     
     let grpc = GRPCExecutor(
       callOptions: callOptions.eraseToAnyPublisher(),
-      retry: .failedCall(upTo: 1, when: { $0.code == .unauthenticated }, delayUntilNext: { retryCount in
+      retry: .failedCall(upTo: 1, when: { $0.status.code == .unauthenticated }, delayUntilNext: { retryCount in
         XCTAssert(retryCount <= 1)
         // Subsequent calls are authenticated
         callOptions.send(CallOptions(customMetadata: HPACKHeaders([("authorization", "Bearer xxx")])))

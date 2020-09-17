@@ -16,19 +16,20 @@ class RetryPolicyTestsService: RetryScenariosProvider {
   func failThenSucceed(request: FailThenSucceedRequest, context: StatusOnlyCallContext) -> EventLoopFuture<FailThenSucceedResponse>
   {
     handle(context) {
-      let failureStatus: AnyPublisher<FailThenSucceedResponse, GRPCStatus> =
-        Fail(error: GRPCStatus(code: .failedPrecondition, message: "Requested failure")).eraseToAnyPublisher()
+      let status = GRPCStatus(code: .failedPrecondition, message: "Requested failure")
+      let error: AnyPublisher<FailThenSucceedResponse, RPCError> =
+        Fail(error: RPCError(status: status)).eraseToAnyPublisher()
       
       if failureCounts[request.key] == nil {
         failureCounts[request.key] = 1
-        return failureStatus
+        return error
       }
       if failureCounts[request.key]! < request.numFailures {
         failureCounts[request.key]! += 1
-        return failureStatus
+        return error
       }
       return Just(FailThenSucceedResponse.with { $0.numFailures = failureCounts[request.key]! })
-        .setFailureType(to: GRPCStatus.self)
+        .setFailureType(to: RPCError.self)
         .eraseToAnyPublisher()
     }
   }
@@ -37,10 +38,11 @@ class RetryPolicyTestsService: RetryScenariosProvider {
     handle(context) {
       if context.request.headers.contains(where: { $0.0 == "authorization" && $0.1 == "Bearer xxx" }) {
         return Just(EchoResponse.with { $0.message = request.message })
-          .setFailureType(to: GRPCStatus.self)
+          .setFailureType(to: RPCError.self)
           .eraseToAnyPublisher()
       }
-      return Fail(error: GRPCStatus(code: .unauthenticated, message: "Missing expected authorization header"))
+      let status = GRPCStatus(code: .unauthenticated, message: "Missing expected authorization header")
+      return Fail(error: RPCError(status: status))
         .eraseToAnyPublisher()
     }
   }
