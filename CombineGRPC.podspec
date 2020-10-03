@@ -18,7 +18,7 @@ Pod::Spec.new do |spec|
   spec.tvos.deployment_target = "13.0"
   spec.source_files = 'Sources/CombineGRPC/**/*.swift'
 
-  spec.dependency "gRPC-Swift", "1.0.0-alpha.19"
+  spec.dependency "gRPC-Swift", "1.0.0-alpha.20"
   spec.dependency "CombineExt", "1.2.0"
 
 end
