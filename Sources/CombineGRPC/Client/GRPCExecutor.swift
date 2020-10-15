@@ -191,7 +191,7 @@ public struct GRPCExecutor {
               let requestsCancellable = requests.sink(
                 receiveCompletion: { switch $0 {
                   case .finished: _ = call.sendEnd()
-                  case .failure: _ = call.cancel(promise: nil)
+                  case .failure: call.cancel(promise: nil)
                 }},
                 receiveValue: { _ = call.sendMessage($0) }
               )
@@ -238,7 +238,7 @@ public struct GRPCExecutor {
               let requestsCancellable = requests.sink(
                 receiveCompletion: { switch $0 {
                   case .finished: _ = call.sendEnd()
-                  case .failure: _ = call.cancel(promise: nil)
+                  case .failure: call.cancel(promise: nil)
                 }},
                 receiveValue: {
                   _ = call.sendMessage($0)
