@@ -10,8 +10,8 @@ import NIOHTTP1
  Holds information about a failed gRPC call.
  */
 public struct RPCError: Error, Equatable {
-  let status: GRPCStatus
-  let trailingMetadata: HPACKHeaders?
+  public let status: GRPCStatus
+  public let trailingMetadata: HPACKHeaders?
   
   public init(status: GRPCStatus) {
     self.init(status: status, trailingMetadata: nil)
