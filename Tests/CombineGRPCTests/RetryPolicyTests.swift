@@ -4,7 +4,6 @@
 import XCTest
 import Combine
 import GRPC
-import NIO
 import NIOHPACK
 @testable import CombineGRPC
 

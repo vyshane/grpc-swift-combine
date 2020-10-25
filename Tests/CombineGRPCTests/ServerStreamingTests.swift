@@ -4,7 +4,6 @@
 import XCTest
 import Combine
 import GRPC
-import NIO
 @testable import CombineGRPC
 
 @available(OSX 10.15, iOS 13, tvOS 13, *)
