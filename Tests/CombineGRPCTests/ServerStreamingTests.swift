@@ -10,7 +10,7 @@ import NIO
 @available(OSX 10.15, iOS 13, tvOS 13, *)
 class ServerStreamingTests: XCTestCase {
   
-  static var serverEventLoopGroup: EventLoopGroup?
+  static var server: Server?
   static var client: ServerStreamingScenariosClient?
   
   // Streams will be cancelled prematurely if cancellables are deinitialized
@@ -18,7 +18,7 @@ class ServerStreamingTests: XCTestCase {
   
   override class func setUp() {
     super.setUp()
-    serverEventLoopGroup = try! makeTestServer(services: [ServerStreamingTestsService()])
+    server = try! makeTestServer(services: [ServerStreamingTestsService()])
     client = makeTestClient { channel, callOptions in
       ServerStreamingScenariosClient(channel: channel, defaultCallOptions: callOptions)
     }
@@ -26,7 +26,7 @@ class ServerStreamingTests: XCTestCase {
   
   override class func tearDown() {
     try! client?.channel.close().wait()
-    try! serverEventLoopGroup?.syncShutdownGracefully()
+    try! server?.close().wait()
     retainedCancellables.removeAll()
     super.tearDown()
   }

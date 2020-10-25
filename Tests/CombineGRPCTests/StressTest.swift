@@ -13,7 +13,7 @@ import NIO
 @available(OSX 10.15, iOS 13, tvOS 13, *)
 class StressTest: XCTestCase {
 
-  static var serverEventLoopGroup: EventLoopGroup?
+  static var server: Server?
   static var unaryClient: UnaryScenariosClient?
   static var serverStreamingClient: ServerStreamingScenariosClient?
   static var clientStreamingClient: ClientStreamingScenariosClient?
@@ -29,7 +29,7 @@ class StressTest: XCTestCase {
       ClientStreamingTestsService(),
       BidirectionalStreamingTestsService()
     ]
-    serverEventLoopGroup = try! makeTestServer(services: services, eventLoopGroupSize: 4)
+    server = try! makeTestServer(services: services, eventLoopGroupSize: 4)
     
     unaryClient = makeTestClient(eventLoopGroupSize: 4) { channel, callOptions in
       UnaryScenariosClient(channel: channel, defaultCallOptions: callOptions)
@@ -50,7 +50,7 @@ class StressTest: XCTestCase {
     try! serverStreamingClient?.channel.close().wait()
     try! clientStreamingClient?.channel.close().wait()
     try! bidirectionalStreamingClient?.channel.close().wait()
-    try! serverEventLoopGroup?.syncShutdownGracefully()
+    try! server?.close().wait()
     retainedCancellables.removeAll()
     super.tearDown()
   }

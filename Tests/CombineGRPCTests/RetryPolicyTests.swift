@@ -11,13 +11,13 @@ import NIOHPACK
 @available(OSX 10.15, iOS 13, tvOS 13, *)
 final class RetryPolicyTests: XCTestCase {
   
-  static var serverEventLoopGroup: EventLoopGroup?
+  static var server: Server?
   static var client: RetryScenariosClient?
   static var retainedCancellables: Set<AnyCancellable> = []
   
   override class func setUp() {
     super.setUp()
-    serverEventLoopGroup = try! makeTestServer(services: [RetryPolicyTestsService()])
+    server = try! makeTestServer(services: [RetryPolicyTestsService()])
     client = makeTestClient { channel, callOptions in
       RetryScenariosClient(channel: channel, defaultCallOptions: callOptions)
     }
@@ -25,7 +25,7 @@ final class RetryPolicyTests: XCTestCase {
   
   override class func tearDown() {
     try! client?.channel.close().wait()
-    try! serverEventLoopGroup?.syncShutdownGracefully()
+    try! server?.close().wait()
     retainedCancellables.removeAll()
     super.tearDown()
   }

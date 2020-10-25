@@ -10,13 +10,13 @@ import NIO
 @available(OSX 10.15, iOS 13, tvOS 13, *)
 final class UnaryTests: XCTestCase {
   
-  static var serverEventLoopGroup: EventLoopGroup?
+  static var server: Server?
   static var client: UnaryScenariosClient?
   static var retainedCancellables: Set<AnyCancellable> = []
   
   override class func setUp() {
     super.setUp()
-    serverEventLoopGroup = try! makeTestServer(services: [UnaryTestsService()])
+    server = try! makeTestServer(services: [UnaryTestsService()])
     client = makeTestClient { channel, callOptions in
       UnaryScenariosClient(channel: channel, defaultCallOptions: callOptions)
     }
@@ -24,7 +24,7 @@ final class UnaryTests: XCTestCase {
   
   override class func tearDown() {
     try! client?.channel.close().wait()
-    try! serverEventLoopGroup?.syncShutdownGracefully()
+    try! server?.close().wait()
     retainedCancellables.removeAll()
     super.tearDown()
   }

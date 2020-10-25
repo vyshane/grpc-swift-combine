@@ -10,13 +10,13 @@ import NIO
 @available(OSX 10.15, iOS 13, tvOS 13, *)
 class ClientStreamingTests: XCTestCase {
   
-  static var serverEventLoopGroup: EventLoopGroup?
+  static var server: Server?
   static var client: ClientStreamingScenariosClient?
   static var retainedCancellables: Set<AnyCancellable> = []
   
   override class func setUp() {
     super.setUp()
-    serverEventLoopGroup = try! makeTestServer(services: [ClientStreamingTestsService()])
+    server = try! makeTestServer(services: [ClientStreamingTestsService()])
     client = makeTestClient { channel, callOptions in
       ClientStreamingScenariosClient(channel: channel, defaultCallOptions: callOptions)
     }
@@ -24,7 +24,7 @@ class ClientStreamingTests: XCTestCase {
   
   override class func tearDown() {
     try! client?.channel.close().wait()
-    try! serverEventLoopGroup?.syncShutdownGracefully()
+    try! server?.close().wait()
     retainedCancellables.removeAll()
     super.tearDown()
   }

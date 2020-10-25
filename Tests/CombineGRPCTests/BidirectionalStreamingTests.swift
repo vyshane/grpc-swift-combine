@@ -11,13 +11,13 @@ import NIOHPACK
 @available(OSX 10.15, iOS 13, tvOS 13, *)
 class BidirectionalStreamingTests: XCTestCase {
   
-  static var serverEventLoopGroup: EventLoopGroup?
+  static var server: Server?
   static var client: BidirectionalStreamingScenariosClient?
   static var retainedCancellables: Set<AnyCancellable> = []
   
   override class func setUp() {
     super.setUp()
-    serverEventLoopGroup = try! makeTestServer(services: [BidirectionalStreamingTestsService()])
+    server = try! makeTestServer(services: [BidirectionalStreamingTestsService()])
     client = makeTestClient { channel, callOptions in
       BidirectionalStreamingScenariosClient(channel: channel, defaultCallOptions: callOptions)
     }
@@ -25,7 +25,7 @@ class BidirectionalStreamingTests: XCTestCase {
   
   override class func tearDown() {
     try! client?.channel.close().wait()
-    try! serverEventLoopGroup?.syncShutdownGracefully()
+    try! server?.close().wait()
     retainedCancellables.removeAll()
     super.tearDown()
   }
