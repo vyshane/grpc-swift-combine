@@ -65,12 +65,18 @@ class EchoServiceProvider: EchoProvider {
 Start the server. This is the same process as with Swift gRPC.
 
 ```swift
-let configuration = Server.Configuration(
-  target: ConnectionTarget.hostAndPort("localhost", 8080),
-  eventLoopGroup: PlatformSupport.makeEventLoopGroup(loopCount: 1),
-  serviceProviders: [EchoServiceProvider()]
-)
-_ = try Server.start(configuration: configuration).wait()
+let eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
+defer {
+  try! eventLoopGroup.syncShutdownGracefully()
+}
+
+// Start the gRPC server and wait until it shuts down.
+_ = try Server
+  .insecure(group: eventLoopGroup)
+  .withServiceProviders([EchoServiceProvider()])
+  .bind(host: "localhost", port: 8080)
+  .flatMap { $0.onClose }
+  .wait()
 ```
 
 ### Client Side
@@ -78,7 +84,7 @@ _ = try Server.start(configuration: configuration).wait()
 Now let's setup our client. Again, it's the same process that you would go through when using Swift gRPC.
 
 ```swift
-let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: eventLoopGroupSize)
+let eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
 let channel = ClientConnection
   .insecure(group: eventLoopGroup)
   .connect(host: "localhost", port: 8080)
