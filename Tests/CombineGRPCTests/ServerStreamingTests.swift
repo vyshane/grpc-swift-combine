@@ -32,7 +32,7 @@ class ServerStreamingTests: XCTestCase {
   
   func testOk() {
     let promise = expectation(description: "Call completes successfully")
-    let client = ServerStreamingTests.client!
+    let client = Self.client!
     let grpc = GRPCExecutor()
 
     grpc.call(client.ok)(EchoRequest.with { $0.message = "hello" })
@@ -49,14 +49,14 @@ class ServerStreamingTests: XCTestCase {
           XCTAssert(count == 3)
         }
       )
-      .store(in: &ServerStreamingTests.retainedCancellables)
+      .store(in: &Self.retainedCancellables)
     
     wait(for: [promise], timeout: 0.2)
   }
   
   func testFailedPrecondition() {
     let promise = expectation(description: "Call fails with failed precondition status")
-    let failedPrecondition = ServerStreamingTests.client!.failedPrecondition
+    let failedPrecondition = Self.client!.failedPrecondition
     let grpc = GRPCExecutor()
     
     grpc.call(failedPrecondition)(EchoRequest.with { $0.message = "hello" })
@@ -76,14 +76,14 @@ class ServerStreamingTests: XCTestCase {
           XCTFail("Call should not return a response")
         }
       )
-      .store(in: &ServerStreamingTests.retainedCancellables)
+      .store(in: &Self.retainedCancellables)
     
     wait(for: [promise], timeout: 0.2)
   }
   
   func testNoResponse() {
     let promise = expectation(description: "Call fails with deadline exceeded status")
-    let client = ServerStreamingTests.client!
+    let client = Self.client!
     let options = CallOptions(timeLimit: TimeLimit.timeout(.milliseconds(20)))
     let grpc = GRPCExecutor(callOptions: Just(options).eraseToAnyPublisher())
         
@@ -103,7 +103,7 @@ class ServerStreamingTests: XCTestCase {
           XCTFail("Call should not return a response")
         }
       )
-      .store(in: &ServerStreamingTests.retainedCancellables)
+      .store(in: &Self.retainedCancellables)
     
     wait(for: [promise], timeout: 0.2)
   }

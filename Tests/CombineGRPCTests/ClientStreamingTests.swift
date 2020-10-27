@@ -30,7 +30,7 @@ class ClientStreamingTests: XCTestCase {
   
   func testOk() {
     let promise = expectation(description: "Call completes successfully")
-    let client = ClientStreamingTests.client!
+    let client = Self.client!
     let requests = Publishers.Sequence<[EchoRequest], Error>(sequence:
       [EchoRequest.with { $0.message = "hello"}, EchoRequest.with { $0.message = "world!"}]
     ).eraseToAnyPublisher()
@@ -50,14 +50,14 @@ class ClientStreamingTests: XCTestCase {
           XCTAssert(response.message == "world!")
         }
       )
-      .store(in: &ClientStreamingTests.retainedCancellables)
+      .store(in: &Self.retainedCancellables)
     
     wait(for: [promise], timeout: 0.2)
   }
   
   func testFailedPrecondition() {
     let promise = expectation(description: "Call fails with failed precondition status")
-    let failedPrecondition = ClientStreamingTests.client!.failedPrecondition
+    let failedPrecondition = Self.client!.failedPrecondition
     let requests = repeatElement(EchoRequest.with { $0.message = "hello"}, count: 3)
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
     let grpc = GRPCExecutor()
@@ -81,14 +81,14 @@ class ClientStreamingTests: XCTestCase {
           XCTFail("Call should not return a response")
         }
       )
-      .store(in: &ClientStreamingTests.retainedCancellables)
+      .store(in: &Self.retainedCancellables)
     
     wait(for: [promise], timeout: 0.2)
   }
   
   func testNoResponse() {
     let promise = expectation(description: "Call fails with deadline exceeded status")
-    let client = ClientStreamingTests.client!
+    let client = Self.client!
     let options = CallOptions(timeLimit: TimeLimit.timeout(.milliseconds(20)))
     let requests = repeatElement(EchoRequest.with { $0.message = "hello"}, count: 3)
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
@@ -112,14 +112,14 @@ class ClientStreamingTests: XCTestCase {
           XCTFail("Call should not return a response")
         }
       )
-      .store(in: &ClientStreamingTests.retainedCancellables)
+      .store(in: &Self.retainedCancellables)
     
     wait(for: [promise], timeout: 0.2)
   }
   
   func testClientStreamError() {
     let promise = expectation(description: "Call fails with cancelled status")
-    let client = ClientStreamingTests.client!
+    let client = Self.client!
     let grpc = GRPCExecutor()
     
     struct ClientStreamError: Error {}
@@ -143,7 +143,7 @@ class ClientStreamingTests: XCTestCase {
           XCTFail("Call should not return a response")
         }
       )
-      .store(in: &ClientStreamingTests.retainedCancellables)
+      .store(in: &Self.retainedCancellables)
     
     wait(for: [promise], timeout: 0.2)
   }

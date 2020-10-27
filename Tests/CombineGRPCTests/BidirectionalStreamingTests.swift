@@ -31,7 +31,7 @@ class BidirectionalStreamingTests: XCTestCase {
   
   func testOk() {
     let promise = expectation(description: "Call completes successfully")
-    let client = BidirectionalStreamingTests.client!
+    let client = Self.client!
     let requests = repeatElement(EchoRequest.with { $0.message = "hello"}, count: 3)
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
 
@@ -50,14 +50,14 @@ class BidirectionalStreamingTests: XCTestCase {
           XCTAssert(count == 3)
         }
       )
-      .store(in: &BidirectionalStreamingTests.retainedCancellables)
+      .store(in: &Self.retainedCancellables)
     
     wait(for: [promise], timeout: 0.2)
   }
   
   func testFailedPrecondition() {
     let promise = expectation(description: "Call fails with failed precondition status")
-    let failedPrecondition = BidirectionalStreamingTests.client!.failedPrecondition
+    let failedPrecondition = Self.client!.failedPrecondition
     let requests = repeatElement(EchoRequest.with { $0.message = "hello"}, count: 3)
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
 
@@ -79,14 +79,14 @@ class BidirectionalStreamingTests: XCTestCase {
           XCTFail("Call should not return a response")
         }
       )
-      .store(in: &BidirectionalStreamingTests.retainedCancellables)
+      .store(in: &Self.retainedCancellables)
     
     wait(for: [promise], timeout: 0.2)
   }
   
   func testNoResponse() {
     let promise = expectation(description: "Call fails with deadline exceeded status")
-    let client = BidirectionalStreamingTests.client!
+    let client = Self.client!
     let options = CallOptions(timeLimit: TimeLimit.timeout(.milliseconds(20)))
     let requests = repeatElement(EchoRequest.with { $0.message = "hello"}, count: 3)
     let requestStream = Publishers.Sequence<Repeated<EchoRequest>, Error>(sequence: requests).eraseToAnyPublisher()
@@ -108,14 +108,14 @@ class BidirectionalStreamingTests: XCTestCase {
           XCTFail("Call should not return a response")
         }
       )
-      .store(in: &BidirectionalStreamingTests.retainedCancellables)
+      .store(in: &Self.retainedCancellables)
     
     wait(for: [promise], timeout: 0.2)
   }
   
   func testClientStreamError() {
     let promise = expectation(description: "Call fails with cancelled status")
-    let client = BidirectionalStreamingTests.client!
+    let client = Self.client!
 
     struct ClientStreamError: Error {}
     let requests = Fail<EchoRequest, Error>(error: ClientStreamError()).eraseToAnyPublisher()
@@ -139,7 +139,7 @@ class BidirectionalStreamingTests: XCTestCase {
           XCTFail("Call should not return a response")
         }
       )
-      .store(in: &BidirectionalStreamingTests.retainedCancellables)
+      .store(in: &Self.retainedCancellables)
     
     wait(for: [promise], timeout: 0.2)
   }

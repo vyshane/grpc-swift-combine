@@ -30,7 +30,7 @@ final class UnaryTests: XCTestCase {
   
   func testOk() {
     let promise = expectation(description: "Call completes successfully")
-    let client = UnaryTests.client!
+    let client = Self.client!
     let grpc = GRPCExecutor()
     
     grpc.call(client.ok)(EchoRequest.with { $0.message = "hello" })
@@ -45,14 +45,14 @@ final class UnaryTests: XCTestCase {
           XCTAssert(response.message == "hello")
         }
       )
-      .store(in: &UnaryTests.retainedCancellables)
+      .store(in: &Self.retainedCancellables)
     
     wait(for: [promise], timeout: 0.2)
   }
 
   func testFailedPrecondition() {
     let promise = expectation(description: "Call fails with failed precondition status")
-    let failedPrecondition = UnaryTests.client!.failedPrecondition
+    let failedPrecondition = Self.client!.failedPrecondition
     let grpc = GRPCExecutor()
     
     grpc.call(failedPrecondition)(EchoRequest.with { $0.message = "hello" })
@@ -72,14 +72,14 @@ final class UnaryTests: XCTestCase {
           XCTFail("Call should not return a response")
         }
       )
-      .store(in: &UnaryTests.retainedCancellables)
+      .store(in: &Self.retainedCancellables)
     
     wait(for: [promise], timeout: 0.2)
   }
 
   func testNoResponse() {
     let promise = expectation(description: "Call fails with deadline exceeded status")
-    let client = UnaryTests.client!
+    let client = Self.client!
     let options = CallOptions(timeLimit: TimeLimit.timeout(.milliseconds(20)))
     let grpc = GRPCExecutor(callOptions: Just(options).eraseToAnyPublisher())
     
@@ -99,7 +99,7 @@ final class UnaryTests: XCTestCase {
           XCTFail("Call should not return a response")
         }
       )
-      .store(in: &UnaryTests.retainedCancellables)
+      .store(in: &Self.retainedCancellables)
     
     wait(for: [promise], timeout: 0.2)
   }

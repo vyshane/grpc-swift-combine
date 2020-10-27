@@ -31,7 +31,7 @@ final class RetryPolicyTests: XCTestCase {
   
   func testRetriesNotExceeded() {
     let promise = expectation(description: "Call completes successfully after retrying twice")
-    let client = RetryPolicyTests.client!
+    let client = Self.client!
     
     let grpc = GRPCExecutor(retry: .failedCall(
       upTo: 2,
@@ -56,7 +56,7 @@ final class RetryPolicyTests: XCTestCase {
           XCTAssert(Int(response.numFailures) == 2)
         }
       )
-      .store(in: &RetryPolicyTests.retainedCancellables)
+      .store(in: &Self.retainedCancellables)
     
     wait(for: [promise], timeout: 0.2)
   }
@@ -65,7 +65,7 @@ final class RetryPolicyTests: XCTestCase {
     let callPromise = expectation(description: "Call fails after exceeding max number of retries")
     let onGiveUpPromise = expectation(description: "On give up callback called")
     
-    let client = RetryPolicyTests.client!
+    let client = Self.client!
     let grpc = GRPCExecutor(retry:
       .failedCall(upTo: 2, when: { $0.status.code == .failedPrecondition }, didGiveUp: { onGiveUpPromise.fulfill() })
     )
@@ -89,14 +89,14 @@ final class RetryPolicyTests: XCTestCase {
           XCTFail("Call should fail, but got response: " + response.debugDescription)
         }
       )
-      .store(in: &RetryPolicyTests.retainedCancellables)
+      .store(in: &Self.retainedCancellables)
     
     wait(for: [callPromise, onGiveUpPromise], timeout: 0.2)
   }
   
   func testRetryStatusDoesNotMatch() {
     let promise = expectation(description: "Call fails when retry status does not match")
-    let client = RetryPolicyTests.client!
+    let client = Self.client!
     let grpc = GRPCExecutor(retry: .failedCall(upTo: 2, when: { $0.status.code == .notFound }))
 
     let request = FailThenSucceedRequest.with {
@@ -118,14 +118,14 @@ final class RetryPolicyTests: XCTestCase {
           XCTFail("Call should fail, but got response: " + response.debugDescription)
         }
       )
-      .store(in: &RetryPolicyTests.retainedCancellables)
+      .store(in: &Self.retainedCancellables)
     
     wait(for: [promise], timeout: 0.2)
   }
   
   func testAuthenticatedRpcScenario() {
     let promise = expectation(description: "Call gets retried with authentication and succeeds")
-    let client = RetryPolicyTests.client!
+    let client = Self.client!
     // The first call is unauthenticated
     let callOptions = CurrentValueSubject<CallOptions, Never>(CallOptions())
     
@@ -151,7 +151,7 @@ final class RetryPolicyTests: XCTestCase {
           XCTAssert(response.message == "hello")
         }
       )
-      .store(in: &RetryPolicyTests.retainedCancellables)
+      .store(in: &Self.retainedCancellables)
     
     wait(for: [promise], timeout: 0.2)
   }
