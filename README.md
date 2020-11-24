@@ -11,7 +11,7 @@ Server streaming | `Request -> AnyPublisher<Response, RPCError>`
 Client streaming | `AnyPublisher<Request, Error> -> AnyPublisher<Response, RPCError>`
 Bidirectional streaming | `AnyPublisher<Request, Error> -> AnyPublisher<Response, RPCError>`
 
-When you make a unary call, you provide a request message, and get back a response publisher. The response publisher will either publish a single response, or fail with a `RPCError` error. Similarly, if you are handling a unary RPC call, you provide a handler that takes a request parameter and returns an `AnyPublisher<Response, RPCError>`.
+When you make a unary call, you provide a request message, and get back a response publisher. The response publisher will either publish a single response, or fail with an `RPCError` error. Similarly, if you are handling a unary RPC call, you provide a handler that takes a request parameter and returns an `AnyPublisher<Response, RPCError>`.
 
 You can follow the same intuition to understand the types for the other RPC styles. The only difference is that publishers for the streaming RPCs may publish zero or more messages instead of the single response message that is expected from the unary response publisher.
 
