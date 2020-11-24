@@ -141,7 +141,7 @@ let grpc = GRPCExecutor(
     when: { error in
       error.status.code == .unauthenticated
     },
-    delayUntilNext: { retryCount in  // Useful for implementing exponential backoff
+    delayUntilNext: { retryCount, error in  // Useful for implementing exponential backoff
       // Retry the call with authentication
       callOptions.send(CallOptions(customMetadata: HTTPHeaders([("authorization", "Bearer xxx")])))
       return Just(()).eraseToAnyPublisher()
