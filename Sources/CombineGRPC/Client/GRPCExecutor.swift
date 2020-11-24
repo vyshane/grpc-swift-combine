@@ -276,7 +276,7 @@ public struct GRPCExecutor {
           .catch { error -> AnyPublisher<T, RPCError> in
             if shouldRetry(error) && retryCount < maxRetries {
               retryCount += 1
-              return delayUntilNext(retryCount)
+              return delayUntilNext(retryCount, error)
                 .setFailureType(to: RPCError.self)
                 .flatMap { _ in attemptCall() }
                 .eraseToAnyPublisher()

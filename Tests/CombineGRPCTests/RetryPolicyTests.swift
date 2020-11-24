@@ -94,7 +94,7 @@ final class RetryPolicyTests: XCTestCase {
     wait(for: [callPromise, onGiveUpPromise], timeout: 0.2)
   }
 
-  func testRetryCountIncrementsWithEachFailure() {
+  func testDelayUntilNextParameters() {
     let promise = expectation(description: "Call fails twice, then succeeds")
     let client = Self.client!
     var delayUntilNextFinalRetryCount = 0
@@ -102,14 +102,15 @@ final class RetryPolicyTests: XCTestCase {
     let grpc = GRPCExecutor(retry: .failedCall(
       upTo: 99,
       when: { $0.status.code == .failedPrecondition },
-      delayUntilNext: { count in
+      delayUntilNext: { count, error in
+        XCTAssert(error.status.code == .failedPrecondition)
         delayUntilNextFinalRetryCount = count
         return Just(()).eraseToAnyPublisher()
       }
     ))
 
     let request = FailThenSucceedRequest.with {
-      $0.key = "testRetryCountIncrementsWithEachFailure"
+      $0.key = "testDelayUntilNextParameters"
       $0.numFailures = 2
     }
 
@@ -166,8 +167,9 @@ final class RetryPolicyTests: XCTestCase {
     
     let grpc = GRPCExecutor(
       callOptions: callOptions.eraseToAnyPublisher(),
-      retry: .failedCall(upTo: 1, when: { $0.status.code == .unauthenticated }, delayUntilNext: { retryCount in
+      retry: .failedCall(upTo: 1, when: { $0.status.code == .unauthenticated }, delayUntilNext: { retryCount, error in
         XCTAssert(retryCount <= 1)
+        XCTAssert(error.status.code == .unauthenticated)
         // Subsequent calls are authenticated
         callOptions.send(CallOptions(customMetadata: HPACKHeaders([("authorization", "Bearer xxx")])))
         return Just(()).eraseToAnyPublisher()
@@ -194,6 +196,7 @@ final class RetryPolicyTests: XCTestCase {
   static var allTests = [
     ("Number of retries not exceeded", testRetriesNotExceeded),
     ("Number of retries exceeded, gave up", testRetriesExceededGaveUp),
+    ("delayUntilNext is called with expected parameters", testDelayUntilNextParameters),
     ("Retry status does not match", testRetryStatusDoesNotMatch),
     ("Authenticated RPC scenario", testAuthenticatedRpcScenario),
   ]
