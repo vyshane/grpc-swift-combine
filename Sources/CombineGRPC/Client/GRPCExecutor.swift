@@ -269,25 +269,32 @@ public struct GRPCExecutor {
       
     case .failedCall(let maxRetries, let shouldRetry, let delayUntilNext, let didGiveUp):
       precondition(maxRetries >= 1, "RetryPolicy.failedCall upTo parameter should be at least 1")
-      
-      func attemptCall(retries: Int) -> AnyPublisher<T, RPCError> {
+      var retryCount = 0
+
+      func attemptCall() -> AnyPublisher<T, RPCError> {
         call(currentCallOptions())
           .catch { error -> AnyPublisher<T, RPCError> in
-            if shouldRetry(error) && retries < maxRetries {
-              return delayUntilNext(retries)
+            if shouldRetry(error) && retryCount < maxRetries {
+              retryCount += 1
+              return delayUntilNext(retryCount)
                 .setFailureType(to: RPCError.self)
-                .flatMap { _ in attemptCall(retries: retries + 1) }
+                .flatMap { _ in attemptCall() }
                 .eraseToAnyPublisher()
             }
-            if shouldRetry(error) && retries == maxRetries {
+            if shouldRetry(error) && retryCount == maxRetries {
               didGiveUp()
             }
             return Fail(error: error).eraseToAnyPublisher()
           }
+          .map { response in
+            // Reset retry count if we successfully receive a value.
+            retryCount = 0
+            return response
+          }
           .eraseToAnyPublisher()
       }
       
-      return attemptCall(retries: 0)
+      return attemptCall()
     }
   }
   

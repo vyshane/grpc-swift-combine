@@ -93,6 +93,41 @@ final class RetryPolicyTests: XCTestCase {
     
     wait(for: [callPromise, onGiveUpPromise], timeout: 0.2)
   }
+
+  func testRetryCountIncrementsWithEachFailure() {
+    let promise = expectation(description: "Call fails twice, then succeeds")
+    let client = Self.client!
+    var delayUntilNextFinalRetryCount = 0
+
+    let grpc = GRPCExecutor(retry: .failedCall(
+      upTo: 99,
+      when: { $0.status.code == .failedPrecondition },
+      delayUntilNext: { count in
+        delayUntilNextFinalRetryCount = count
+        return Just(()).eraseToAnyPublisher()
+      }
+    ))
+
+    let request = FailThenSucceedRequest.with {
+      $0.key = "testRetryCountIncrementsWithEachFailure"
+      $0.numFailures = 2
+    }
+
+    grpc.call(client.failThenSucceed)(request)
+      .sink(
+        receiveCompletion: { switch $0 {
+          case .failure:
+            XCTFail("Call should not fail")
+          case .finished:
+            XCTAssert(delayUntilNextFinalRetryCount == 2)
+            promise.fulfill()
+        }},
+        receiveValue: { _ in }
+      )
+      .store(in: &Self.retainedCancellables)
+
+    wait(for: [promise], timeout: 0.2)
+  }
   
   func testRetryStatusDoesNotMatch() {
     let promise = expectation(description: "Call fails when retry status does not match")
