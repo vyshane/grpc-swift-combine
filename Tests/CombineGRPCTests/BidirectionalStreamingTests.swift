@@ -40,15 +40,8 @@ class BidirectionalStreamingTests: XCTestCase {
       .filter { $0.message == "hello" }
       .count()
       .sink(
-        receiveCompletion: { switch $0 {
-          case .failure(let status):
-            XCTFail("Unexpected status: " + status.localizedDescription)
-          case .finished:
-            promise.fulfill()
-        }},
-        receiveValue: { count in
-          XCTAssert(count == 3)
-        }
+        receiveCompletion: expectFinished(resolve: promise),
+        receiveValue: expectValue { count in count == 3 }
       )
       .store(in: &Self.retainedCancellables)
     
@@ -64,17 +57,10 @@ class BidirectionalStreamingTests: XCTestCase {
     GRPCExecutor()
       .call(failedPrecondition)(requestStream)
       .sink(
-        receiveCompletion: { switch $0 {
-          case .failure(let error):
-            if error.status.code == .failedPrecondition {
-              XCTAssert(error.trailingMetadata?.first(name: "custom") == "info")
-              promise.fulfill()
-            } else {
-              XCTFail("Unexpected status: " + error.status.localizedDescription)
-            }
-          case .finished:
-            XCTFail("Call should not succeed")
-        }},
+        receiveCompletion: resolve(promise, expectingFailure:
+          { error in
+            error.status.code == .failedPrecondition && error.trailingMetadata?.first(name: "custom") == "info"
+          }),
         receiveValue: { empty in
           XCTFail("Call should not return a response")
         }
@@ -94,19 +80,8 @@ class BidirectionalStreamingTests: XCTestCase {
     GRPCExecutor(callOptions: Just(options).eraseToAnyPublisher())
       .call(client.noResponse)(requestStream)
       .sink(
-        receiveCompletion: { switch $0 {
-          case .failure(let error):
-            if error.status.code == .deadlineExceeded {
-              promise.fulfill()
-            } else {
-              XCTFail("Unexpected status: " + error.status.localizedDescription)
-            }
-          case .finished:
-            XCTFail("Call should not succeed")
-        }},
-        receiveValue: { empty in
-          XCTFail("Call should not return a response")
-        }
+        receiveCompletion: expectRPCError(code: .deadlineExceeded, resolve: promise),
+        receiveValue: expectNoValue()
       )
       .store(in: &Self.retainedCancellables)
     
@@ -123,21 +98,8 @@ class BidirectionalStreamingTests: XCTestCase {
     GRPCExecutor()
       .call(client.ok)(requests)
       .sink(
-        receiveCompletion: { completion in
-          switch completion {
-          case .failure(let error):
-            if error.status.code == .cancelled {
-              promise.fulfill()
-            } else {
-              XCTFail("Unexpected status: " + error.status.localizedDescription)
-            }
-          case .finished:
-            XCTFail("Call should not succeed")
-          }
-        },
-        receiveValue: { response in
-          XCTFail("Call should not return a response")
-        }
+        receiveCompletion: expectRPCError(code: .cancelled, resolve: promise),
+        receiveValue: expectNoValue()
       )
       .store(in: &Self.retainedCancellables)
     

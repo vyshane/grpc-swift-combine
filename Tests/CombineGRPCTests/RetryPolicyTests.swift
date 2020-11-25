@@ -46,14 +46,9 @@ final class RetryPolicyTests: XCTestCase {
     
     grpc.call(client.failThenSucceed)(request)
       .sink(
-        receiveCompletion: { switch $0 {
-          case .failure(let status):
-            XCTFail("Unexpected status: " + status.localizedDescription)
-          case .finished:
-            promise.fulfill()
-        }},
-        receiveValue: { response in
-          XCTAssert(Int(response.numFailures) == 2)
+        receiveCompletion: expectFinished(resolve: promise),
+        receiveValue: expectValue { response in
+          Int(response.numFailures) == 2
         }
       )
       .store(in: &Self.retainedCancellables)
@@ -77,17 +72,8 @@ final class RetryPolicyTests: XCTestCase {
     
     grpc.call(client.failThenSucceed)(request)
       .sink(
-        receiveCompletion: { switch $0 {
-          case .failure(let error):
-            if error.status.code == .failedPrecondition {
-              callPromise.fulfill()
-            }
-          case .finished:
-            XCTFail("Call should fail, but was completed")
-        }},
-        receiveValue: { response in
-          XCTFail("Call should fail, but got response: " + response.debugDescription)
-        }
+        receiveCompletion: expectRPCError(code: .failedPrecondition, resolve: callPromise),
+        receiveValue: expectNoValue()
       )
       .store(in: &Self.retainedCancellables)
     
@@ -116,13 +102,9 @@ final class RetryPolicyTests: XCTestCase {
 
     grpc.call(client.failThenSucceed)(request)
       .sink(
-        receiveCompletion: { switch $0 {
-          case .failure:
-            XCTFail("Call should not fail")
-          case .finished:
-            XCTAssert(delayUntilNextFinalRetryCount == 2)
-            promise.fulfill()
-        }},
+        receiveCompletion: expectFinished(resolve: promise, onFinished: {
+          XCTAssert(delayUntilNextFinalRetryCount == 2)
+        }),
         receiveValue: { _ in }
       )
       .store(in: &Self.retainedCancellables)
@@ -142,17 +124,8 @@ final class RetryPolicyTests: XCTestCase {
     
     grpc.call(client.failThenSucceed)(request)
       .sink(
-        receiveCompletion: { switch $0 {
-          case .failure(let error):
-            if error.status.code == .failedPrecondition {
-              promise.fulfill()
-            }
-          case .finished:
-            XCTFail("Call should fail, but was completed")
-        }},
-        receiveValue: { response in
-          XCTFail("Call should fail, but got response: " + response.debugDescription)
-        }
+        receiveCompletion: expectRPCError(code: .failedPrecondition, resolve: promise),
+        receiveValue: expectNoValue()
       )
       .store(in: &Self.retainedCancellables)
     
@@ -178,15 +151,8 @@ final class RetryPolicyTests: XCTestCase {
     
     grpc.call(client.authenticatedRpc)(EchoRequest.with { $0.message = "hello" })
       .sink(
-        receiveCompletion: { switch $0 {
-          case .failure(let status):
-            XCTFail("Unexpected status: " + status.localizedDescription)
-          case .finished:
-            promise.fulfill()
-        }},
-        receiveValue: { response in
-          XCTAssert(response.message == "hello")
-        }
+        receiveCompletion: expectFinished(resolve: promise),
+        receiveValue: expectValue { $0.message == "hello" }
       )
       .store(in: &Self.retainedCancellables)
     

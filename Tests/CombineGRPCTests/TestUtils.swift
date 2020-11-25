@@ -6,8 +6,8 @@ import Combine
 import GRPC
 import NIO
 
-let host = "localhost"
-let port = 30120
+fileprivate let host = "localhost"
+fileprivate let port = 30120
 
 func makeTestServer(services: [CallHandlerProvider], eventLoopGroupSize: Int = 1) throws -> Server {
   let eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: eventLoopGroupSize)
