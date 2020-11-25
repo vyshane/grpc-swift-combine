@@ -17,7 +17,7 @@ func expectFinished<E>(resolve expectation: XCTestExpectation? = nil, onFinished
   { actual in
     switch actual {
     case .failure(let actualError):
-      XCTFail("Expecting Completion.finished but got (\(actualError)")
+      XCTFail("Expecting Completion.finished but got \(actualError)")
     case .finished:
       expectation?.fulfill()
     }
@@ -75,7 +75,7 @@ func expectRPCError(code: GRPCStatus.Code, message: String? = nil, resolve expec
         expectation?.fulfill()
       } else {
         XCTFail("Expecting (\(code), \(message ?? "nil")) " +
-          "but got (\(actualError.status), \(actualError.status.message ?? ""))")
+          "but got (\(actualError.status), \(actualError.status.message ?? "nil"))")
       }
     case .finished:
       XCTFail("Expecting Completion.failure but got Completion.finished")
