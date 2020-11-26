@@ -11,7 +11,7 @@ import GRPC
 import XCTest
 
 @available(OSX 10.15, iOS 13, tvOS 13, *)
-func expectFinished<E>(resolve expectation: XCTestExpectation? = nil, onFinished: () -> Void = {})
+public func expectFinished<E>(resolve expectation: XCTestExpectation? = nil, onFinished: () -> Void = {})
   -> (_ actual: Subscribers.Completion<E>) -> Void where E: Error
 {
   { actual in
@@ -25,7 +25,7 @@ func expectFinished<E>(resolve expectation: XCTestExpectation? = nil, onFinished
 }
 
 @available(OSX 10.15, iOS 13, tvOS 13, *)
-func resolve<T>
+public func resolve<T>
   (_ expectation: XCTestExpectation? = nil, expectingFailure check: @escaping (T) -> Bool)
   -> (_ actual: Subscribers.Completion<T>)
   -> Void
@@ -45,7 +45,7 @@ func resolve<T>
 }
 
 @available(OSX 10.15, iOS 13, tvOS 13, *)
-func expectFailure<T>(_ check: @escaping (T) -> Bool, resolve expectation: XCTestExpectation? = nil)
+public func expectFailure<T>(_ check: @escaping (T) -> Bool, resolve expectation: XCTestExpectation? = nil)
   -> (_ actual: Subscribers.Completion<T>)
   -> Void
 {
@@ -64,7 +64,7 @@ func expectFailure<T>(_ check: @escaping (T) -> Bool, resolve expectation: XCTes
 }
 
 @available(OSX 10.15, iOS 13, tvOS 13, *)
-func expectRPCError(code: GRPCStatus.Code, message: String? = nil, resolve expectation: XCTestExpectation? = nil)
+public func expectRPCError(code: GRPCStatus.Code, message: String? = nil, resolve expectation: XCTestExpectation? = nil)
   -> (_ actual: Subscribers.Completion<RPCError>)
   -> Void
 {
@@ -83,13 +83,13 @@ func expectRPCError(code: GRPCStatus.Code, message: String? = nil, resolve expec
   }
 }
 
-func expectValue<T>(_ check: @escaping (T) -> Bool) -> (_ value: T) -> Void {
+public func expectValue<T>(_ check: @escaping (T) -> Bool) -> (_ value: T) -> Void {
   { value in
     XCTAssert(check(value))
   }
 }
 
-func expectNoValue<T>() -> (_ value: T) -> Void {
+public func expectNoValue<T>() -> (_ value: T) -> Void {
   { _ in
     XCTFail("Unexpected value")
   }
