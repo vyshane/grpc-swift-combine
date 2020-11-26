@@ -38,7 +38,7 @@ class ServerStreamingHandlerSubscriber<Response>: Subscriber, Cancellable where 
   func receive(completion: Subscribers.Completion<RPCError>) {
     switch completion {
     case .failure(let error):
-      context.trailingMetadata = augment(headers: context.trailingMetadata, withError: error)
+      context.trailers = augment(headers: context.trailers, withError: error)
       context.statusPromise.fail(error.status)
     case .finished:
       context.statusPromise.succeed(.ok)

@@ -10,6 +10,8 @@ import NIOHPACK
 
 @available(OSX 10.15, iOS 13, tvOS 13, *)
 class BidirectionalStreamingTestsService: BidirectionalStreamingScenariosProvider {
+
+  var interceptors: BidirectionalStreamingScenariosServerInterceptorFactoryProtocol?
   
   // OK, echoes back each message in the request stream
   func ok(context: StreamingResponseCallContext<EchoResponse>)

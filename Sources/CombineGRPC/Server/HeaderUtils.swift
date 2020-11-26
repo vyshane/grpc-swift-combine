@@ -2,18 +2,14 @@
 // Licensed under the Apache License, Version 2.0
 
 import Foundation
-import NIOHTTP1
+import NIOHPACK
 
-func augment(headers: HTTPHeaders, withError: RPCError) -> HTTPHeaders {
+func augment(headers: HPACKHeaders, withError: RPCError) -> HPACKHeaders {
   guard let errorHeaders = withError.trailingMetadata else {
     return headers
   }
-  var augmented = HTTPHeaders()
-  headers.forEach({ name, value in
-    augmented.add(name: name, value: value)
-  })
-  errorHeaders.forEach({ name, value, _ in
-    augmented.add(name: name, value: value)
-  })
+  var augmented = HPACKHeaders()
+  augmented.add(contentsOf: headers)
+  augmented.add(contentsOf: errorHeaders)
   return augmented
 }

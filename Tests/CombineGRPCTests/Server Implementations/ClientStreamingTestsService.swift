@@ -11,6 +11,8 @@ import NIOHPACK
 @available(OSX 10.15, iOS 13, tvOS 13, *)
 class ClientStreamingTestsService: ClientStreamingScenariosProvider {
 
+  var interceptors: ClientStreamingScenariosServerInterceptorFactoryProtocol?
+
   // OK, echoes back the last received message
   func ok(context: UnaryResponseCallContext<EchoResponse>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>

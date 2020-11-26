@@ -9,7 +9,8 @@ import NIO
 
 @available(OSX 10.15, iOS 13, tvOS 13, *)
 class RetryPolicyTestsService: RetryScenariosProvider {
-  
+
+  var interceptors: RetryScenariosServerInterceptorFactoryProtocol?
   var failureCounts: [String: UInt32] = [:]
   
   // Fails with gRPC status failed precondition for the requested number of times, then succeeds
@@ -36,7 +37,7 @@ class RetryPolicyTestsService: RetryScenariosProvider {
   
   func authenticatedRpc(request: EchoRequest, context: StatusOnlyCallContext) -> EventLoopFuture<EchoResponse> {
     handle(context) {
-      if context.request.headers.contains(where: { $0.0 == "authorization" && $0.1 == "Bearer xxx" }) {
+      if context.headers.contains(where: { $0.0 == "authorization" && $0.1 == "Bearer xxx" }) {
         return Just(EchoResponse.with { $0.message = request.message })
           .setFailureType(to: RPCError.self)
           .eraseToAnyPublisher()

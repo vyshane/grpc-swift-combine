@@ -250,8 +250,7 @@ Platform | Minimum Supported Version
 macOS | 10.15 (Catalina)
 iOS & iPadOS | 13
 tvOS | 13
-
-WatchOS is not supported because upstream gRPC Swift does not support it.
+watchOS | 6
 
 ## Feature Status
 

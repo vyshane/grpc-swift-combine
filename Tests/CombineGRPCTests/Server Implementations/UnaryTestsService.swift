@@ -10,6 +10,8 @@ import NIOHPACK
 
 @available(OSX 10.15, iOS 13, tvOS 13, *)
 class UnaryTestsService: UnaryScenariosProvider {
+
+  var interceptors: UnaryScenariosServerInterceptorFactoryProtocol?
   
   // OK, echoes back the message in the request
   func ok(request: EchoRequest, context: StatusOnlyCallContext) -> EventLoopFuture<EchoResponse> {

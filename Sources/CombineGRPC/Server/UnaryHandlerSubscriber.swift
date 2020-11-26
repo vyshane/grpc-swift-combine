@@ -40,7 +40,7 @@ class UnaryHandlerSubscriber<Response>: Subscriber, Cancellable {
   func receive(completion: Subscribers.Completion<RPCError>) {
     switch completion {
     case .failure(let error):
-      context.trailingMetadata = augment(headers: context.trailingMetadata, withError: error)
+      context.trailers = augment(headers: context.trailers, withError: error)
       responsePromise.fail(error.status)
     case .finished:
       let status = GRPCStatus(code: .aborted, message: "Response publisher completed without sending a value")

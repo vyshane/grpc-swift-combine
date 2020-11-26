@@ -16,9 +16,10 @@ Pod::Spec.new do |spec|
   spec.ios.deployment_target = "13.0"
   spec.osx.deployment_target = "10.15"
   spec.tvos.deployment_target = "13.0"
+  spec.watchos.deployment_target = "6.0"
   spec.source_files = 'Sources/CombineGRPC/**/*.swift'
 
-  spec.dependency "gRPC-Swift", "1.0.0-alpha.20"
+  spec.dependency "gRPC-Swift", "1.0.0-alpha.21"
   spec.dependency "CombineExt", "1.2.0"
   spec.framework = "XCTest"
 

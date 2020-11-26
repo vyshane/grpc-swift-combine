@@ -11,6 +11,8 @@ import NIOHPACK
 @available(OSX 10.15, iOS 13, tvOS 13, *)
 class ServerStreamingTestsService: ServerStreamingScenariosProvider {
 
+  var interceptors: ServerStreamingScenariosServerInterceptorFactoryProtocol?
+
   // OK, echoes back the request message three times
   func ok(request: EchoRequest, context: StreamingResponseCallContext<EchoResponse>)
     -> EventLoopFuture<GRPCStatus>

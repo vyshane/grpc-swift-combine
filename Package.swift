@@ -8,7 +8,7 @@ import PackageDescription
 let package = Package(
     name: "CombineGRPC",
     platforms: [
-        .macOS(.v10_15), .iOS(.v13), .tvOS(.v13)
+        .macOS(.v10_15), .iOS(.v13), .tvOS(.v13), .watchOS(.v6)
     ],
     products: [
         .library(
@@ -16,7 +16,7 @@ let package = Package(
             targets: ["CombineGRPC"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/grpc/grpc-swift.git", .exact("1.0.0-alpha.20")),
+        .package(url: "https://github.com/grpc/grpc-swift.git", .exact("1.0.0-alpha.21")),
         .package(url: "https://github.com/CombineCommunity/CombineExt.git", from: "1.2.0"),
     ],
     targets: [
