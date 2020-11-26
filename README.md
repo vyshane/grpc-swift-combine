@@ -199,8 +199,8 @@ To generate Swift code from your .proto files, you'll need to first install the 
 brew install protobuf
 ```
 
-Next, download the swift and grpc-swift protoc plugins from the the latest version of grpc-swift. Currently that means [protoc-grpc-swift-plugins-1.0.0-alpha.20.zip
-](https://github.com/grpc/grpc-swift/releases/download/1.0.0-alpha.20/protoc-grpc-swift-plugins-1.0.0-alpha.20.zip). Unarchive the downloaded file and move the binaries from the `bin/` directory somewhere in your `$PATH`.
+Next, download the swift and grpc-swift protoc plugins from the the latest version of grpc-swift. Currently that means [protoc-grpc-swift-plugins-1.0.0-alpha.21.zip
+](https://github.com/grpc/grpc-swift/releases/download/1.0.0-alpha.21/protoc-grpc-swift-plugins-1.0.0-alpha.21.zip). Unarchive the downloaded file and move the binaries from the `bin/` directory somewhere in your `$PATH`.
 
 Now you are ready to generate Swift code from protobuf interface definition files.
 
@@ -229,7 +229,7 @@ Add the package dependency to your `Package.swift`:
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/vyshane/grpc-swift-combine.git", from: "0.21.0"),
+  .package(url: "https://github.com/vyshane/grpc-swift-combine.git", from: "0.22.0"),
 ],
 ```
 
@@ -238,7 +238,7 @@ dependencies: [
 Add the following line to your `Podfile`:
 
 ```text
-pod 'CombineGRPC', '~> 0.21'
+pod 'CombineGRPC', '~> 0.22'
 ```
 
 ## Compatibility

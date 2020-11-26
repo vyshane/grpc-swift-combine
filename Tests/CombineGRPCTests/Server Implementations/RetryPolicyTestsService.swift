@@ -13,7 +13,7 @@ class RetryPolicyTestsService: RetryScenariosProvider {
   var interceptors: RetryScenariosServerInterceptorFactoryProtocol?
   var failureCounts: [String: UInt32] = [:]
   
-  // Fails with gRPC status failed precondition for the requested number of times, then succeeds
+  // Fails with gRPC status failed precondition for the requested number of times, then succeeds.
   func failThenSucceed(request: FailThenSucceedRequest, context: StatusOnlyCallContext) -> EventLoopFuture<FailThenSucceedResponse>
   {
     handle(context) {
