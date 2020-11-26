@@ -162,7 +162,7 @@ You can imagine doing something along those lines to seamlessly retry calls when
 
 ### Test Utilities
 
-CombineGRPC ships with a collection of [convenience functions](Sources/CombineGRPC/Testing/CompletionExpectations.swift) that allow you to succintly declare expectations when testing publisher subscriptions. Here's a sample test:
+CombineGRPC ships with a collection of [convenience functions](Sources/CombineGRPC/Testing/CompletionExpectations.swift) that allow you to succinctly declare expectations when testing publisher subscriptions. Here's a sample test:
 
 ```swift
 func testTodoCreationSucceeds() {
