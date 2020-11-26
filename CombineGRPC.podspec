@@ -20,5 +20,6 @@ Pod::Spec.new do |spec|
 
   spec.dependency "gRPC-Swift", "1.0.0-alpha.20"
   spec.dependency "CombineExt", "1.2.0"
+  spec.framework = "XCTest"
 
 end
