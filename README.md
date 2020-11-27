@@ -238,8 +238,10 @@ dependencies: [
 Add the following line to your `Podfile`:
 
 ```text
-pod 'CombineGRPC', '~> 0.22'
+pod 'CombineGRPC', '~> 0.21'
 ```
+
+Note that the release of CombineGRPC 0.22.0 to CocoaPods is currently pending. See [#17](https://github.com/vyshane/grpc-swift-combine/issues/17) for details.
 
 ## Compatibility
 
