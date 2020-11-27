@@ -40,7 +40,7 @@ public typealias BidirectionalStreamingRPC<Request, Response> =
  
  Can be configured with `CallOptions` to use when making RPC calls, as well as a `RetryPolicy` for automatic retries of failed RPC calls.
  */
-@available(OSX 10.15, iOS 13, tvOS 13, *)
+@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public struct GRPCExecutor {
   
   private let retryPolicy: RetryPolicy

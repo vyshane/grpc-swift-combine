@@ -10,7 +10,7 @@ import Combine
 import GRPC
 import XCTest
 
-@available(OSX 10.15, iOS 13, tvOS 13, *)
+@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public func expectFinished<E>(resolve expectation: XCTestExpectation? = nil, onFinished: () -> Void = {})
   -> (_ actual: Subscribers.Completion<E>) -> Void where E: Error
 {

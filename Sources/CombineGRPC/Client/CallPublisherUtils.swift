@@ -8,7 +8,7 @@ import NIO
 import NIOHPACK
 import NIOHTTP1
 
-@available(OSX 10.15, iOS 13, tvOS 13, *)
+@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 func sendCompletion<Response>(
   status: EventLoopFuture<GRPCStatus>,
   trailingMetadata: EventLoopFuture<HPACKHeaders>,

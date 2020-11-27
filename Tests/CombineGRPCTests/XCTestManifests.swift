@@ -10,6 +10,7 @@ public func allTests() -> [XCTestCaseEntry] {
     testCase(ClientStreamingTests.allTests),
     testCase(ServerStreamingTests.allTests),
     testCase(BidirectionalStreamingTests.allTests),
+    testCase(RetryPolicyTests.allTests),
   ]
 }
 #endif

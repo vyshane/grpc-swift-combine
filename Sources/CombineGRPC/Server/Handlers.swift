@@ -15,7 +15,7 @@ import SwiftProtobuf
    - context: The gRPC call context.
    - handler: A function that returns a publisher that either publishes a `Response` or fails with an `RPCError`.
  */
-@available(OSX 10.15, iOS 13, tvOS 13, *)
+@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public func handle<Response>
   (_ context: StatusOnlyCallContext, handler: () -> AnyPublisher<Response, RPCError>)
   -> EventLoopFuture<Response>

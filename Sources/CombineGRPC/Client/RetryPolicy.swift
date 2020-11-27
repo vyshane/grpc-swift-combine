@@ -7,7 +7,7 @@ import GRPC
 /**
  Specifies retry behaviour when a gRPC call fails.
 */
-@available(OSX 10.15, iOS 13, tvOS 13, *)
+@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public enum RetryPolicy {
   /**
    Automatically retry failed calls up to a maximum number of times, when a condition is met.

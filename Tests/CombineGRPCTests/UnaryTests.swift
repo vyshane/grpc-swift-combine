@@ -6,7 +6,7 @@ import Combine
 import GRPC
 @testable import CombineGRPC
 
-@available(OSX 10.15, iOS 13, tvOS 13, *)
+@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 final class UnaryTests: XCTestCase {
   
   static var server: Server?
