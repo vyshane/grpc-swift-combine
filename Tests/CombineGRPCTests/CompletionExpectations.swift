@@ -3,14 +3,12 @@
 //
 // CompletionExpectation is a collection of useful functions for asserting how you
 // expect publishers to behave in your tests.
-//
-// For usage examples, look at CombineGRPCTests.
 
 import Combine
 import GRPC
 import XCTest
+@testable import CombineGRPC
 
-@available(OSX 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public func expectFinished<E>(resolve expectation: XCTestExpectation? = nil, onFinished: () -> Void = {})
   -> (_ actual: Subscribers.Completion<E>) -> Void where E: Error
 {
@@ -24,7 +22,6 @@ public func expectFinished<E>(resolve expectation: XCTestExpectation? = nil, onF
   }
 }
 
-@available(OSX 10.15, iOS 13, tvOS 13, *)
 public func resolve<T>
   (_ expectation: XCTestExpectation? = nil, expectingFailure check: @escaping (T) -> Bool)
   -> (_ actual: Subscribers.Completion<T>)
@@ -44,7 +41,6 @@ public func resolve<T>
   }
 }
 
-@available(OSX 10.15, iOS 13, tvOS 13, *)
 public func expectFailure<T>(_ check: @escaping (T) -> Bool, resolve expectation: XCTestExpectation? = nil)
   -> (_ actual: Subscribers.Completion<T>)
   -> Void
@@ -63,7 +59,6 @@ public func expectFailure<T>(_ check: @escaping (T) -> Bool, resolve expectation
   }
 }
 
-@available(OSX 10.15, iOS 13, tvOS 13, *)
 public func expectRPCError(code: GRPCStatus.Code, message: String? = nil, resolve expectation: XCTestExpectation? = nil)
   -> (_ actual: Subscribers.Completion<RPCError>)
   -> Void

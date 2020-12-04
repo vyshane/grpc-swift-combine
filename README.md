@@ -160,31 +160,6 @@ grpc.call(client.authenticatedRpc)(request)
 
 You can imagine doing something along those lines to seamlessly retry calls when an ID token expires. The back-end service replies with status `.unauthenticated`, you obtain a new ID token using your refresh token, and the call is retried.
 
-### Test Utilities
-
-CombineGRPC ships with a collection of [convenience functions](Sources/CombineGRPC/Testing/CompletionExpectations.swift) that allow you to succinctly declare expectations when testing publisher subscriptions. Here's a sample test:
-
-```swift
-func testTodoCreationSucceeds() {
-  let promise = expectation(description: "gRPC call completes successfully")
-  let grpc = GRPCExecutor()
-
-  // Create a new Todo item by calling the CreateTodo RPC.
-  grpc.call(Self.client.createTodo)(Todo.with { $0.title = "Make test pass" })
-    .sink(
-      receiveCompletion: expectFinished(resolve: promise),
-      receiveValue: expectValue { todo in
-        !todo.id.isEmpty
-          && todo.title == "Make test pass"
-          && todo.isCompleted == false
-      }
-    )
-    .store(in: &Self.cancellables)
-
-  wait(for: [promise], timeout: 0.1)
-}
-```
-
 ### More Examples
 
 Check out the [CombineGRPC tests](Tests/CombineGRPCTests) for examples of all the different RPC calls and handler implementations. You can find the matching protobuf [here](Tests/Protobuf/test_scenarios.proto).
@@ -238,10 +213,8 @@ dependencies: [
 Add the following line to your `Podfile`:
 
 ```text
-pod 'CombineGRPC', '~> 0.21'
+pod 'CombineGRPC', '~> 0.22'
 ```
-
-Note that the release of CombineGRPC 0.22.0 to CocoaPods is currently pending. See [#17](https://github.com/vyshane/grpc-swift-combine/issues/17) for details.
 
 ## Compatibility
 
