@@ -16,7 +16,7 @@ class ClientStreamingTestsService: ClientStreamingScenariosProvider {
   func ok(context: UnaryResponseCallContext<EchoResponse>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
-    handle(context) { requests in
+    CombineGRPC.handle(context) { requests in
       requests
         .last()
         .map { request in
@@ -31,7 +31,7 @@ class ClientStreamingTestsService: ClientStreamingScenariosProvider {
   func failedPrecondition(context: UnaryResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
-    handle(context) { _ in
+    CombineGRPC.handle(context) { _ in
       let status = GRPCStatus(code: .failedPrecondition, message: "Failed precondition message")
       let additionalMetadata = HPACKHeaders([("custom", "info")])
       return Fail<Empty, RPCError>(error: RPCError(status: status, trailingMetadata: additionalMetadata))
@@ -43,7 +43,7 @@ class ClientStreamingTestsService: ClientStreamingScenariosProvider {
   func noResponse(context: UnaryResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
-    handle(context) { _ in
+    CombineGRPC.handle(context) { _ in
       Combine.Empty<Empty, RPCError>(completeImmediately: false).eraseToAnyPublisher()
     }
   }

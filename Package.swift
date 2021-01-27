@@ -16,7 +16,7 @@ let package = Package(
             targets: ["CombineGRPC"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/grpc/grpc-swift.git", .exact("1.0.0-alpha.22")),
+        .package(url: "https://github.com/grpc/grpc-swift.git", .exact("1.0.0-alpha.23")),
         .package(url: "https://github.com/CombineCommunity/CombineExt.git", from: "1.2.0"),
     ],
     targets: [

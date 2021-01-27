@@ -16,7 +16,7 @@ class ServerStreamingTestsService: ServerStreamingScenariosProvider {
   func ok(request: EchoRequest, context: StreamingResponseCallContext<EchoResponse>)
     -> EventLoopFuture<GRPCStatus>
   {
-    handle(context) {
+    CombineGRPC.handle(context) {
       let responses = repeatElement(EchoResponse.with { $0.message = request.message}, count: 3)
       return Publishers.Sequence(sequence: responses).eraseToAnyPublisher()
     }
@@ -26,7 +26,7 @@ class ServerStreamingTestsService: ServerStreamingScenariosProvider {
   func failedPrecondition(request: EchoRequest, context: StreamingResponseCallContext<Empty>)
     -> EventLoopFuture<GRPCStatus>
   {
-    handle(context) {
+    CombineGRPC.handle(context) {
       let status = GRPCStatus(code: .failedPrecondition, message: "Failed precondition message")
       let additionalMetadata = HPACKHeaders([("custom", "info")])
       return Fail<Empty, RPCError>(error: RPCError(status: status, trailingMetadata: additionalMetadata))
@@ -38,7 +38,7 @@ class ServerStreamingTestsService: ServerStreamingScenariosProvider {
   func noResponse(request: EchoRequest, context: StreamingResponseCallContext<Empty>)
     -> EventLoopFuture<GRPCStatus>
   {
-    handle(context) {
+    CombineGRPC.handle(context) {
       Combine.Empty<Empty, RPCError>(completeImmediately: false).eraseToAnyPublisher()
     }
   }

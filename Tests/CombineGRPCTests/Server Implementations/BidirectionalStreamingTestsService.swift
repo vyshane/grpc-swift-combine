@@ -16,7 +16,7 @@ class BidirectionalStreamingTestsService: BidirectionalStreamingScenariosProvide
   func ok(context: StreamingResponseCallContext<EchoResponse>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
-    handle(context) { requests in
+    CombineGRPC.handle(context) { requests in
       requests
         .map { req in
           EchoResponse.with { $0.message = req.message }
@@ -30,7 +30,7 @@ class BidirectionalStreamingTestsService: BidirectionalStreamingScenariosProvide
   func failedPrecondition(context: StreamingResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
-    handle(context) { _ in
+    CombineGRPC.handle(context) { _ in
       let status = GRPCStatus(code: .failedPrecondition, message: "Failed precondition message")
       let additionalMetadata = HPACKHeaders([("custom", "info")])
       let error = RPCError(status: status, trailingMetadata: additionalMetadata)
@@ -42,7 +42,7 @@ class BidirectionalStreamingTestsService: BidirectionalStreamingScenariosProvide
   func noResponse(context: StreamingResponseCallContext<Empty>)
     -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void>
   {
-    handle(context) { _ in
+    CombineGRPC.handle(context) { _ in
       Combine.Empty<Empty, RPCError>(completeImmediately: false).eraseToAnyPublisher()
     }
   }

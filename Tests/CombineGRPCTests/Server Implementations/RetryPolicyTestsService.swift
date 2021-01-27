@@ -15,7 +15,7 @@ class RetryPolicyTestsService: RetryScenariosProvider {
   // Fails with gRPC status failed precondition for the requested number of times, then succeeds.
   func failThenSucceed(request: FailThenSucceedRequest, context: StatusOnlyCallContext) -> EventLoopFuture<FailThenSucceedResponse>
   {
-    handle(context) {
+    CombineGRPC.handle(context) {
       let status = GRPCStatus(code: .failedPrecondition, message: "Requested failure")
       let error: AnyPublisher<FailThenSucceedResponse, RPCError> =
         Fail(error: RPCError(status: status)).eraseToAnyPublisher()
@@ -35,7 +35,7 @@ class RetryPolicyTestsService: RetryScenariosProvider {
   }
   
   func authenticatedRpc(request: EchoRequest, context: StatusOnlyCallContext) -> EventLoopFuture<EchoResponse> {
-    handle(context) {
+    CombineGRPC.handle(context) {
       if context.headers.contains(where: { $0.0 == "authorization" && $0.1 == "Bearer xxx" }) {
         return Just(EchoResponse.with { $0.message = request.message })
           .setFailureType(to: RPCError.self)
