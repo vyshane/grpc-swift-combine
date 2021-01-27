@@ -50,7 +50,7 @@ class EchoServiceProvider: EchoProvider {
   
   // Simple bidirectional RPC that echoes back each request message
   func sayItBack(context: StreamingResponseCallContext<EchoResponse>) -> EventLoopFuture<(StreamEvent<EchoRequest>) -> Void> {
-    handle(context) { requests in
+    CombineGRPC.handle(context) { requests in
       requests
         .map { req in
           EchoResponse.with { $0.message = req.message }
