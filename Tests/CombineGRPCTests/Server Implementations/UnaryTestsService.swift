@@ -20,8 +20,7 @@ class UnaryTestsService: UnaryScenariosProvider {
   }
   
   // Fails
-  func failedPrecondition(request: EchoRequest,
-                               context: StatusOnlyCallContext) -> EventLoopFuture<Empty> {
+  func failedPrecondition(request: EchoRequest, context: StatusOnlyCallContext) -> EventLoopFuture<Empty> {
     CombineGRPC.handle(context) {
       let status = GRPCStatus(code: .failedPrecondition, message: "Failed precondition message")
       let additionalMetadata = HPACKHeaders([("custom", "info")])
