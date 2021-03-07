@@ -20,7 +20,7 @@ Pod::Spec.new do |spec|
   spec.source_files = 'Sources/CombineGRPC/**/*.swift'
 
   spec.dependency "gRPC-Swift", "1.0.0"
-  spec.dependency "CombineExt", "1.2.0"
+  spec.dependency "CombineExt", "1.3.0"
 
   spec.pod_target_xcconfig = { "ENABLE_TESTABILITY" => "YES" }
 
