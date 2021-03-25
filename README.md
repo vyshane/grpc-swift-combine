@@ -203,7 +203,7 @@ Add the package dependency to your `Package.swift`:
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/vyshane/grpc-swift-combine.git", from: "1.0.0"),
+  .package(url: "https://github.com/vyshane/grpc-swift-combine.git", from: "1.0.1"),
 ],
 ```
 
@@ -212,7 +212,7 @@ dependencies: [
 Add the following line to your `Podfile`:
 
 ```text
-pod 'CombineGRPC', '~> 1.0.0'
+pod 'CombineGRPC', '~> 1.0.1'
 ```
 
 ## Compatibility
