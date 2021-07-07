@@ -12,7 +12,7 @@ import NIOHTTP1
 func sendCompletion<Response>(
   status: EventLoopFuture<GRPCStatus>,
   trailingMetadata: EventLoopFuture<HPACKHeaders>,
-  toSubscriber: Publishers.Create<Response, RPCError>.Subscriber
+  to subscriber: Publishers.Create<Response, RPCError>.Subscriber
 ) -> Void {
   var resolvedMetadata: HPACKHeaders?
   
@@ -22,10 +22,10 @@ func sendCompletion<Response>(
   status.whenSuccess { status in
     switch status.code {
     case .ok:
-      toSubscriber.send(completion: .finished)
+      subscriber.send(completion: .finished)
     default:
       let error = RPCError(status: status, trailingMetadata: resolvedMetadata)
-      toSubscriber.send(completion: .failure(error))
+      subscriber.send(completion: .failure(error))
     }
   }
 }

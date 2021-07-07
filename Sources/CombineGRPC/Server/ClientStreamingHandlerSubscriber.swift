@@ -32,7 +32,7 @@ class ClientStreamingHandlerSubscriber<Request, Response>: Subscriber, Cancellab
   func receive(completion: Subscribers.Completion<RPCError>) {
     switch completion {
     case .failure(let error):
-      context.trailers = augment(headers: context.trailers, withError: error)
+      context.trailers = augment(headers: context.trailers, with: error)
       context.responsePromise.fail(error.status)
     case .finished:
       let status = GRPCStatus(code: .aborted, message: "Handler completed without a response")

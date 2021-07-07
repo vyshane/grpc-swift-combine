@@ -95,7 +95,7 @@ public struct GRPCExecutor {
     where Request: Message, Response: Message
   {
     { request in
-      self.executeWithRetry(policy: self.retryPolicy, { currentCallOptions in
+      self.executeWithRetry(policy: self.retryPolicy) { currentCallOptions in
         currentCallOptions
           .flatMap { callOptions in
             Future<Response, RPCError> { promise in
@@ -115,7 +115,7 @@ public struct GRPCExecutor {
             }
           }
           .eraseToAnyPublisher()
-      })
+      }
     }
   }
   
@@ -145,12 +145,12 @@ public struct GRPCExecutor {
     where Request: Message, Response: Message
   {
     { request in
-      self.executeWithRetry(policy: self.retryPolicy, { currentCallOptions in
+      self.executeWithRetry(policy: self.retryPolicy) { currentCallOptions in
         currentCallOptions
           .flatMap { callOptions in
             AnyPublisher<Response, RPCError>.create { subscriber in
               let call = rpc(request, callOptions, subscriber.send)
-              sendCompletion(status: call.status, trailingMetadata: call.trailingMetadata, toSubscriber: subscriber)
+              sendCompletion(status: call.status, trailingMetadata: call.trailingMetadata, to: subscriber)
 
               return AnyCancellable {
                 call.cancel(promise: nil)
@@ -158,7 +158,7 @@ public struct GRPCExecutor {
             }
           }
           .eraseToAnyPublisher()
-      })
+      }
     }
   }
   
@@ -181,7 +181,7 @@ public struct GRPCExecutor {
     where Request: Message, Response: Message
   {
     { requests in
-      self.executeWithRetry(policy: self.retryPolicy, { currentCallOptions in
+      self.executeWithRetry(policy: self.retryPolicy) { currentCallOptions in
         currentCallOptions
           .flatMap { callOptions in
             AnyPublisher<Response, RPCError>.create { subscriber in
@@ -196,7 +196,7 @@ public struct GRPCExecutor {
                 receiveValue: { _ = call.sendMessage($0) }
               )
               call.response.whenSuccess { subscriber.send($0) }
-              sendCompletion(status: call.status, trailingMetadata: call.trailingMetadata, toSubscriber: subscriber)
+              sendCompletion(status: call.status, trailingMetadata: call.trailingMetadata, to: subscriber)
 
               return AnyCancellable {
                 call.cancel(promise: nil)
@@ -205,7 +205,7 @@ public struct GRPCExecutor {
             }
         }
         .eraseToAnyPublisher()
-      })
+      }
     }
   }
   
@@ -228,7 +228,7 @@ public struct GRPCExecutor {
     where Request: Message, Response: Message
   {
     { requests in
-      self.executeWithRetry(policy: self.retryPolicy, { currentCallOptions in
+      self.executeWithRetry(policy: self.retryPolicy) { currentCallOptions in
         currentCallOptions
           .flatMap { callOptions in
             AnyPublisher<Response, RPCError>.create { subscriber in
@@ -244,7 +244,7 @@ public struct GRPCExecutor {
                   _ = call.sendMessage($0)
                 }
               )
-              sendCompletion(status: call.status, trailingMetadata: call.trailingMetadata, toSubscriber: subscriber)
+              sendCompletion(status: call.status, trailingMetadata: call.trailingMetadata, to: subscriber)
               
               return AnyCancellable {
                 call.cancel(promise: nil)
@@ -253,7 +253,7 @@ public struct GRPCExecutor {
             }
           }
           .eraseToAnyPublisher()
-      })
+      }
     }
   }
   

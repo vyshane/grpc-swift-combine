@@ -4,8 +4,8 @@
 import Foundation
 import NIOHPACK
 
-func augment(headers: HPACKHeaders, withError: RPCError) -> HPACKHeaders {
-  guard let errorHeaders = withError.trailingMetadata else {
+func augment(headers: HPACKHeaders, with error: RPCError) -> HPACKHeaders {
+  guard let errorHeaders = error.trailingMetadata else {
     return headers
   }
   var augmented = HPACKHeaders()
