@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/grpc/grpc-swift.git",
         "state": {
           "branch": null,
-          "revision": "f258d1cd8e8fcc97ebfaaf397e569be3d3fa91d6",
-          "version": "1.1.0"
+          "revision": "276f09147d914b6463f3ccdd39f51f7e0dd15aaa",
+          "version": "1.1.1"
         }
       },
       {
