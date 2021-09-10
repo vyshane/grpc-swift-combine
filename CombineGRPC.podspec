@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
   spec.name = "CombineGRPC"
-  spec.version = "1.0.5"
+  spec.version = "1.0.6"
   spec.summary = "Combine framework integration for Swift gRPC"
   spec.description  = <<-DESC
                       CombineGRPC is a library that provides Combine framework integration for Swift gRPC. It provides two flavours of functionality, call and handle. Use call to make gRPC calls on the client side, and handle to handle incoming RPC calls on the server side. CombineGRPC provides versions of call and handle for all RPC styles: Unary, server streaming, client streaming and bidirectional streaming RPCs.
@@ -19,7 +19,7 @@ Pod::Spec.new do |spec|
   spec.watchos.deployment_target = "6.0"
   spec.source_files = 'Sources/CombineGRPC/**/*.swift'
 
-  spec.dependency "gRPC-Swift", "1.3.0"
+  spec.dependency "gRPC-Swift", "1.4.0"
   spec.dependency "CombineExt", "1.3.0"
 
   spec.pod_target_xcconfig = { "ENABLE_TESTABILITY" => "YES" }
