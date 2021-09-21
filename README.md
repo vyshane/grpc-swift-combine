@@ -252,10 +252,10 @@ End-to-end Tests
 
 ## Contributing
 
-To generate the Xcode project, run:
+Generate Swift source for the protobuf that is used in tests:
 
 ```text
-make project
+make protobuf
 ```
 
-You can then open the project in Xcode, build and run the tests.
+You can then open `Package.swift` in Xcode, build and run the tests.
