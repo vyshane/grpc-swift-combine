@@ -19,8 +19,8 @@ Pod::Spec.new do |spec|
   spec.watchos.deployment_target = "6.0"
   spec.source_files = 'Sources/CombineGRPC/**/*.swift'
 
-  spec.dependency "gRPC-Swift", "1.4.0"
-  spec.dependency "CombineExt", "1.3.0"
+  spec.dependency "gRPC-Swift", "1.5.0"
+  spec.dependency "CombineExt", "1.5.1"
 
   spec.pod_target_xcconfig = { "ENABLE_TESTABILITY" => "YES" }
 

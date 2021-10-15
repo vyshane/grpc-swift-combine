@@ -2,21 +2,12 @@
   "object": {
     "pins": [
       {
-        "package": "combine-schedulers",
-        "repositoryURL": "https://github.com/pointfreeco/combine-schedulers",
-        "state": {
-          "branch": null,
-          "revision": "6bde3b0063ba8e7537b43744948535ca7e9e0dad",
-          "version": "0.5.2"
-        }
-      },
-      {
         "package": "CombineExt",
         "repositoryURL": "https://github.com/CombineCommunity/CombineExt.git",
         "state": {
           "branch": null,
-          "revision": "5b8a0c0f178527f9204200505c5fefa6847e528f",
-          "version": "1.3.0"
+          "revision": "0880829102152185190064fd17847a7c681d2127",
+          "version": "1.5.1"
         }
       },
       {
@@ -24,8 +15,8 @@
         "repositoryURL": "https://github.com/grpc/grpc-swift.git",
         "state": {
           "branch": null,
-          "revision": "8a9fd195b6ba5c45f3a14ec7e5ebf7a8e4bdeaf8",
-          "version": "1.4.0"
+          "revision": "580ba36aec6d96c4e93365e0e55197832853d9ea",
+          "version": "1.5.0"
         }
       },
       {
@@ -89,15 +80,6 @@
           "branch": null,
           "revision": "1f62db409f2c9b0223a3f68567b4a01333aae778",
           "version": "1.17.0"
-        }
-      },
-      {
-        "package": "xctest-dynamic-overlay",
-        "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
-        "state": {
-          "branch": null,
-          "revision": "50a70a9d3583fe228ce672e8923010c8df2deddd",
-          "version": "0.2.1"
         }
       }
     ]
