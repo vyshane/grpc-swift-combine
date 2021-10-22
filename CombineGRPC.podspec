@@ -12,7 +12,7 @@ Pod::Spec.new do |spec|
   spec.social_media_url = "https://twitter.com/vyshane"
   spec.homepage = "https://github.com/vyshane/grpc-swift-combine"
 
-  spec.swift_version = "5.1"
+  spec.swift_version = "5.2"
   spec.ios.deployment_target = "13.0"
   spec.osx.deployment_target = "10.15"
   spec.tvos.deployment_target = "13.0"
