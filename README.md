@@ -212,7 +212,7 @@ dependencies: [
 Add the following line to your `Podfile`:
 
 ```text
-pod 'CombineGRPC', '~> 1.0.6'
+pod 'CombineGRPC', '~> 1.0.8'
 ```
 
 ## Compatibility
