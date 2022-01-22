@@ -174,7 +174,7 @@ To generate Swift code from your .proto files, you'll need to first install the 
 brew install protobuf
 ```
 
-Next, download the [swift and grpc-swift protoc plugins](https://github.com/grpc/grpc-swift/releases/download/1.6.0/protoc-grpc-swift-plugins-1.6.0.zip). Unarchive the downloaded file and move the binaries from the `bin/` directory to somewhere in your `$PATH`.
+Next, download the [swift and grpc-swift protoc plugins](https://github.com/grpc/grpc-swift/releases/download/1.6.1/protoc-grpc-swift-plugins-1.6.1.zip). Unarchive the downloaded file and move the binaries from the `bin/` directory to somewhere in your `$PATH`.
 
 Now you are ready to generate Swift code from protobuf interface definition files.
 
