@@ -171,10 +171,8 @@ Check out the [CombineGRPC tests](Tests/CombineGRPCTests) for examples of all th
 To generate Swift code from your .proto files, you'll need to first install the [protoc](https://github.com/protocolbuffers/protobuf) Protocol Buffer compiler.
 
 ```text
-brew install protobuf
+brew install protobuf swift-protobuf grpc-swift
 ```
-
-Next, download the [swift and grpc-swift protoc plugins](https://github.com/grpc/grpc-swift/releases/download/1.8.1/protoc-grpc-swift-plugins-1.8.1.zip). Unarchive the downloaded file and move the binaries from the `bin/` directory to somewhere in your `$PATH`.
 
 Now you are ready to generate Swift code from protobuf interface definition files.
 
