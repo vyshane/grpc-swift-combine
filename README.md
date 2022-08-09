@@ -193,24 +193,12 @@ example_service.pb.swift
 
 ### Adding CombineGRPC to Your Project
 
-You can easily add CombineGRPC to your project using either Swift Package Manager or CocoaPods.
-
-#### Swift Package Manager
-
-Add the package dependency to your `Package.swift`:
+You can easily add CombineGRPC to your project using Swift Package Manager. To add the package dependency to your `Package.swift`:
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/vyshane/grpc-swift-combine.git", from: "1.0.10"),
+  .package(url: "https://github.com/vyshane/grpc-swift-combine.git", from: "1.0.13"),
 ],
-```
-
-#### CocoaPods
-
-Add the following line to your `Podfile`:
-
-```text
-pod 'CombineGRPC', '~> 1.0.8'
 ```
 
 ## Compatibility
