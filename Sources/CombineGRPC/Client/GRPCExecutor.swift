@@ -184,27 +184,9 @@ public struct GRPCExecutor {
       self.executeWithRetry(policy: self.retryPolicy) { currentCallOptions in
         currentCallOptions
           .flatMap { callOptions in
-            AnyPublisher<Response, RPCError>.create { subscriber in
-              let call = rpc(callOptions)
-              
-              // TODO: Can we avoid .sink() here in order to support backpressure?
-              let requestsCancellable = requests.sink(
-                receiveCompletion: { switch $0 {
-                  case .finished: _ = call.sendEnd()
-                  case .failure: call.cancel(promise: nil)
-                }},
-                receiveValue: { _ = call.sendMessage($0) }
-              )
-              call.response.whenSuccess { subscriber.send($0) }
-              sendCompletion(status: call.status, trailingMetadata: call.trailingMetadata, to: subscriber)
-
-              return AnyCancellable {
-                call.cancel(promise: nil)
-                requestsCancellable.cancel()
-              }
-            }
-        }
-        .eraseToAnyPublisher()
+            ClientStreamingPublisher(rpc: rpc, callOptions: callOptions, requests: requests)
+          }
+          .eraseToAnyPublisher()
       }
     }
   }
@@ -231,26 +213,7 @@ public struct GRPCExecutor {
       self.executeWithRetry(policy: self.retryPolicy) { currentCallOptions in
         currentCallOptions
           .flatMap { callOptions in
-            AnyPublisher<Response, RPCError>.create { subscriber in
-              let call = rpc(callOptions, subscriber.send)
-              
-              // TODO: Can we avoid .sink() here in order to support backpressure?
-              let requestsCancellable = requests.sink(
-                receiveCompletion: { switch $0 {
-                  case .finished: _ = call.sendEnd()
-                  case .failure: call.cancel(promise: nil)
-                }},
-                receiveValue: {
-                  _ = call.sendMessage($0)
-                }
-              )
-              sendCompletion(status: call.status, trailingMetadata: call.trailingMetadata, to: subscriber)
-              
-              return AnyCancellable {
-                call.cancel(promise: nil)
-                requestsCancellable.cancel()
-              }
-            }
+            BidirectionalStreamingPublisher(rpc: rpc, callOptions: callOptions, requests: requests)
           }
           .eraseToAnyPublisher()
       }

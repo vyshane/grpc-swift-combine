@@ -94,7 +94,7 @@ class ClientStreamingTests: XCTestCase {
     
     grpc.call(client.ok)(requests)
       .sink(
-        receiveCompletion: expectRPCError(code: .cancelled, resolve: promise),
+        receiveCompletion: expectRPCError(code: .dataLoss, resolve: promise),
         receiveValue: expectNoValue()
       )
       .store(in: &Self.retainedCancellables)
