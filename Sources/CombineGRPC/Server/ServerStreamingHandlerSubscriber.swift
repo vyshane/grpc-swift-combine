@@ -38,8 +38,15 @@ class ServerStreamingHandlerSubscriber<Response>: Subscriber, Cancellable where 
   func receive(completion: Subscribers.Completion<RPCError>) {
     switch completion {
     case .failure(let error):
-      context.trailers = augment(headers: context.trailers, with: error)
-      context.statusPromise.fail(error.status)
+      if context.eventLoop.inEventLoop {
+        context.trailers = augment(headers: context.trailers, with: error)
+        context.statusPromise.fail(error.status)
+      } else {
+        context.eventLoop.execute {
+          self.context.trailers = augment(headers: self.context.trailers, with: error)
+          self.context.statusPromise.fail(error.status)
+        }
+      }
     case .finished:
       context.statusPromise.succeed(.ok)
     }
