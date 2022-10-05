@@ -1,4 +1,4 @@
-// Copyright 2020, Vy-Shane Xie
+// Copyright 2020, ComgineGRPC
 // Licensed under the Apache License, Version 2.0
 //
 // CompletionExpectation is a collection of useful functions for asserting how you
