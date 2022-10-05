@@ -5,18 +5,18 @@ import Combine
 import GRPC
 import NIOHPACK
 
-class StreamingRequestsSubscriber<CALL, REQ, RES, DS>: Subscriber, Subscription
-where CALL: StreamingRequestClientCall, CALL.RequestPayload == REQ, CALL.ResponsePayload == RES,
-      DS: Subscriber, DS.Input == RES, DS.Failure == RPCError {
+class StreamingRequestsSubscriber<Call, Request, Response, DownstreamSubscriber>: Subscriber, Subscription
+where Call: StreamingRequestClientCall, Call.RequestPayload == Request, Call.ResponsePayload == Response,
+      DownstreamSubscriber: Subscriber, DownstreamSubscriber.Input == Response, DownstreamSubscriber.Failure == RPCError {
 
-  typealias Input = REQ
+  typealias Input = Request
   typealias Failure = Error
 
-  let call: CALL
-  var buffer: DemandBuffer<DS>
+  let call: Call
+  var buffer: DemandBuffer<DownstreamSubscriber>
   var subscription: Subscription?
 
-  init(call: CALL, buffer: DemandBuffer<DS>) {
+  init(call: Call, buffer: DemandBuffer<DownstreamSubscriber>) {
     self.call = call
     self.buffer = buffer
   }
@@ -47,7 +47,7 @@ where CALL: StreamingRequestClientCall, CALL.RequestPayload == REQ, CALL.Respons
     subscription.request(.max(1))
   }
 
-  func receive(_ input: REQ) -> Subscribers.Demand {
+  func receive(_ input: Request) -> Subscribers.Demand {
 
     call.sendMessage(input)
       .whenComplete { result in

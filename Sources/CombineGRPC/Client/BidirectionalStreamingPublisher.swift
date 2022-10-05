@@ -8,17 +8,17 @@ import SwiftProtobuf
 import NIOHPACK
 import NIO
 
-class BidirectionalStreamingPublisher<REQ, RES, RP>: Publisher
-where RP: Publisher, RP.Output == REQ, RP.Failure == Error, REQ: Message, RES: Message {
+class BidirectionalStreamingPublisher<Request, Response, RequestPublisher>: Publisher
+where RequestPublisher: Publisher, RequestPublisher.Output == Request, RequestPublisher.Failure == Error, Request: Message, Response: Message {
 
-  typealias Output = RES
+  typealias Output = Response
   typealias Failure = RPCError
 
-  let rpc: BidirectionalStreamingRPC<REQ, RES>
+  let rpc: BidirectionalStreamingRPC<Request, Response>
   let callOptions: CallOptions
-  let requests: RP
+  let requests: RequestPublisher
 
-  init(rpc: @escaping BidirectionalStreamingRPC<REQ, RES>, callOptions: CallOptions, requests: RP) {
+  init(rpc: @escaping BidirectionalStreamingRPC<Request, Response>, callOptions: CallOptions, requests: RequestPublisher) {
     self.rpc = rpc
     self.callOptions = callOptions
     self.requests = requests
