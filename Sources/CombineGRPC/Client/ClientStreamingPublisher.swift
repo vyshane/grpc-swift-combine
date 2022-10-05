@@ -7,7 +7,6 @@ import GRPC
 import SwiftProtobuf
 import NIOHPACK
 import NIO
-import CombineExt
 
 class ClientStreamingPublisher<Request, Response, RequestPublisher>: Publisher
 where RequestPublisher: Publisher, RequestPublisher.Output == Request, RequestPublisher.Failure == Error, Request: Message, Response: Message {
