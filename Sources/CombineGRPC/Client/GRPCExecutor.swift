@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0
 
 import Combine
-import CombineExt
 import GRPC
 import NIOHPACK
 import SwiftProtobuf
@@ -148,14 +147,7 @@ public struct GRPCExecutor {
       self.executeWithRetry(policy: self.retryPolicy) { currentCallOptions in
         currentCallOptions
           .flatMap { callOptions in
-            AnyPublisher<Response, RPCError>.create { subscriber in
-              let call = rpc(request, callOptions, subscriber.send)
-              sendCompletion(status: call.status, trailingMetadata: call.trailingMetadata, to: subscriber)
-
-              return AnyCancellable {
-                call.cancel(promise: nil)
-              }
-            }
+            ServerStreamingPublisher(rpc: rpc, callOptions: callOptions, request: request)
           }
           .eraseToAnyPublisher()
       }
