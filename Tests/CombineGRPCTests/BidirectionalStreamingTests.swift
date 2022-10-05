@@ -88,7 +88,7 @@ class BidirectionalStreamingTests: XCTestCase {
   }
   
   func testClientStreamError() {
-    let promise = expectation(description: "Call fails with cancelled status")
+    let promise = expectation(description: "Call fails with dataLoss status")
     let client = Self.client!
 
     struct ClientStreamError: Error {}
@@ -109,6 +109,6 @@ class BidirectionalStreamingTests: XCTestCase {
     ("Bidirectional streaming OK", testOk),
     ("Bidirectional streaming failed precondition", testFailedPrecondition),
     ("Bidirectional streaming no response", testNoResponse),
-    ("Bidirectional streaming with client stream error, stream cancelled", testClientStreamError),
+    ("Bidirectional streaming with client stream error, stream failed", testClientStreamError),
   ]
 }

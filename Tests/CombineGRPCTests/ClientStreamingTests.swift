@@ -85,7 +85,7 @@ class ClientStreamingTests: XCTestCase {
   }
   
   func testClientStreamError() {
-    let promise = expectation(description: "Call fails with cancelled status")
+    let promise = expectation(description: "Call fails with dataLoss status")
     let client = Self.client!
     let grpc = GRPCExecutor()
     
@@ -106,6 +106,6 @@ class ClientStreamingTests: XCTestCase {
     ("Client streaming OK", testOk),
     ("Client streaming failed precondition", testFailedPrecondition),
     ("Client streaming no response", testNoResponse),
-    ("Client streaming with client stream error, stream cancelled", testClientStreamError),
+    ("Client streaming with client stream error, stream failed", testClientStreamError),
   ]
 }
