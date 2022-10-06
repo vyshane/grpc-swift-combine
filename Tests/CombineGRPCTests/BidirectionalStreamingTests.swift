@@ -88,7 +88,7 @@ class BidirectionalStreamingTests: XCTestCase {
   }
   
   func testClientStreamError() {
-    let promise = expectation(description: "Call fails with dataLoss status")
+    let promise = expectation(description: "Call fails with aborted status")
     let client = Self.client!
 
     struct ClientStreamError: Error {}
@@ -97,7 +97,7 @@ class BidirectionalStreamingTests: XCTestCase {
     GRPCExecutor()
       .call(client.ok)(requests)
       .sink(
-        receiveCompletion: expectRPCError(code: .dataLoss, resolve: promise),
+        receiveCompletion: expectRPCError(code: .aborted, resolve: promise),
         receiveValue: expectNoValue()
       )
       .store(in: &Self.retainedCancellables)

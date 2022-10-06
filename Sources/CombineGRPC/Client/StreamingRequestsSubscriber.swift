@@ -78,7 +78,7 @@ where Call: StreamingRequestClientCall, Call.RequestPayload == Request, Call.Res
 
       self.complete(error: .from(
         error: error,
-        statusCode: .dataLoss,
+        statusCode: .aborted,
         message: "Request Stream Failed"
       ))
 

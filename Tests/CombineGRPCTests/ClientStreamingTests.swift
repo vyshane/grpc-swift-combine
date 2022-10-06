@@ -85,7 +85,7 @@ class ClientStreamingTests: XCTestCase {
   }
   
   func testClientStreamError() {
-    let promise = expectation(description: "Call fails with dataLoss status")
+    let promise = expectation(description: "Call fails with aborted status")
     let client = Self.client!
     let grpc = GRPCExecutor()
     
@@ -94,7 +94,7 @@ class ClientStreamingTests: XCTestCase {
     
     grpc.call(client.ok)(requests)
       .sink(
-        receiveCompletion: expectRPCError(code: .dataLoss, resolve: promise),
+        receiveCompletion: expectRPCError(code: .aborted, resolve: promise),
         receiveValue: expectNoValue()
       )
       .store(in: &Self.retainedCancellables)
