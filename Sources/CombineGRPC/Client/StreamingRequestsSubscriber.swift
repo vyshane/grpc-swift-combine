@@ -62,7 +62,7 @@ where Call: StreamingRequestClientCall, Call.RequestPayload == Request, Call.Res
           self.complete(error: .from(
             error: error,
             statusCode: .dataLoss,
-            message: "Bidirectional Request Stream Send End Failed"
+            message: "Request Stream Send Message Failed"
           ))
 
           self.call.cancel(promise: nil)
@@ -79,7 +79,7 @@ where Call: StreamingRequestClientCall, Call.RequestPayload == Request, Call.Res
       self.complete(error: .from(
         error: error,
         statusCode: .dataLoss,
-        message: "Bidirectional Request Stream Failed"
+        message: "Request Stream Failed"
       ))
 
       self.call.cancel(promise: nil)
@@ -95,7 +95,7 @@ where Call: StreamingRequestClientCall, Call.RequestPayload == Request, Call.Res
           self.complete(error: .from(
             error: error,
             statusCode: .dataLoss,
-            message: "Bidirectional Request Stream Send End Failed"
+            message: "Request Stream Send End Failed"
           ))
         }
       }
