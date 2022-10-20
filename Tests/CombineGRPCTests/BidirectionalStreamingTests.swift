@@ -1,4 +1,4 @@
-// Copyright 2019, Vy-Shane Xie
+// Copyright 2019, ComgineGRPC
 // Licensed under the Apache License, Version 2.0
 
 import XCTest
@@ -88,7 +88,7 @@ class BidirectionalStreamingTests: XCTestCase {
   }
   
   func testClientStreamError() {
-    let promise = expectation(description: "Call fails with cancelled status")
+    let promise = expectation(description: "Call fails with aborted status")
     let client = Self.client!
 
     struct ClientStreamError: Error {}
@@ -97,7 +97,7 @@ class BidirectionalStreamingTests: XCTestCase {
     GRPCExecutor()
       .call(client.ok)(requests)
       .sink(
-        receiveCompletion: expectRPCError(code: .cancelled, resolve: promise),
+        receiveCompletion: expectRPCError(code: .aborted, resolve: promise),
         receiveValue: expectNoValue()
       )
       .store(in: &Self.retainedCancellables)
@@ -109,6 +109,6 @@ class BidirectionalStreamingTests: XCTestCase {
     ("Bidirectional streaming OK", testOk),
     ("Bidirectional streaming failed precondition", testFailedPrecondition),
     ("Bidirectional streaming no response", testNoResponse),
-    ("Bidirectional streaming with client stream error, stream cancelled", testClientStreamError),
+    ("Bidirectional streaming with client stream error, stream failed", testClientStreamError),
   ]
 }

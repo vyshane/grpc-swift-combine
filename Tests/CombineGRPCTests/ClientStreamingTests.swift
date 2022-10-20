@@ -1,4 +1,4 @@
-// Copyright 2019, Vy-Shane Xie
+// Copyright 2019, ComgineGRPC
 // Licensed under the Apache License, Version 2.0
 
 import XCTest
@@ -85,7 +85,7 @@ class ClientStreamingTests: XCTestCase {
   }
   
   func testClientStreamError() {
-    let promise = expectation(description: "Call fails with cancelled status")
+    let promise = expectation(description: "Call fails with aborted status")
     let client = Self.client!
     let grpc = GRPCExecutor()
     
@@ -94,7 +94,7 @@ class ClientStreamingTests: XCTestCase {
     
     grpc.call(client.ok)(requests)
       .sink(
-        receiveCompletion: expectRPCError(code: .cancelled, resolve: promise),
+        receiveCompletion: expectRPCError(code: .aborted, resolve: promise),
         receiveValue: expectNoValue()
       )
       .store(in: &Self.retainedCancellables)
@@ -106,6 +106,6 @@ class ClientStreamingTests: XCTestCase {
     ("Client streaming OK", testOk),
     ("Client streaming failed precondition", testFailedPrecondition),
     ("Client streaming no response", testNoResponse),
-    ("Client streaming with client stream error, stream cancelled", testClientStreamError),
+    ("Client streaming with client stream error, stream failed", testClientStreamError),
   ]
 }

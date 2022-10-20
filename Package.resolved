@@ -2,15 +2,6 @@
   "object": {
     "pins": [
       {
-        "package": "CombineExt",
-        "repositoryURL": "https://github.com/CombineCommunity/CombineExt.git",
-        "state": {
-          "branch": null,
-          "revision": "aaf1a0981c05360000af972473034cb952be4ca0",
-          "version": "1.8.0"
-        }
-      },
-      {
         "package": "grpc-swift",
         "repositoryURL": "https://github.com/grpc/grpc-swift.git",
         "state": {
