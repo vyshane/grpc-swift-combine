@@ -1,4 +1,4 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.6
 //
 // Copyright 2019, ComgineGRPC
 // Licensed under the Apache License, Version 2.0
@@ -16,12 +16,14 @@ let package = Package(
             targets: ["CombineGRPC"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/grpc/grpc-swift.git", .exact("1.9.0"))
+        .package(url: "https://github.com/grpc/grpc-swift.git", from: "1.13.0")
     ],
     targets: [
         .target(
             name: "CombineGRPC",
-            dependencies: ["GRPC"]),
+            dependencies: [
+                .product(name: "GRPC", package: "grpc-swift")
+            ]),
         .testTarget(
             name: "CombineGRPCTests",
             dependencies: ["CombineGRPC"]),
