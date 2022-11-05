@@ -10,4 +10,3 @@ clean:
 	rm -rf .build/
 	rm -rf .swiftpm/
 	rm -rf $PROTO_GEN_DIR
-	rm -rf CombineGRPC.xcodeproj
