@@ -10,14 +10,14 @@ import NIOHPACK
 final class RetryPolicyTests: XCTestCase {
   
   static var server: Server?
-  static var client: RetryScenariosClient?
+  static var client: RetryScenariosNIOClient?
   static var retainedCancellables: Set<AnyCancellable> = []
   
   override class func setUp() {
     super.setUp()
     server = try! makeTestServer(services: [RetryPolicyTestsService()])
     client = makeTestClient { channel, callOptions in
-      RetryScenariosClient(channel: channel, defaultCallOptions: callOptions)
+      RetryScenariosNIOClient(channel: channel, defaultCallOptions: callOptions)
     }
   }
   

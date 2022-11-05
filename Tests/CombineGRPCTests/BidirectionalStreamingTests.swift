@@ -10,14 +10,14 @@ import NIOHPACK
 class BidirectionalStreamingTests: XCTestCase {
   
   static var server: Server?
-  static var client: BidirectionalStreamingScenariosClient?
+  static var client: BidirectionalStreamingScenariosNIOClient?
   static var retainedCancellables: Set<AnyCancellable> = []
   
   override class func setUp() {
     super.setUp()
     server = try! makeTestServer(services: [BidirectionalStreamingTestsService()])
     client = makeTestClient { channel, callOptions in
-      BidirectionalStreamingScenariosClient(channel: channel, defaultCallOptions: callOptions)
+      BidirectionalStreamingScenariosNIOClient(channel: channel, defaultCallOptions: callOptions)
     }
   }
   

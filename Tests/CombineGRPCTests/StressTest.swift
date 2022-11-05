@@ -12,10 +12,10 @@ import GRPC
 class StressTest: XCTestCase {
 
   static var server: Server?
-  static var unaryClient: UnaryScenariosClient?
-  static var serverStreamingClient: ServerStreamingScenariosClient?
-  static var clientStreamingClient: ClientStreamingScenariosClient?
-  static var bidirectionalStreamingClient: BidirectionalStreamingScenariosClient?
+  static var unaryClient: UnaryScenariosNIOClient?
+  static var serverStreamingClient: ServerStreamingScenariosNIOClient?
+  static var clientStreamingClient: ClientStreamingScenariosNIOClient?
+  static var bidirectionalStreamingClient: BidirectionalStreamingScenariosNIOClient?
   static var retainedCancellables: [AnyCancellable] = []
   
   override class func setUp() {
@@ -30,16 +30,16 @@ class StressTest: XCTestCase {
     server = try! makeTestServer(services: services, eventLoopGroupSize: 4)
     
     unaryClient = makeTestClient(eventLoopGroupSize: 4) { channel, callOptions in
-      UnaryScenariosClient(channel: channel, defaultCallOptions: callOptions)
+      UnaryScenariosNIOClient(channel: channel, defaultCallOptions: callOptions)
     }
     serverStreamingClient = makeTestClient(eventLoopGroupSize: 4) { channel, callOptions in
-      ServerStreamingScenariosClient(channel: channel, defaultCallOptions: callOptions)
+      ServerStreamingScenariosNIOClient(channel: channel, defaultCallOptions: callOptions)
     }
     clientStreamingClient = makeTestClient(eventLoopGroupSize: 4) { channel, callOptions in
-      ClientStreamingScenariosClient(channel: channel, defaultCallOptions: callOptions)
+      ClientStreamingScenariosNIOClient(channel: channel, defaultCallOptions: callOptions)
     }
     bidirectionalStreamingClient = makeTestClient(eventLoopGroupSize: 4) { channel, callOptions in
-      BidirectionalStreamingScenariosClient(channel: channel, defaultCallOptions: callOptions)
+      BidirectionalStreamingScenariosNIOClient(channel: channel, defaultCallOptions: callOptions)
     }
   }
   

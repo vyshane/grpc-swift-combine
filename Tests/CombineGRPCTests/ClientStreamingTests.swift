@@ -9,14 +9,14 @@ import GRPC
 class ClientStreamingTests: XCTestCase {
   
   static var server: Server?
-  static var client: ClientStreamingScenariosClient?
+  static var client: ClientStreamingScenariosNIOClient?
   static var retainedCancellables: Set<AnyCancellable> = []
   
   override class func setUp() {
     super.setUp()
     server = try! makeTestServer(services: [ClientStreamingTestsService()])
     client = makeTestClient { channel, callOptions in
-      ClientStreamingScenariosClient(channel: channel, defaultCallOptions: callOptions)
+      ClientStreamingScenariosNIOClient(channel: channel, defaultCallOptions: callOptions)
     }
   }
   

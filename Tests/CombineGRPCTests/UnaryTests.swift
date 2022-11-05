@@ -9,14 +9,14 @@ import GRPC
 final class UnaryTests: XCTestCase {
   
   static var server: Server?
-  static var client: UnaryScenariosClient?
+  static var client: UnaryScenariosNIOClient?
   static var retainedCancellables: Set<AnyCancellable> = []
   
   override class func setUp() {
     super.setUp()
     server = try! makeTestServer(services: [UnaryTestsService()])
     client = makeTestClient { channel, callOptions in
-      UnaryScenariosClient(channel: channel, defaultCallOptions: callOptions)
+      UnaryScenariosNIOClient(channel: channel, defaultCallOptions: callOptions)
     }
   }
   

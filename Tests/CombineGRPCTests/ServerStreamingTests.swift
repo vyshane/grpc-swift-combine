@@ -9,7 +9,7 @@ import GRPC
 class ServerStreamingTests: XCTestCase {
   
   static var server: Server?
-  static var client: ServerStreamingScenariosClient?
+  static var client: ServerStreamingScenariosNIOClient?
   
   // Streams will be cancelled prematurely if cancellables are deinitialized
   static var retainedCancellables: Set<AnyCancellable> = []
@@ -18,7 +18,7 @@ class ServerStreamingTests: XCTestCase {
     super.setUp()
     server = try! makeTestServer(services: [ServerStreamingTestsService()])
     client = makeTestClient { channel, callOptions in
-      ServerStreamingScenariosClient(channel: channel, defaultCallOptions: callOptions)
+      ServerStreamingScenariosNIOClient(channel: channel, defaultCallOptions: callOptions)
     }
   }
   
