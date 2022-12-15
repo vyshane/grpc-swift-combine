@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/grpc/grpc-swift.git",
       "state" : {
-        "revision" : "3e17f2b847da39b50329b7a11c5ad23453190e8b",
-        "version" : "1.13.0"
+        "revision" : "6bf35472cb8621481e59e6d1450b19627db81cea",
+        "version" : "1.13.1"
       }
     },
     {
