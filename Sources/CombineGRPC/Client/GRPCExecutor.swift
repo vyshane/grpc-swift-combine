@@ -95,27 +95,33 @@ public struct GRPCExecutor {
   {
     { request in
       self.executeWithRetry(policy: self.retryPolicy) { currentCallOptions in
-        currentCallOptions
-          .flatMap { callOptions in
-            Future<Response, RPCError> { promise in
-              let call = rpc(request, callOptions)
-              call.response.whenSuccess { promise(.success($0)) }
-              
-              // Trailing metadata will be available before status.
-              var trailingMetadata: HPACKHeaders?
-              call.trailingMetadata.whenSuccess { trailingMetadata = $0 }
-
-              // The status EventLoopFuture succeeds when RPC fails.
-              call.status.whenSuccess {
-                promise(.failure(
-                  RPCError(status: $0, trailingMetadata: trailingMetadata)
-                ))
-              }
-            }
-          }
+        currentCallOptions.flatMap { grpcCallPublisher(for: rpc(request, $0)) }
           .eraseToAnyPublisher()
       }
     }
+  }
+
+  func grpcCallPublisher<Request, Response>(for call: UnaryCall<Request, Response>) -> AnyPublisher<Response, RPCError>
+  where Request: Message, Response: Message
+  {
+    Future<Response, RPCError> { promise in
+      call.response.whenSuccess { promise(.success($0)) }
+            
+      // Trailing metadata will be available before status.
+      var trailingMetadata: HPACKHeaders?
+      call.trailingMetadata.whenSuccess { trailingMetadata = $0 }
+
+      // The status EventLoopFuture succeeds when RPC fails.
+      call.status.whenSuccess {
+          promise(.failure(
+            RPCError(status: $0, trailingMetadata: trailingMetadata)
+          ))
+      }
+    }
+    .handleEvents(receiveCancel: {
+      call.cancel(promise: nil)
+    })
+    .eraseToAnyPublisher()
   }
   
   // MARK: Server Streaming
